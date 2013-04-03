@@ -1,4 +1,9 @@
-# Django settings for elts project.
+"""Django-specific settings for the ELTS project.
+
+Application settings that are not specific to django are maintained elsewhere.
+
+"""
+import os
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -10,14 +15,23 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASES = {
+    # ENGINE: 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+    # NAME: name of db "owned" by django
+    # HOST: If empty, assumes localhost via domain sockets or TCP.
+    # PORT: Set to empty string for default.
     'default': {
-        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '',                      # Or path to database file if using sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.abspath(os.path.join(
+            os.path.dirname(__file__),
+            '..',
+            'sqlite',
+            'elts.db',
+        )),
         # The following settings are not used with sqlite3:
         'USER': '',
         'PASSWORD': '',
-        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '',                      # Set to empty string for default.
+        'HOST': '',
+        'PORT': '',
     }
 }
 
@@ -29,7 +43,7 @@ ALLOWED_HOSTS = []
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'America/New_York'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -39,7 +53,7 @@ SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
-USE_I18N = True
+USE_I18N = False
 
 # If you set this to False, Django will not format dates, numbers and
 # calendars according to the current locale.
@@ -61,7 +75,11 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = os.path.abspath(os.path.join(
+    os.path.dirname(__file__),
+    '..',
+    'collectstatic',
+))
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
@@ -108,8 +126,8 @@ ROOT_URLCONF = 'elts.urls'
 WSGI_APPLICATION = 'elts.wsgi.application'
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
+    # Put strings here, like "/home/html/django_templates" or
+    # "C:/www/django/templates". Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 )
 
