@@ -1,8 +1,4 @@
-"""Django-specific settings for the ELTS project.
-
-Application settings that are not specific to django are maintained elsewhere.
-
-"""
+# Django settings for elts project.
 import os
 
 DEBUG = True
@@ -15,17 +11,16 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASES = {
-    # ENGINE: 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-    # NAME: name of db "owned" by django
-    # HOST: If empty, assumes localhost via domain sockets or TCP.
+    # ENGINE: Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+    # NAME: Or path to database file if using sqlite3.
+    # HOST: Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
     # PORT: Set to empty string for default.
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.abspath(os.path.join(
             os.path.dirname(__file__),
-            '..',
             'sqlite',
-            'elts.db',
+            'db.db',
         )),
         # The following settings are not used with sqlite3:
         'USER': '',
@@ -77,7 +72,6 @@ MEDIA_URL = ''
 # Example: "/var/www/example.com/static/"
 STATIC_ROOT = os.path.abspath(os.path.join(
     os.path.dirname(__file__),
-    '..',
     'collectstatic',
 ))
 
@@ -101,7 +95,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '=ypb$ma8xh0pw_ke9r=_@gp6p3!i8z@+hymi!uwi8bc-jyll80'
+SECRET_KEY = '!ncc#qokpg%0hw+4+)6ddsraamoflvbl-xqgql158^4e&(4cd0'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -120,14 +114,14 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'main.urls'
+ROOT_URLCONF = 'elts.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'main.wsgi.application'
+WSGI_APPLICATION = 'elts.wsgi.application'
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or
-    # "C:/www/django/templates". Always use forward slashes, even on Windows.
+    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+    # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 )
 
