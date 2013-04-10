@@ -45,6 +45,48 @@ Whereas `main` is dedicated to project-wide resources, `elts` contains all
 logic for the actual lending system. Thus, database models for items, item
 reservations, tags, and other facts are housed here.
 
+&lt;app\_name&gt;/templates/&lt;app\_name&gt;
+---------------------------------------------
+
+Each django application can have a templates subfolder, which itself has
+another &lt;app\_name&gt; subfolder. It looks like this:
+
+    $ tree templates
+    elts/
+    |-- __init__.py
+    |-- models.py
+    |-- templates
+    |   `-- elts
+    |       `-- base.html
+    |-- tests.py
+    |-- urls.py
+    `-- views.py
+
+At first glance, this is a bit awkward: why not put a template directly under
+the `templates` folder? For example:
+
+    $ tree templates
+    elts/
+    |-- __init__.py
+    |-- models.py
+    |-- templates
+    |   `-- base.html
+    |-- tests.py
+    |-- urls.py
+    `-- views.py
+
+The latter is a bad idea. The django project documentation [explains
+why](https://docs.djangoproject.com/en/1.5/intro/tutorial03/#write-views-that-actually-do-something):
+
+> Now we might be able to get away with putting our templates directly in
+> polls/templates (rather than creating another polls subdirectory), but it
+> would actually be a bad idea. Django will choose the first template it finds
+> whose name matches, and if you had a template with the same name in a
+> different application, Django would be unable to distinguish between them. We
+> need to be able to point Django at the right one, and the easiest way to
+> ensure this is by namespacing them. That is, by putting those templates
+> inside another directory named for the application itself.
+
 Development Guidelines
 ======================
 
