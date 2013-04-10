@@ -18,7 +18,10 @@ understand how branching under subversion works, go do some reading
 Project Layout
 ==============
 
-The `elts` folder contains project-wide settings and is the "root" URL
+main
+----
+
+The `main` folder contains project-wide settings and is the "root" URL
 dispatcher. It also contains arbitrary project-wide resources that don't easily
 go elsewhere.
 
@@ -26,7 +29,7 @@ Django can collect static files, such as CSS files, into a central location for
 you. A webserver can then do what it's good at (serving static files), and
 django can do what it's good at (generating dynamic content). Run the
 `django-admin.py collectstatic` command to collect files into the
-`elts/collectstatic` folder. The contents of this folder should *not* be
+`main/collectstatic` folder. The contents of this folder should *not* be
 version controlled.
 
 By default, this project uses sqlite as a database backend. When you issue
@@ -35,7 +38,12 @@ necessary. This is great for development and testing, though it should be
 changed in production. The contents of the this folder should *not* be version
 controlled.
 
-Django apps are placed in the `apps` folder.
+elts
+----
+
+Whereas `main` is dedicated to project-wide resources, `elts` contains all
+logic for the actual lending system. Thus, database models for items, item
+reservations, tags, and other facts are housed here.
 
 Development Guidelines
 ======================
@@ -44,7 +52,7 @@ Use pylint to check *every* file. For example:
 
     $ pwd
     .../elts/trunk
-    $ pylint --init-hook='import sys; sys.path.append(".")' lending/models.py | less
+    $ pylint --init-hook='import sys; sys.path.append(".")' main/settings.py | less
 
 Some warnings are spurious, and you can force pylint to ignore those warnings.
 For example, the following might be placed in a models.py file:
