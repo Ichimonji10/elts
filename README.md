@@ -36,3 +36,28 @@ changed in production. The contents of the this folder should *not* be version
 controlled.
 
 Django apps are placed in the `apps` folder.
+
+Development Guidelines
+======================
+
+Use pylint to check *every* file. For example:
+
+    $ pwd
+    .../elts/trunk
+    $ pylint --init-hook='import sys; sys.path.append(".")' lending/models.py | less
+
+Some warnings are spurious, and you can force pylint to ignore those warnings.
+For example, the following might be placed in a models.py file:
+
+    # pylint: disable=R0903
+    # "Too few public methods (0/2)" 
+    # It is both common and OK for a model to have no methods.
+    #
+    # pylint: disable=W0232
+    # "Class has no __init__ method" 
+    # It is both common and OK for a model to have no __init__ method.
+
+Location is important. If "disable" statements are placed at the top of a file,
+the named messages are ignored throughout that entire file, but if they are
+placed within a class, the named messages are ignored only within that class.
+Don't apply a "disable" statement to an excessively large scope!

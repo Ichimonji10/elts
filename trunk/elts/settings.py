@@ -13,7 +13,8 @@ MANAGERS = ADMINS
 DATABASES = {
     # ENGINE: Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
     # NAME: Or path to database file if using sqlite3.
-    # HOST: Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+    # HOST: Empty for localhost through domain sockets or '127.0.0.1' for
+    # localhost through TCP.
     # PORT: Set to empty string for default.
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -120,13 +121,13 @@ ROOT_URLCONF = 'elts.urls'
 WSGI_APPLICATION = 'elts.wsgi.application'
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
+    # Put strings here, like "/home/html/django_templates" or
+    # "C:/www/django/templates".  Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 )
 
 INSTALLED_APPS = (
-    #'elts',
+    'lending',
 
     'django.contrib.auth',
     'django.contrib.contenttypes',

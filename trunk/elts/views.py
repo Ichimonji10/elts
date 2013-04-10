@@ -1,4 +1,4 @@
 from django.http import HttpResponse
 
 def index(request):
-    return HttpResponse('lending.views.index')
+    return HttpResponse('elts.views.index')
