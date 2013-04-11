@@ -1,39 +1,34 @@
 """URLs for the ELTS application.
 
-Sample URLs and explanations follow.
+A general description of the URLs used in this app follows.
 
 /
     The default index page. At the very least, it should show which items are
     going out and due back in today.
 
-/item
-/item?tag=laptop
-/item?name=macbook
+/items
     A list of all items. It is possible to search for specific items from this
     URL. For example, `/item?tag=laptop` would display items with the tag
     "laptop".
 
-/item/1
-    Details about the item with an ID of 1. Some information can be edited from
-    here, e.g. adding a new note about the item. However, not all fields can be
-    edited.
+/items/<item_number>
+    Details about item <item_number>.
 
-/item/1/edit
-    Details about the item with an ID of 1, plus the ability to edit that
-    information.
+/items/<item_number>/edit_form
+    A form for editing item <item_number>.
 
-/tag
+/tags
     A place to create, read (view), update (rename), and delete tags.
 
-/reservation
-    TODO: flesh this out more
+/reservations
+    A list of all reservations. Should show whether the reserved item has
+    actually been lent out or not.
 
-/lend
-    TODO: flesh this out more
+/lends
+    A list of all lends.
 
 /calendar
-    A page which displays all reservations and lends on a calendar. TODO: flesh
-    this out more
+    A calendar displaying all reservations and lends.
 
 """
 from django.conf.urls import patterns, url
