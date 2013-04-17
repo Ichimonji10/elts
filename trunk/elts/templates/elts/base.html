@@ -1,13 +1,16 @@
+{# For {% static 'path/to/resource.ext' %} tag #}
+{% load staticfiles %}
 <!DOCTYPE HTML>
 <html lang="en">
     <head>
         <meta charset="utf-8">
         <title>{{ title }}</title>
     </head>
+    <link rel="stylesheet" href="{% static 'elts/base.css' %}" />
     {{ stylesheet_tags }}
     <body>
         <div class="navbar">
-            <h1>Site Nav</h2>
+            <h1>Site Nav</h1>
             <ul>
                 <li><a  href="{%  url  'elts.views.index'        %}">Home</a></li>
                 <li><a  href="{%  url  'elts.views.calendar'     %}">Calendar</a></li>

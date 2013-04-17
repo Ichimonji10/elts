@@ -1,0 +1,80 @@
+/* <hack> */
+ol {
+    list-style-position: inside;
+}
+ul {
+    list-style-position: inside;
+}
+/* </hack> */
+
+/* If a "float: left" block is placed right next to <li> elements, the <li>
+ * bullets will overflow onto the float. This looks disgusting, and is annoying.
+ * There are several possible solutions:
+ *
+ *     ul li {
+ *         position: relative;
+ *         left: 1em;
+ *         padding-right: 1em;
+ *     }
+ *
+ * A bad solution. The resultant page is always wider than the browser's
+ * viewport, which produces a scrollbar on the bottom of the viewport. Annoying.
+ *
+ *     ul {
+ *         overflow: hidden;
+ *     }
+ *
+ * How... magical. I don't understand why this works, so I'm avoiding it.
+ *
+ *     ul {
+ *         list-style-position: inside;
+ *     }
+ *
+ * Works well, and easily comprehensible. The downside? It destroys the
+ * indentation normally produced by a <li>. (which is what's supposed to happen
+ * with this CSS rule) As a result, any decently long <li> looks fugly.
+ *
+ *     ul {
+ *         display: table;
+ *     }
+ *
+ * Forces the entire <ul> into a single, rectangular area. Works well, except
+ * when a list gets decently long. Then, this rule just destroys the normal flow
+ * of the document.
+ *
+ * Further reading:
+ * http://stackoverflow.com/questions/2759354/left-floated-element-and-unordered-lists-ul
+ * dvoxdesign.com/website_design_blog/?p=224
+ */
+
+/* Everything that follows is for the navbar. */
+
+/* Sits in upper left corner of the page. */
+div.navbar {
+    float:left;
+    width: 10em;
+
+    /* Make sure there's a bit of separation between div.navbar and everything
+     * else. */
+    margin-right: 0.5em;
+    padding-right: 0.5em;
+    border-right: thin dotted black;
+}
+
+div.navbar ul {
+    /* Get rid of bullet points and push text to the left. */
+    list-style-type: none;
+    list-style-position: outside;
+    padding-left: 0;
+}
+
+div.navbar ul li a {
+    /* Make entire link area, not just link text. */
+    display: block;
+
+    /* These anchors are used for navigation, so they should look a bit
+     * different from a normal anchor. */
+    text-decoration: none;
+    line-height: 200%;
+    color: black;
+}
