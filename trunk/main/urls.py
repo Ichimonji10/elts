@@ -1,4 +1,32 @@
-"""Top-level project URLs."""
+"""URLs and URL operations provided by the main app.
+
+The following documents what URLs are available for use, what messages can be
+sent to each, and what type of information is returned from each.
+
+URL "nouns"
+===========
+
+====== ======== ====== ======== ========
+URL    POST     GET    PUT      DELETE
+       (create) (read) (update) (delete)
+====== ======== ====== ======== ========
+\/              *
+/elts/          *
+====== ======== ====== ======== ========
+
+GET /
+    Redirects the user to ``/elts/``.
+
+GET /elts/
+    Makes available URLs in the ELTS application. See documentation on
+    ``elts.urls`` for details.
+
+URL "verbs"
+===========
+
+No URL "verbs" are provided by this app.
+
+"""
 from django.conf.urls import patterns, include, url
 
 # Uncomment the next two lines to enable the admin:

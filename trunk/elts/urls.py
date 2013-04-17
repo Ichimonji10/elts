@@ -1,66 +1,110 @@
-"""URLs for the ELTS application.
+"""URLs and URL operations provided by the ELTS app.
 
-The following is a summary of available URLs and the operations that can be
-performed on them.
+The following documents what URLs are available for use, what messages can be
+sent to each, and what type of information is returned from each.
 
 URL "nouns"
 ===========
 
-/
-    The default index page. It includes a "dashboard" of immediately relevant
-    information, such as which items are going out and due in today.
+====================== ======== ====== ======== ========
+URL                    POST     GET    PUT      DELETE
+                       (create) (read) (update) (delete)
+====================== ======== ====== ======== ========
+\/                              *
+/calendar/                      *
+/item/                 *        *
+/item/<number>/                 *      *        *
+/reservation/          *        *
+/reservation/<number>/          *      *        *
+/lend/                          *
+/lend/<number>/                 *
+/tag/                  *        *
+/tag/<number>                   *      *        *
+====================== ======== ====== ======== ========
 
-/calendar
-    A calendar displaying all reservations and lends.
+GET /
+    Returns the default home page. This page is a summarizes information such as
+    which items are going out and due in on that day.
 
-/item
-    A list of all items.
+GET /calendar
+    Returns a calendar displaying all reservations and lends within a certain
+    time period, such as the current week or month.
 
-/reservation
-    A list of all item reservations.
+POST /item
+    TODO
 
-/lend
-    A list of all item lends.
+GET /item
+    Returns a list of all items. (FIXME: might this be paginated?)
 
-/tag
-    A list of all item tags. (A tag may be attached to zero or more items.)
+GET /item/<number>
+    TODO
 
-=====================  ======  ====  ======  ======
-URL                    POST    GET   PUT     DELETE
-                       create  read  update  delete
-=====================  ======  ====  ======  ======
-/                              *
-/calendar                      *
-/item                  *       *
-/item/<number>                 *     *       *
-/reservation           *       *
-/reservation/<number>          *     *       *
-/lend                          *
-/lend/<number>                 *
-/tag                   *       *
-/tag/<number>                  *     *       *
-=====================  ======  ====  ======  ======
+PUT /item/<number>
+    TODO
+
+DELETE /item/<number>
+    TODO
+
+POST /reservation
+    TODO
+
+GET /reservation
+    Returns a list of all item reservations.
+
+GET /reservation/<number>
+    TODO
+
+PUT /reservation/<number>
+    TODO
+
+DELETE /reservation/<number>
+    TODO
+
+GET /lend
+    Returns a list of all items currently being lent out. (FIXME: might this
+    also show past lends, with pagination?)
+
+GET /lend/<number>
+    TODO
+
+POST /tag
+    TODO
+
+GET /tag
+    Returns a list of all item tags, even including tags that aren't attached to
+    any items.
+
+GET /tag/<number>
+    TODO
+
+PUT /tag/<number>
+    TODO
+
+DELETE /tag/<number>
+    TODO
 
 URL "verbs"
 ===========
 
-/item?tag=xyz
-    TODO
+===============================  ========  ======  ========  ========
+URL                              POST      GET     PUT       DELETE
+                                 (create)  (read)  (update)  (delete)
+===============================  ========  ======  ========  ========
+/item?tag=xyz                              *
+/item/<number>?mode=edit                   *
+/reservation/<number>?mode=edit            *
+===============================  ========  ======  ========  ========
 
-/item/<number>?mode=edit
-    TODO
+GET /item?tag=xyz
+    Returns all items that have are tagged as "xyz".
 
-/reservation/<number>?mode=edit
-    TODO
+GET /item/<number>?mode=edit
+    Returns detailed information about a single item, and makes all fields
+    editable.
 
-===============================  ======  ====  ======  ======
-URL                              POST    GET   PUT     DELETE
-                                 create  read  update  delete
-===============================  ======  ====  ======  ======
-/item?tag=xyz                            *
-/item/<number>?mode=edit                 *
-/reservation/<number>?mode=edit          *
-===============================  ======  ====  ======  ======
+GET /reservation/<number>?mode=edit
+    Returns detailed information about a single reservation, and makes all
+    fields editable.
 
 """
 from django.conf.urls import patterns, url
