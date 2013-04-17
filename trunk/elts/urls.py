@@ -3,43 +3,64 @@
 The following is a summary of available URLs and the operations that can be
 performed on them.
 
-                                  POST    GET   PUT     DELETE
-                                  create  read  update  delete
-/                                         *
-/calendar                                 *
-/items                            *       *
-/items/<number>                           *     *       *
-/items/<number>/edit_form                 *
-/reservations                     *       *
-/reservations/<number>                    *     *       *
-/reservations/<number>/edit_form          *
-/lends                                    *
-/lends/<number>                           *
-/tags                             *       *
-/tags/<number>                            *     *       *
-
-A general description of the URLs used in this app follows.
+URL "nouns"
+===========
 
 /
-    The default index page. At the very least, it should show which items are
-    going out and due back in today.
+    The default index page. It includes a "dashboard" of immediately relevant
+    information, such as which items are going out and due in today.
 
 /calendar
     A calendar displaying all reservations and lends.
 
-/items
-    A list of all items. It is possible to search for specific items from this
-    URL. For example, `/item?tag=laptop` would display items with the tag
-    "laptop".
+/item
+    A list of all items.
 
-/reservations
+/reservation
     A list of all item reservations.
 
-/lends
+/lend
     A list of all item lends.
 
-/tags
+/tag
     A list of all item tags. (A tag may be attached to zero or more items.)
+
+=====================  ======  ====  ======  ======
+URL                    POST    GET   PUT     DELETE
+                       create  read  update  delete
+=====================  ======  ====  ======  ======
+/                              *
+/calendar                      *
+/item                  *       *
+/item/<number>                 *     *       *
+/reservation           *       *
+/reservation/<number>          *     *       *
+/lend                          *
+/lend/<number>                 *
+/tag                   *       *
+/tag/<number>                  *     *       *
+=====================  ======  ====  ======  ======
+
+URL "verbs"
+===========
+
+/item?tag=xyz
+    TODO
+
+/item/<number>?mode=edit
+    TODO
+
+/reservation/<number>?mode=edit
+    TODO
+
+===============================  ======  ====  ======  ======
+URL                              POST    GET   PUT     DELETE
+                                 create  read  update  delete
+===============================  ======  ====  ======  ======
+/item?tag=xyz                            *
+/item/<number>?mode=edit                 *
+/reservation/<number>?mode=edit          *
+===============================  ======  ====  ======  ======
 
 """
 from django.conf.urls import patterns, url

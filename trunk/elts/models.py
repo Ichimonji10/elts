@@ -1,18 +1,15 @@
-"""Data models at the core of ELTS."""
-from django.db import models
+"""Data models at the core of ELTS.
 
-# Model reference: https://docs.djangoproject.com/en/dev/ref/models/fields/
-#
-# The database tables are laid out as follows:
-#
-# Item-----+-------+------------+
-# |        |       |            |
-# ItemTag  Lend    Reservation  Note
-# |        |       |            |
-# Tag      Person--+------------+
-#
-# The classes below are laid out in accordance with the diagram, from left to
-# right, then from top to bottom.
+The database tables are laid out as follows::
+
+    Item-----+-------+------------+
+    |        |       |            |
+    ItemTag  Lend    Reservation  Note
+    |        |       |            |
+    Tag      Person--+------------+
+
+"""
+from django.db import models
 
 # pylint: disable=R0903
 # "Too few public methods (0/2)" 

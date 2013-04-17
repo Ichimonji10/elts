@@ -90,6 +90,24 @@ why](https://docs.djangoproject.com/en/1.5/intro/tutorial03/#write-views-that-ac
 Development Guidelines
 ======================
 
+Documentation
+-------------
+
+Use epydoc to generate documentation from the source code itself. For example:
+
+    $ ls
+    branches  tags  trunk  epydocrc  LICENSE.txt  README.md
+    $ epydoc --config epydocrc --output <output_dir> `find trunk/ -type f -name \*.py`
+
+`graphviz` must be installed for epydoc to generate graphs.
+
+The `README.md` file is written in markdown format. It can be compiled to HTML:
+
+    $ markdown README.md > <output_dir>/README.html
+
+Static Analysis
+---------------
+
 Use pylint to check *every* file. For example:
 
     $ pwd
