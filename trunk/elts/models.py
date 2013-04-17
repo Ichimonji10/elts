@@ -27,9 +27,21 @@ class Item(models.Model):
     due_back_date = models.DateField(blank = True)
 
 class ItemTag(models.Model):
-    """Junction table relating items and tags."""
-    item_id = models.ForeignKey('Item', to_field = 'id', primary_key = True)
-    tag_id = models.ForeignKey('Tag',  to_field = 'id', primary_key = True)
+    """Junction table relating items and tags.
+
+    Unfortunately, Django does not support multi-column primary keys. The
+    work-around is to specify that the relevant columns should be
+    ``unique_together``. More detailed info is available `here`_.
+
+    .. _here: https://docs.djangoproject.com/en/dev/faq/models/#do-django-models-support-multiple-column-primary-keys
+
+    """
+    id = models.AutoField(primary_key = True)
+    item_id = models.ForeignKey('Item', to_field = 'id')
+    tag_id = models.ForeignKey('Tag',  to_field = 'id')
+
+    class Meta:
+        unique_together = (('item_id', 'tag_id'),)
 
 class Lend(models.Model):
     """Tracks the lending of an item to a person."""

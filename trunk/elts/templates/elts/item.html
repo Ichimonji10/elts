@@ -1,0 +1,14 @@
+{% extends 'elts/base.html' %}
+
+{% block title %}Items{% endblock %}
+
+{% block body %}
+    <h1>Items</h1>
+    {% if items %}
+        {% for item in items %}
+            <p>{{ item.name }}</p>
+        {% endfor %}
+    {% else %}
+        <p>No items in database.</p>
+    {% endif %}
+{% endblock %}

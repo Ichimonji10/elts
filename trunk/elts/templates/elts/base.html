@@ -4,22 +4,25 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>{{ title }}</title>
+        <title>{% block title %}FIXME{% endblock %}</title>
+        <link rel="stylesheet" href="{% static 'elts/base.css' %}" />
+        {{ head }}
     </head>
-    <link rel="stylesheet" href="{% static 'elts/base.css' %}" />
-    {{ stylesheet_tags }}
     <body>
         <div class="navbar">
             <h1>Site Nav</h1>
             <ul>
                 <li><a  href="{%  url  'elts.views.index'        %}">Home</a></li>
                 <li><a  href="{%  url  'elts.views.calendar'     %}">Calendar</a></li>
-                <li><a  href="{%  url  'elts.views.item'         %}">Item</a></li>
-                <li><a  href="{%  url  'elts.views.reservation'  %}">Reservation</a></li>
-                <li><a  href="{%  url  'elts.views.lend'         %}">Lend</a></li>
-                <li><a  href="{%  url  'elts.views.tag'          %}">Tag</a></li>
+                <li><a  href="{%  url  'elts.views.item'         %}">Items</a></li>
+                <li><a  href="{%  url  'elts.views.lend'         %}">Item Lends</a></li>
+                <li><a  href="{%  url  'elts.views.reservation'  %}">Item Reservations</a></li>
+                <li><a  href="{%  url  'elts.views.tag'          %}">Item Tags</a></li>
             </ul>
         </div>
-        {{ body }}
+        {% block body %}
+        <p>Replace this default text by inheriting the 'base.html' template and
+        creating a 'block body'.</p>
+        {% endblock %}
     </body>
 </html>
