@@ -8,7 +8,7 @@ def index(request):
         request,
         {
             'title': 'index',
-            'body': 'body',
+            'body': 'index',
         }
     )
     return http.HttpResponse(tplate.render(ctext))
@@ -19,7 +19,7 @@ def calendar(request):
         request,
         {
             'title': 'calendar',
-            'body': 'body',
+            'body': 'calendar',
         }
     )
     return http.HttpResponse(tplate.render(ctext))
@@ -30,7 +30,7 @@ def item(request):
         request,
         {
             'title': 'item',
-            'body': 'body',
+            'body': 'item',
         }
     )
     return http.HttpResponse(tplate.render(ctext))
@@ -41,7 +41,7 @@ def reservation(request):
         request,
         {
             'title': 'reservation',
-            'body': 'body',
+            'body': 'reservation',
         }
     )
     return http.HttpResponse(tplate.render(ctext))
@@ -52,7 +52,7 @@ def lend(request):
         request,
         {
             'title': 'lend',
-            'body': 'body',
+            'body': 'lend',
         }
     )
     return http.HttpResponse(tplate.render(ctext))
@@ -63,7 +63,7 @@ def tag(request):
         request,
         {
             'title': 'tag',
-            'body': 'body',
+            'body': 'tag',
         }
     )
     return http.HttpResponse(tplate.render(ctext))

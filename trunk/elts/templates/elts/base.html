@@ -6,6 +6,17 @@
     </head>
     {{ stylesheet_tags }}
     <body>
+        <div class="navbar">
+            <h1>Site Nav</h2>
+            <ul>
+                <li><a  href="{%  url  'elts.views.index'        %}">Home</a></li>
+                <li><a  href="{%  url  'elts.views.calendar'     %}">Calendar</a></li>
+                <li><a  href="{%  url  'elts.views.item'         %}">Item</a></li>
+                <li><a  href="{%  url  'elts.views.reservation'  %}">Reservation</a></li>
+                <li><a  href="{%  url  'elts.views.lend'         %}">Lend</a></li>
+                <li><a  href="{%  url  'elts.views.tag'          %}">Tag</a></li>
+            </ul>
+        </div>
         {{ body }}
     </body>
 </html>
