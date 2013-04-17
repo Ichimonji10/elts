@@ -65,6 +65,14 @@ URL                              POST    GET   PUT     DELETE
 """
 from django.conf.urls import patterns, url
 
-urlpatterns = patterns('',
-    url(r'^$', 'elts.views.index'),
+# pylint: disable=C0103
+# "Invalid name "urlpatterns" for type constant (should match
+# (([A-Z_][A-Z0-9_]*)|(__.*__))$)"
+urlpatterns = patterns('elts.views',
+    url(r'^$',              'index'),
+    url(r'^calendar/$',     'calendar'),
+    url(r'^item/$',         'item'),
+    url(r'^reservation/$',  'reservation'),
+    url(r'^lend/$',         'lend'),
+    url(r'^tag/$',          'tag'),
 )

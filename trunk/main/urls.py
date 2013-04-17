@@ -1,9 +1,13 @@
+"""Top-level project URLs."""
 from django.conf.urls import patterns, include, url
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
 
+# pylint: disable=C0103
+# "Invalid name "urlpatterns" for type constant (should match
+# (([A-Z_][A-Z0-9_]*)|(__.*__))$)"
 urlpatterns = patterns('',
     url(r'^$', 'main.views.index'),
     url(r'^elts/', include('elts.urls')),
