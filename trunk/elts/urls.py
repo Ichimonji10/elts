@@ -1,87 +1,108 @@
 """URLs and URL operations provided by the ELTS app.
 
-The following documents what URLs are available for use, what messages can be
-sent to each, and what type of information is returned from each.
+The following documents what URLs are available for use, what types of requests
+can be sent to each, and what type of information is returned from each.
 
 URL "nouns"
 ===========
 
-====================== ======== ====== ======== ========
-URL                    POST     GET    PUT      DELETE
-                       (create) (read) (update) (delete)
-====================== ======== ====== ======== ========
-\/                              *
-/calendar/                      *
-/item/                 *        *
-/item/<number>/                 *      *        *
-/reservation/          *        *
-/reservation/<number>/          *      *        *
-/lend/                          *
-/lend/<number>/                 *
-/tag/                  *        *
-/tag/<number>                   *      *        *
-====================== ======== ====== ======== ========
+================================ ======== ====== ======== ========
+URI                              POST     GET    PUT      DELETE
+                                 (create) (read) (update) (delete)
+================================ ======== ====== ======== ========
+`/`                                       *
+`/calendar/`                              *
+`/item/`                         *        *
+`/item/create-form/`                      *
+`/item/<id>/`                             *      *        *
+`/item/<id>/update-form/`                 *
+`/reservation/`                  *        *
+`/reservation/create-form/`               *
+`/reservation/<id>/`                      *      *        *
+`/reservation/<id>/update-form/`          *
+`/lend/`                                  *
+`/lend/<id>/`                             *
+`/tag/`                          *        *
+`/tag/create-form/`                       *
+`/tag/<id>/`                              *      *        *
+`/tag/<id>/update-form/`                  *
+================================ ======== ====== ======== ========
 
-GET /
-    Returns the default home page. This page is a summarizes information such as
-    which items are going out and due in on that day.
+`/`
+    `GET` returns the default home page. This page summarizes information such
+    as which items are due out and in on that day.
 
-GET /calendar
-    Returns a calendar displaying all reservations and lends within a certain
-    time period, such as the current week or month.
+`/calendar/`
+    `GET` returns a calendar displaying all reservations and lends within a
+    certain time period, such as the current week or month.
 
-POST /item
-    TODO
+`/item/`
+    `POST` creates a new item.
 
-GET /item
-    Returns a list of all items. (FIXME: might this be paginated?)
+    `GET` returns a list of all items.
 
-GET /item/<number>
-    TODO
+`/item/create-form/`
+    `GET` returns a form for creating a new item.
 
-PUT /item/<number>
-    TODO
+`/item/<id>/`
+    `<id>` is an integer number which identifies a specific item.
 
-DELETE /item/<number>
-    TODO
+    `GET` returns information about item `<id>`.
 
-POST /reservation
-    TODO
+    `PUT` updates information about item `<id>`.
 
-GET /reservation
-    Returns a list of all item reservations.
+    `DELETE` deletes item `<id>`.
 
-GET /reservation/<number>
-    TODO
+`/item/<id>/update-form/`
+    `GET` returns a form for updating item `<id>`.
 
-PUT /reservation/<number>
-    TODO
+`/reservation/`
+    `POST` creates a new reservation.
 
-DELETE /reservation/<number>
-    TODO
+    `GET` returns a list of all reservations.
 
-GET /lend
-    Returns a list of all items currently being lent out. (FIXME: might this
-    also show past lends, with pagination?)
+`/reservation/create-form/`
+    `GET` returns a form for creating a new reservation.
 
-GET /lend/<number>
-    TODO
+`/reservation/<id>/`
+    `<id>` is an integer number which identifies a specific reservation.
 
-POST /tag
-    TODO
+    `GET` returns information about reservation `<id>`.
 
-GET /tag
-    Returns a list of all item tags, even including tags that aren't attached to
-    any items.
+    `PUT` updates information about reservation `<id>`.
 
-GET /tag/<number>
-    TODO
+    `DELETE` deletes reservation `<id>`.
 
-PUT /tag/<number>
-    TODO
+`/reservation/<id>/update-form/`
+    `GET` returns a form for updating reservation `<id>`.
 
-DELETE /tag/<number>
-    TODO
+`/lend/`
+    `GET` returns a list of all lends.
+
+`/lend/<id>/`
+    `<id>` is an integer number which identifies a specific lend.
+
+    `GET` returns information about lend `<id>`.
+
+`/tag/`
+    `POST` creates a new tag.
+
+    `GET` returns a list of all tags.
+
+`/tag/create-form/`
+    `GET` returns a form for creating a new tag.
+
+`/tag/<id>/`
+    `<id>` is an integer number which identifies a specific tag.
+
+    `GET` returns information about tag `<id>`.
+
+    `PUT` updates information about tag `<id>`.
+
+    `DELETE` deletes tag `<id>`.
+
+`/tag/<id>/update-form/`
+    `GET` returns a form for updating tag `<id>`.
 
 URL "verbs"
 ===========
@@ -91,20 +112,10 @@ URL                              POST      GET     PUT       DELETE
                                  (create)  (read)  (update)  (delete)
 ===============================  ========  ======  ========  ========
 /item?tag=xyz                              *
-/item/<number>?mode=edit                   *
-/reservation/<number>?mode=edit            *
 ===============================  ========  ======  ========  ========
 
 GET /item?tag=xyz
     Returns all items that have are tagged as "xyz".
-
-GET /item/<number>?mode=edit
-    Returns detailed information about a single item, and makes all fields
-    editable.
-
-GET /reservation/<number>?mode=edit
-    Returns detailed information about a single reservation, and makes all
-    fields editable.
 
 """
 from django.conf.urls import patterns, url
