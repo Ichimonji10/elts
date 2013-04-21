@@ -1,0 +1,14 @@
+{% extends 'elts/base.html' %}
+
+{% block title %}Lends{% endblock %}
+
+{% block body %}
+    <h1>Lends</h1>
+    {% if lends %}
+        {% for lend in lends %}
+            <p>{{ lend.name }}</p>
+        {% endfor %}
+    {% else %}
+        <p>No lends in database.</p>
+    {% endif %}
+{% endblock %}

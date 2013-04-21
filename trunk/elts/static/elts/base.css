@@ -60,6 +60,10 @@ div.navbar {
     border-right: thin dotted black;
 }
 
+div.navbar h1 {
+    margin-top: 0;
+}
+
 div.navbar ul {
     /* Get rid of bullet points and push text to the left. */
     list-style-type: none;
