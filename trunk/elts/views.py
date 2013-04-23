@@ -27,6 +27,14 @@ def item(request):
     )
     return http.HttpResponse(tplate.render(ctext))
 
+def item_create_form(request):
+    tplate = template.loader.get_template('elts/item-create-form.html')
+    ctext = template.RequestContext(
+        request,
+        {}
+    )
+    return http.HttpResponse(tplate.render(ctext))
+
 def reservation(request):
     tplate = template.loader.get_template('elts/reservation.html')
     ctext = template.RequestContext(
