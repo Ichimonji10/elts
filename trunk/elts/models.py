@@ -24,7 +24,7 @@ class Item(models.Model):
     id = models.AutoField(primary_key = True)
     name = models.CharField(max_length = 50, db_index = True)
     description = models.TextField(blank = True)
-    due_back_date = models.DateField(blank = True)
+    due_back_date = models.DateField(blank = True, null = True)
 
 class ItemTag(models.Model):
     """Junction table relating items and tags.
