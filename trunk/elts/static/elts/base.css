@@ -28,11 +28,14 @@ div.navbar {
 
     /* Make sure there's a bit of separation between div.navbar and everything
      * else. */
-    margin-right: 0.5em;
-    padding-right: 0.5em;
+    margin-right: 1.5em;
+    /* Create a border, and put a little space between it and the navbar
+     * contents. */
     border-right: thin solid black;
     border-bottom: thin solid black;
     border-radius: 1em;
+    padding-right: 0.5em;
+    padding-left: 0.5em;
 }
 
 div.navbar h1 {
