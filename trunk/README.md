@@ -26,13 +26,6 @@ django app.
 The `main` folder contains project-wide settings and functionas as the "root"
 URL dispatcher.
 
-Django can collect static files, such as CSS files, into a central location for
-you. A webserver can then do what it's good at (serving static files), and
-django can do what it's good at (generating dynamic content). Run the
-`django-admin.py collectstatic` command to collect files into the
-`main/collectstatic` folder. The contents of this folder should *not* be
-version controlled.
-
 ### code/elts
 
 Whereas `main` serves as the "root" project application, `elts` contains all
@@ -82,6 +75,16 @@ why](https://docs.djangoproject.com/en/1.5/intro/tutorial03/#write-views-that-ac
 > need to be able to point Django at the right one, and the easiest way to
 > ensure this is by namespacing them. That is, by putting those templates
 > inside another directory named for the application itself.
+
+collectstatic
+-------------
+
+Django can collect static files such as CSS files into a single, central
+location for you. A webserver can then do what it's good at (serving static
+files), and django can do what it's good at (generating dynamic content). Run
+the `django-admin.py collectstatic` command to collect files into the
+`collectstatic` folder. The contents of this folder should *not* be version
+controlled.
 
 configs
 -------
