@@ -10,35 +10,45 @@ documentation](https://docs.djangoproject.com/en/dev/) are good references.
 Deployment Guidelines
 =====================
 
-Development
------------
+This project is not dependent upon any particular web server, app server,
+communication protocol, or database backend. However, it it is tested only with
+certain configurations. Directions for setting up specific configurations are
+listed below.
 
-To start the development webserver:
+### lighttpd + flup + sqlite
 
-    $ ./manage.py syncdb
-    $ ./manage.py runserver
+Start by installing the following:
 
-Production
-----------
+* lighttpd
+* flup (python 2 version)
+* django (python 2 version)
+* mysql
 
-This django project is not dependent upon any particular web-server, app-server,
-communication protocol, or database backend. However, this project has been
-tested with lighttpd (web-server), flup (app-server), SCGI (communication
-protocol), and mysql and sqlite (database backend). Unfortunately, flup (and
-seemingly every other FastCGI and SCGI handler available) do not yet support
-python3, so the python2 versions of flup and django must be used.
+Unfortunately, flup (and seemingly every other FastCGI and SCGI handler
+available) do not yet support python 3. As a result, the python 2 version of
+django must also be installed.
 
-Once you have dependencies installed, you'll need to tweak config files. If
-you're using lighttpd as a webserver, edit `configs/lighttpd.conf`. If you're
-using sqlite as a database backend, no configuration is needed, but if you're
-using any other backend, edit `code/main/settings.py`.
+Generate static files:
 
-After configuring your webserver and database backend, collect static files into
-a single location:
-    
     $ code/manage.py collectstatic
 
-Finally, start the app server: (tweak this line as needed)
+The lighttpd config file assumes that a project branch (such as `trunk`) has
+been copied to `/srv/http/`. Tweak the config file if needed, then install it
+and start lighttpd.
+
+    $ vi configs/lighttpd.conf
+    $ cp configs/lighttpd.conf /etc/lighttpd/lighttpd.conf
+    # systemctl start lighttpd
+
+Ensure `collectstatic` collected files and lighttpd is functioning:
+
+    $ curl localhost/static/elts/base.css > /dev/null
+
+Initialize the database backend:
+
+    $ code/manage.py syncdb
+
+Start the app server: (tweak to taste)
 
     $ python2 code/manage.py runfcgi \
         host=127.0.0.1 \
@@ -47,13 +57,61 @@ Finally, start the app server: (tweak this line as needed)
         daemonize=false \
         debug=true
 
+Test the setup by heading to `localhost/elts/item/` in a web browser. (this page
+triggers several database queries, so visiting this page ensures that you've set
+things up correctly)
+
+### lighttpd + flup + mysql
+
+Follow directions for setting up lighttpd + flup + sqlite, up to the point where
+the database is initialized. Then, edit the `DATABASES` section of
+`code/main/settings.py`. When you're done, it will look something like this:
+
+    DATABASES = {
+        # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'elts',
+            'USER': 'elts',
+            'PASSWORD': 'hackme',
+            'HOST': '127.0.0.1',
+            'PORT': '',
+        }
+    }
+
+Install [MySQL-Python](http://mysql-python.sourceforge.net/), then configure the
+MySQL database:
+
+    $ mysql -p -u root
+    mysql> create database elts character set utf8;
+    mysql> create user 'elts'@'localhost' IDENTIFIED BY 'hackme';
+    mysql> GRANT AlL PRIVILEGES ON elts.* TO 'elts'@'localhost';
+    mysql> commit;
+    mysql> exit
+    $ python2.7 code/manage.py syncdb
+
+Start the app server as normal.
+
 Development Guidelines
 ======================
+
+It is possible to start ELTS with only two commands:
+
+    $ ./manage.py syncdb
+    $ ./manage.py runserver
+
+This starts the built-in django webserver and a SQLite database backend. You can
+use the setup by heading to `http://localhost:8000/` in a web browser.
 
 Documentation
 -------------
 
-Use epydoc to generate documentation from the source code itself. For example:
+The `README.md` file is written in markdown format. It can be compiled to HTML:
+
+    $ markdown README.md > <output_dir>/README.html
+
+You can generate documentation about the source code itself using epydoc. For
+example:
 
     $ epydoc \
         --config configs/epydocrc \
@@ -62,14 +120,11 @@ Use epydoc to generate documentation from the source code itself. For example:
 
 `graphviz` must be installed for epydoc to generate graphs.
 
-The `README.md` file is written in markdown format. It can be compiled to HTML:
-
-    $ markdown README.md > <output_dir>/README.html
-
 Static Analysis
 ---------------
 
-Use pylint to check *every* file. For example:
+You can use pylint to perform static analysis of individual python files. For
+example:
 
     $ pylint --init-hook='import sys; sys.path.append("code/")' code/elts/views.py | less
 
@@ -84,10 +139,11 @@ For example, the following might be placed in a models.py file:
     # "Class has no __init__ method" 
     # It is both common and OK for a model to have no __init__ method.
 
-Location is important. If "disable" statements are placed at the top of a file,
-the named messages are ignored throughout that entire file, but if they are
-placed within a class, the named messages are ignored only within that class.
-Don't apply a "disable" statement to an excessively large scope!
+The location of `pylint: diable=XXXX` is important! If "disable" statements are
+placed at the top of a file, the named messages are ignored throughout that
+entire file, but if they are placed within a class, the named messages are
+ignored only within that class. Don't apply a "disable" statement to an
+excessively large scope!
 
 Repository Layout
 =================
@@ -182,6 +238,6 @@ sqlite
 
 By default, this project uses sqlite as a database backend. When you issue
 `manage.py syncdb`, a sqlite database file is created in the `sqlite` folder if
-necessary. This is great for development and testing, though it should be
-changed in production. The contents of the this folder should *not* be version
-controlled.
+necessary, and it is populated with necessary tables. This is great for
+development and testing, though it should be changed in production. The contents
+of the this folder should *not* be version controlled.
