@@ -7,8 +7,93 @@ Django, go do some reading, then come back. The [The Django
 Book](http://www.djangobook.com/en/2.0/index.html) and the official [Django
 documentation](https://docs.djangoproject.com/en/dev/) are good references.
 
+Deployment Guidelines
+=====================
+
+Development
+-----------
+
+To start the development webserver:
+
+    $ ./manage.py syncdb
+    $ ./manage.py runserver
+
+Production
+----------
+
+This django project is not dependent upon any particular web-server, app-server,
+communication protocol, or database backend. However, this project has been
+tested with lighttpd (web-server), flup (app-server), SCGI (communication
+protocol), and mysql and sqlite (database backend). Unfortunately, flup (and
+seemingly every other FastCGI and SCGI handler available) do not yet support
+python3, so the python2 versions of flup and django must be used.
+
+Once you have dependencies installed, you'll need to tweak config files. If
+you're using lighttpd as a webserver, edit `configs/lighttpd.conf`. If you're
+using sqlite as a database backend, no configuration is needed, but if you're
+using any other backend, edit `code/main/settings.py`.
+
+After configuring your webserver and database backend, collect static files into
+a single location:
+    
+    $ code/manage.py collectstatic
+
+Finally, start the app server: (tweak this line as needed)
+
+    $ python2 code/manage.py runfcgi \
+        host=127.0.0.1 \
+        port=4000 \
+        protocol=scgi \
+        daemonize=false \
+        debug=true
+
+Development Guidelines
+======================
+
+Documentation
+-------------
+
+Use epydoc to generate documentation from the source code itself. For example:
+
+    $ epydoc \
+        --config configs/epydocrc \
+        --output <output_dir> \
+        `find code/ -type f -name \*.py`
+
+`graphviz` must be installed for epydoc to generate graphs.
+
+The `README.md` file is written in markdown format. It can be compiled to HTML:
+
+    $ markdown README.md > <output_dir>/README.html
+
+Static Analysis
+---------------
+
+Use pylint to check *every* file. For example:
+
+    $ pylint --init-hook='import sys; sys.path.append("code/")' code/elts/views.py | less
+
+Some warnings are spurious, and you can force pylint to ignore those warnings.
+For example, the following might be placed in a models.py file:
+
+    # pylint: disable=R0903
+    # "Too few public methods (0/2)" 
+    # It is both common and OK for a model to have no methods.
+    #
+    # pylint: disable=W0232
+    # "Class has no __init__ method" 
+    # It is both common and OK for a model to have no __init__ method.
+
+Location is important. If "disable" statements are placed at the top of a file,
+the named messages are ignored throughout that entire file, but if they are
+placed within a class, the named messages are ignored only within that class.
+Don't apply a "disable" statement to an excessively large scope!
+
 Repository Layout
 =================
+
+This section isn't requred reading, but if you really want to understand why the
+project is laid out as it is, read on.
 
 This project is currently housed in a subversion repository, and the branches,
 tags, and trunk folders are used in the usual way. If you don't understand how
@@ -100,77 +185,3 @@ By default, this project uses sqlite as a database backend. When you issue
 necessary. This is great for development and testing, though it should be
 changed in production. The contents of the this folder should *not* be version
 controlled.
-
-Deployment Guidelines
-=====================
-
-Development
------------
-
-To start the development webserver:
-
-    $ ./manage.py syncdb
-    $ ./manage.py runserver
-
-Production
-----------
-
-This django project is not dependent upon any particular web-server, app-server,
-communication protocol, or database backend. However, this project has been
-tested with lighttpd (web-server), flup (app-server), scgi (communication
-protocol), and mysql and sqlite (database backend).
-
-Unfortunately, flup (and seemingly every other FCGI and SCGI handler available)
-do not yet support python3, so the python2 versions of flup and django must be
-used.
-
-To start the app-server:
-
-    $ python2 code/manage.py runfcgi \
-        host=127.0.0.1 \
-        port=4000 \
-        protocol=scgi \
-        daemonize=false \
-        debug=true
-
-Development Guidelines
-======================
-
-Documentation
--------------
-
-Use epydoc to generate documentation from the source code itself. For example:
-
-    $ epydoc \
-        --config configs/epydocrc \
-        --output <output_dir> \
-        `find code/ -type f -name \*.py`
-
-`graphviz` must be installed for epydoc to generate graphs.
-
-The `README.md` file is written in markdown format. It can be compiled to HTML:
-
-    $ markdown README.md > <output_dir>/README.html
-
-Static Analysis
----------------
-
-Use pylint to check *every* file. For example:
-
-    $ pylint --init-hook='import sys; sys.path.append("code/")' code/elts/views.py | less
-
-Some warnings are spurious, and you can force pylint to ignore those warnings.
-For example, the following might be placed in a models.py file:
-
-    # pylint: disable=R0903
-    # "Too few public methods (0/2)" 
-    # It is both common and OK for a model to have no methods.
-    #
-    # pylint: disable=W0232
-    # "Class has no __init__ method" 
-    # It is both common and OK for a model to have no __init__ method.
-
-Location is important. If "disable" statements are placed at the top of a file,
-the named messages are ignored throughout that entire file, but if they are
-placed within a class, the named messages are ignored only within that class.
-Don't apply a "disable" statement to an excessively large scope!
