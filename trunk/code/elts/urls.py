@@ -1,4 +1,4 @@
-"""URLs and URL operations provided by the ELTS app.
+"""URLs and URL operations provided by the ``elts`` app.
 
 This table summarizes what URIs are available for use and what types of HTTP
 requests can be accepted by each. Details about each URI, including arguments,

@@ -1,30 +1,23 @@
-"""URLs and URL operations provided by the main app.
+"""URLs and URL operations provided by the ``main`` app.
 
-The following documents what URLs are available for use, what messages can be
-sent to each, and what type of information is returned from each.
+This table summarizes what URIs are available for use and what types of HTTP
+requests can be accepted by each. Details about each URI, including arguments,
+are given after the table.
 
-URL "nouns"
-===========
+========== ======== ====== ======== ========
+URI        POST     GET    PUT      DELETE
+           (create) (read) (update) (delete)
+========== ======== ====== ======== ========
+``/``               *
+``elts/``           *
+========== ======== ====== ======== ========
 
-====== ======== ====== ======== ========
-URL    POST     GET    PUT      DELETE
-       (create) (read) (update) (delete)
-====== ======== ====== ======== ========
-\/              *
-/elts/          *
-====== ======== ====== ======== ========
+``/``
+    ``GET`` redirects the user to ``GET elts/``.
 
-GET /
-    Redirects the user to ``/elts/``.
-
-GET /elts/
-    Makes available URLs in the ELTS application. See documentation on
-    ``elts.urls`` for details.
-
-URL "verbs"
-===========
-
-No URL "verbs" are provided by this app.
+``elts/``
+    ``GET`` requests are forwarded to the ``elts`` django app. See
+    ``elts/urls.py`` for details on what URIs it provides.
 
 """
 from django.conf.urls import patterns, include, url
