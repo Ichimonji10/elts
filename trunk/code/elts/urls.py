@@ -43,7 +43,8 @@ URI                         POST     GET    PUT      DELETE
     ``GET`` returns a form for creating an item.
 
 ``item/<id>/update-form/``
-    ``GET`` returns a form for updating an item.
+    ``GET`` returns a form for updating an item. If item ``id`` does not exist,
+    user is redirected to ``item/<id>/``
 
 """
 from django.conf.urls import patterns, url
@@ -52,12 +53,10 @@ from django.conf.urls import patterns, url
 # "Invalid name "urlpatterns" for type constant (should match
 # (([A-Z_][A-Z0-9_]*)|(__.*__))$)"
 urlpatterns = patterns('elts.views',
-    url(r'^$',                   'index'),
-    url(r'^calendar/$',          'calendar'),
-    url(r'^item/$',              'item'),
-    url(r'^item/create-form/$',  'item_create_form'),
-    url(r'^item/(?P<item_id>\d+)/$', 'item_id'),
-    url(r'^reservation/$',       'reservation'),
-    url(r'^lend/$',              'lend'),
-    url(r'^tag/$',               'tag'),
+    url(r'^$',                                    'index'),
+    url(r'^calendar/$',                           'calendar'),
+    url(r'^item/$',                               'item'),
+    url(r'^item/create-form/$',                   'item_create_form'),
+    url(r'^item/(?P<item_id>\d+)/$',              'item_id'),
+    url(r'^item/(?P<item_id>\d+)/update-form/$',  'item_id_update_form'),
 )
