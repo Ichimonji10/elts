@@ -1,0 +1,21 @@
+{% extends 'elts/base.html' %}
+
+{% block title %}Item {{ item_id }}{% endblock %}
+
+{% block body %}
+    <h1>Item {{ item_id }}</h1>
+    {% if item %}
+        <h2>Name</h2>
+        <p>{{ item.name }}</p>
+        <h2>Description</h2>
+        {% if item.description %}
+            <p>{{ item.description }}</p>
+        {% else %}
+            <p>No description available.</p>
+        {% endif %}
+        <h2>Tags</h2>
+        <p>FIXME</p>
+    {% else %}
+        <p>Item {{ item_id }} does not exist.</p>
+    {% endif %}
+{% endblock %}

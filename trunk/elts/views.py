@@ -9,9 +9,9 @@ That module documents both URI-to-function mappings and the exact
 responsiblities of each function.
 
 """
-from django import http, template
 from django.core import urlresolvers
-from elts.models import Item, Reservation, Lend, Tag
+from django import http, template
+from elts import models
 
 def index(request):
     """Returns a summary of information about ELTS."""
@@ -38,7 +38,7 @@ def item(request):
         tplate = template.loader.get_template('elts/item-read.html')
         ctext = template.RequestContext(
             request,
-            {'items': Item.objects.all()}
+            {'items': models.Item.objects.all()}
         )
         return http.HttpResponse(tplate.render(ctext))
 
@@ -61,7 +61,7 @@ def item(request):
             )
         else:
             # Create an ``Item`` and redirect the user to an appropriate page.
-            Item(name = name, description = description).save()
+            models.Item(name = name, description = description).save()
             return http.HttpResponseRedirect(
                 urlresolvers.reverse('elts.views.item')
             )
@@ -83,12 +83,27 @@ def item_create_form(request):
     )
     return http.HttpResponse(tplate.render(ctext))
 
+def item_id(request, item_id):
+    """Returns information about a specific item."""
+    tplate = template.loader.get_template('elts/item-id.html')
+    ctext = template.RequestContext(
+        request,
+        {
+            'item_id': item_id,
+            'item': models.Item.objects.filter(id = item_id)[0],
+#            'item_tags': models.Tag.objects.filter(
+#                id__in = models.ItemTag.objects.filter(item_id = item_id)
+#            )
+        }
+    )
+    return http.HttpResponse(tplate.render(ctext))
+
 def reservation(request):
     tplate = template.loader.get_template('elts/reservation.html')
     ctext = template.RequestContext(
         request,
         {
-            'reservations': Reservation.objects.all()
+            'reservations': models.Reservation.objects.all()
         }
     )
     return http.HttpResponse(tplate.render(ctext))
@@ -98,7 +113,7 @@ def lend(request):
     ctext = template.RequestContext(
         request,
         {
-            'lends': Lend.objects.all()
+            'lends': models.Lend.objects.all()
         }
     )
     return http.HttpResponse(tplate.render(ctext))
@@ -108,7 +123,7 @@ def tag(request):
     ctext = template.RequestContext(
         request,
         {
-            'tags': Tag.objects.all()
+            'tags': models.Tag.objects.all()
         }
     )
     return http.HttpResponse(tplate.render(ctext))
