@@ -110,9 +110,9 @@ Static Analysis
 
 Use pylint to check *every* file. For example:
 
-    $ pwd
-    .../elts/trunk
-    $ pylint --init-hook='import sys; sys.path.append(".")' main/settings.py | less
+    $ ls
+    branches  tags  trunk  epydocrc  LICENSE.txt  README.md
+    $ pylint --init-hook='import sys; sys.path.append(".")' trunk/elts/views.py | less
 
 Some warnings are spurious, and you can force pylint to ignore those warnings.
 For example, the following might be placed in a models.py file:

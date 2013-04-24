@@ -1,9 +1,8 @@
 """This module implements business logic for all URIs in the application.
 
 Each function in this module is typically responsible for requests to a single
-URI, including any arguments. For example, ``item`` is responsible for requests
-to ``item/``, ``item/?tag=laptop``, and ``item/?mode=create``. It is not
-responsible for requests to ``item/15/``.
+URI, including any arguments. For example, ``item()`` is responsible for
+requests to the URIs ``item/`` and ``item/?tag=laptop``, but not ``item/15/``.
 
 For more details on what each function is responsible for, see ``elts/urls.py``.
 That module documents both URI-to-function mappings and the exact
@@ -15,7 +14,7 @@ from django.core import urlresolvers
 from elts.models import Item, Reservation, Lend, Tag
 
 def index(request):
-    """Return a summary of information about ELTS."""
+    """Returns a summary of information about ELTS."""
     tplate = template.loader.get_template('elts/index.html')
     ctext = template.RequestContext(
         request,
@@ -33,7 +32,7 @@ def calendar(request):
     return http.HttpResponse(tplate.render(ctext))
 
 def item(request):
-    """Either show all items or create a new item."""
+    """Either shows all items or creates a new item."""
     if 'GET' == request.method:
         # Return a list of all items.
         tplate = template.loader.get_template('elts/item-read.html')
@@ -44,7 +43,7 @@ def item(request):
         return http.HttpResponse(tplate.render(ctext))
 
     elif 'POST' == request.method:
-        # Validate arguments. TODO: improve validation
+        # Fetch and validate arguments. TODO: improve validation
         name = request.POST.get('name', '')
         description = request.POST.get('description', '')
         errors = []
@@ -52,7 +51,8 @@ def item(request):
             errors.append('No name was given.')
 
         if errors:
-            # Let user fill out form again.
+            # Send user back to form so they can correct their mistakes and
+            # re-submit it.
             request.session['errors'] = errors
             request.session['name'] = name
             request.session['description'] = description
@@ -60,6 +60,7 @@ def item(request):
                 urlresolvers.reverse('elts.views.item_create_form')
             )
         else:
+            # Create an ``Item`` and redirect the user to an appropriate page.
             Item(name = name, description = description).save()
             return http.HttpResponseRedirect(
                 urlresolvers.reverse('elts.views.item')
@@ -70,7 +71,7 @@ def item(request):
         pass
 
 def item_create_form(request):
-    """Return a form for creating a new item."""
+    """Returns a form for creating a new item."""
     tplate = template.loader.get_template('elts/item-create.html')
     ctext = template.RequestContext(
         request,
