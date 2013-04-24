@@ -10,25 +10,18 @@ documentation](https://docs.djangoproject.com/en/dev/) are good references.
 Repository Layout
 =================
 
-This project is currently maintained in a subversion repository, and the
-branches, tags, and trunk folders are used in the usual way. If you don't
-understand how branching under subversion works, go do some reading
+This project is currently housed in a subversion repository, and the branches,
+tags, and trunk folders are used in the usual way. If you don't understand how
+branching under subversion works, go do some reading
 [here](http://svnbook.red-bean.com/en/1.5/svn.branchmerge.html).
-
-Project Layout
-==============
 
 code
 ----
 
-All python code is maintained here. The django documentation details how to
-interact with a project using `manage.py`, but here's some highlights:
+This directory acts as the root of the django project. Each sub-folder is a
+django app.
 
-    $ manage.py syncdb # create database tables
-    $ manage.py runserver # run the development webserver
-
-code/main
----------
+### code/main
 
 The `main` folder contains project-wide settings and functionas as the "root"
 URL dispatcher.
@@ -40,14 +33,7 @@ django can do what it's good at (generating dynamic content). Run the
 `main/collectstatic` folder. The contents of this folder should *not* be
 version controlled.
 
-By default, this project uses sqlite as a database backend. When you issue
-`manage.py syncdb`, a sqlite database file is created in the `sqlite` folder if
-necessary. This is great for development and testing, though it should be
-changed in production. The contents of the this folder should *not* be version
-controlled.
-
-code/elts
----------
+### code/elts
 
 Whereas `main` serves as the "root" project application, `elts` contains all
 logic for the actual lending system. Thus, database models for items, item
@@ -96,6 +82,53 @@ why](https://docs.djangoproject.com/en/1.5/intro/tutorial03/#write-views-that-ac
 > need to be able to point Django at the right one, and the easiest way to
 > ensure this is by namespacing them. That is, by putting those templates
 > inside another directory named for the application itself.
+
+configs
+-------
+
+Project-wide config files are housed here. Go have a look -- it's pretty
+self-explanatory.
+
+sqlite
+------
+
+By default, this project uses sqlite as a database backend. When you issue
+`manage.py syncdb`, a sqlite database file is created in the `sqlite` folder if
+necessary. This is great for development and testing, though it should be
+changed in production. The contents of the this folder should *not* be version
+controlled.
+
+Deployment Guidelines
+=====================
+
+Development
+-----------
+
+To start the development webserver:
+
+    $ ./manage.py syncdb
+    $ ./manage.py runserver
+
+Production
+----------
+
+This django project is not dependent upon any particular web-server, app-server,
+communication protocol, or database backend. However, this project has been
+tested with lighttpd (web-server), flup (app-server), scgi (communication
+protocol), and mysql and sqlite (database backend).
+
+Unfortunately, flup (and seemingly every other FCGI and SCGI handler available)
+do not yet support python3, so the python2 versions of flup and django must be
+used.
+
+To start the app-server:
+
+    $ python2 code/manage.py runfcgi \
+        host=127.0.0.1 \
+        port=4000 \
+        protocol=scgi \
+        daemonize=false \
+        debug=true
 
 Development Guidelines
 ======================
