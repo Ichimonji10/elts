@@ -57,6 +57,6 @@ urlpatterns = patterns('elts.views',
     url(r'^calendar/$',                           'calendar'),
     url(r'^item/$',                               'item'),
     url(r'^item/create-form/$',                   'item_create_form'),
-    url(r'^item/(?P<item_id>\d+)/$',              'item_id'),
-    url(r'^item/(?P<item_id>\d+)/update-form/$',  'item_id_update_form'),
+    url(r'^item/(\d+)/$',              'item_id'),
+    url(r'^item/(\d+)/update-form/$',  'item_id_update_form'),
 )
