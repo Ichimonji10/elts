@@ -5,7 +5,9 @@ This repo contains the source code for the Electronic Lending Tracking System
 (ELTS). ELTS is written using the Django web app framework. If you don't know
 Django, go do some reading, then come back. The [The Django
 Book](http://www.djangobook.com/en/2.0/index.html) and the official [Django
-documentation](https://docs.djangoproject.com/en/dev/) are good references.
+documentation](https://docs.djangoproject.com/en/dev/) are good references. The
+Django Book is old but extremely readable; the Django documentation is
+up-to-date but harder to grok.
 
 Deployment Guidelines
 =====================
@@ -25,8 +27,8 @@ Start by installing the following:
 * mysql
 
 Unfortunately, flup (and seemingly every other FastCGI and SCGI handler
-available) do not yet support python 3. As a result, the python 2 version of
-django must also be installed.
+available) does not yet support python 3. As a result, the python 2 versions of
+flup and django must be used.
 
 Generate static files:
 
