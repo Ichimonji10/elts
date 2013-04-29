@@ -2,8 +2,10 @@ About
 =====
 
 This repo contains the source code for the Electronic Lending Tracking System
-(ELTS). ELTS is written using the Django web app framework. If you don't know
-Django, go do some reading, then come back. The [The Django
+(ELTS). You can get the full source code for ELTS from the subversion repository
+at `https://subversion.assembla.com/svn/elts`.
+
+ELTS is written using the Django web app framework. The [The Django
 Book](http://www.djangobook.com/en/2.0/index.html) and the official [Django
 documentation](https://docs.djangoproject.com/en/dev/) are good references. The
 Django Book is old but extremely readable; the Django documentation is
