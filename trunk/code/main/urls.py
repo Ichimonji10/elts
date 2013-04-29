@@ -1,4 +1,4 @@
-"""URLs and URL operations provided by the ``main`` app.
+"""URLs and HTTP operations provided by the ``main`` app.
 
 This table summarizes what URLs are available for use and what types of HTTP
 requests can be accepted by each. Details about each URL, including arguments,
