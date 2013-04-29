@@ -1,16 +1,16 @@
-"""This module implements business logic for all URIs in the application.
+"""Business logic for all URLs in the ``elts`` application.
 
 For details on what each function is responsible for, see ``elts/urls.py``.
-That module documents both URI-to-function mappings and the exact
+That module documents both URL-to-function mappings and the exact
 responsiblities of each function.
 
 Naming Conventions
 ==================
 
-Each function in this module is responsible for all requests to a single URI,
+Each function in this module is responsible for all requests to a single URL,
 including any arguments. For example, ``item()`` is responsible for requests to
-the URIs ``item/`` and ``item/?tag=laptop``, but not ``item/15/``. Each function
-is typically named after the URI it handles. So, ``item/create-form/`` is
+the URLs ``item/`` and ``item/?tag=laptop``, but not ``item/15/``. Each function
+is typically named after the URL it handles. So, ``item/create-form/`` is
 handled by ``item_create_form()``.
 
 This naming convention holds true not only for function names, but also template

@@ -1,4 +1,19 @@
-# Django settings project.
+"""Global settings for this Django project.
+
+This module only contains settings that are Django-specific. If a setting is
+listed in the official `Django documentation`_, it belongs here. If a settings
+is not listed there, it does not belong here.
+
+Currently, there are no project-wide custom settings. If a need for them arises,
+it may make sense to place them in the module ``main.custom-settings``.
+
+For the curious, the `Django settings`_ page gives a good overview of how
+settings work and which settings are available.
+
+.. _Django documentation: https://docs.djangoproject.com/en/dev/
+.. _Django settings: https://docs.djangoproject.com/en/dev/topics/settings/
+
+"""
 import os
 
 DEBUG = True

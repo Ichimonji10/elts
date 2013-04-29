@@ -1,10 +1,10 @@
-"""
-WSGI config for project.
+"""WSGI config for this Django project.
 
-This module contains the WSGI application used by Django's development server
-and any production WSGI deployments. It should expose a module-level variable
-named ``application``. Django's ``runserver`` and ``runfcgi`` commands discover
-this application via the ``WSGI_APPLICATION`` setting.
+This module contains a WSGI application that can be used by Python application
+servers, such as Django's development server or Apache's ``mod_wsgi`` module.
+Like any good WSGI application, it exposes a module-level variable named
+``application``. The location of this module-level variable is specified in
+``settings.py`` via the ``WSGI_APPLICATION`` setting.
 
 Usually you will have the standard Django WSGI application here, but it also
 might make sense to replace the whole Django WSGI application with a custom one

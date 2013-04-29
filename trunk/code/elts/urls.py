@@ -1,11 +1,11 @@
 """URLs and URL operations provided by the ``elts`` app.
 
-This table summarizes what URIs are available for use and what types of HTTP
-requests can be accepted by each. Details about each URI, including arguments,
+This table summarizes what URLs are available for use and what types of HTTP
+requests can be accepted by each. Details about each URL, including arguments,
 are given after the table.
 
 =========================== ======== ====== ======== ========
-URI                         POST     GET    PUT      DELETE
+URL                         POST     GET    PUT      DELETE
                             (create) (read) (update) (delete)
 =========================== ======== ====== ======== ========
 ``/``                                *

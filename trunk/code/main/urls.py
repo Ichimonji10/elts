@@ -1,11 +1,11 @@
 """URLs and URL operations provided by the ``main`` app.
 
-This table summarizes what URIs are available for use and what types of HTTP
-requests can be accepted by each. Details about each URI, including arguments,
+This table summarizes what URLs are available for use and what types of HTTP
+requests can be accepted by each. Details about each URL, including arguments,
 are given after the table.
 
 ========== ======== ====== ======== ========
-URI        POST     GET    PUT      DELETE
+URL        POST     GET    PUT      DELETE
            (create) (read) (update) (delete)
 ========== ======== ====== ======== ========
 ``/``               *
@@ -13,11 +13,11 @@ URI        POST     GET    PUT      DELETE
 ========== ======== ====== ======== ========
 
 ``/``
-    ``GET`` redirects the user to ``GET elts/``.
+    ``GET`` requests return a redirect to ``GET elts/``.
 
 ``elts/``
     ``GET`` requests are forwarded to the ``elts`` django app. See
-    ``elts/urls.py`` for details on what URIs it provides.
+    ``elts/urls.py`` for details on what URLs it provides.
 
 """
 from django.conf.urls import patterns, include, url
