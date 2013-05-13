@@ -3,13 +3,12 @@ About
 
 This repo contains the source code for the Electronic Lending Tracking System
 (ELTS). You can get the full source code for ELTS from the subversion repository
-at `https://subversion.assembla.com/svn/elts`.
+at https://subversion.assembla.com/svn/elts.
 
-ELTS is written using the Django web app framework. The [The Django
-Book](http://www.djangobook.com/en/2.0/index.html) and the official [Django
-documentation](https://docs.djangoproject.com/en/dev/) are good references. The
-Django Book is old but extremely readable; the Django documentation is
-up-to-date but harder to grok.
+ELTS is written using the Django web app framework. The `The Django Book`_ and
+the official `Django documentation`_ are good references. The Django Book is old
+but extremely readable; the Django documentation is up-to-date but harder to
+grok.
 
 Deployment Guidelines
 =====================
@@ -19,7 +18,8 @@ communication protocol, or database backend. However, it it is tested only with
 certain configurations. Directions for setting up specific configurations are
 listed below.
 
-### lighttpd + flup + sqlite
+lighttpd + flup + sqlite
+------------------------
 
 Start by installing the following:
 
@@ -29,30 +29,30 @@ Start by installing the following:
 * mysql
 
 Unfortunately, flup (and seemingly every other FastCGI and SCGI handler
-available) does not yet support python 3. As a result, the python 2 versions of
+available) do not yet support python 3. As a result, the python 2 versions of
 flup and django must be used.
 
-Generate static files:
+Generate static files::
 
     $ code/manage.py collectstatic
 
-The lighttpd config file assumes that a project branch (such as `trunk`) has
-been copied to `/srv/http/`. Tweak the config file if needed, then install it
-and start lighttpd.
+The lighttpd config file assumes that a project branch (such as ``trunk``) has
+been copied to ``/srv/http/``. Tweak the config file if needed, then install it
+and start lighttpd. ::
 
     $ vi configs/lighttpd.conf
     $ cp configs/lighttpd.conf /etc/lighttpd/lighttpd.conf
     # systemctl start lighttpd
 
-Ensure `collectstatic` collected files and lighttpd is functioning:
+Ensure ``collectstatic`` collected files and lighttpd is functioning::
 
     $ curl localhost/static/elts/base.css > /dev/null
 
-Initialize the database backend:
+Initialize the database backend::
 
     $ code/manage.py syncdb
 
-Start the app server: (tweak to taste)
+Start the app server (tweak to taste)::
 
     $ python2 code/manage.py runfcgi \
         host=127.0.0.1 \
@@ -61,15 +61,16 @@ Start the app server: (tweak to taste)
         daemonize=false \
         debug=true
 
-Test the setup by heading to `localhost/elts/item/` in a web browser. (this page
-triggers several database queries, so visiting this page ensures that you've set
-things up correctly)
+Test the setup by heading to ``localhost/elts/item/`` in a web browser.
+Visiting this page triggers several database queries, so visiting this page
+ensures that you've set things up correctly.
 
-### lighttpd + flup + mysql
+lighttpd + flup + mysql
+-----------------------
 
 Follow directions for setting up lighttpd + flup + sqlite, up to the point where
-the database is initialized. Then, edit the `DATABASES` section of
-`code/main/settings.py`. When you're done, it will look something like this:
+the database is initialized. Then, edit the ``DATABASES`` section of
+``code/main/settings.py``. When you're done, it will look something like this::
 
     DATABASES = {
         # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
@@ -83,8 +84,7 @@ the database is initialized. Then, edit the `DATABASES` section of
         }
     }
 
-Install [MySQL-Python](http://mysql-python.sourceforge.net/), then configure the
-MySQL database:
+Install `MySQL-Python`_, then configure the MySQL database::
 
     $ mysql -p -u root
     mysql> create database elts character set utf8;
@@ -99,41 +99,42 @@ Start the app server as normal.
 Development Guidelines
 ======================
 
-It is possible to start ELTS with only two commands:
+It is possible to start ELTS with only two commands::
 
     $ ./manage.py syncdb
     $ ./manage.py runserver
 
 This starts the built-in django webserver and a SQLite database backend. You can
-use the setup by heading to `http://localhost:8000/` in a web browser.
+use the setup by heading to http://localhost:8000/ in a web browser.
 
 Documentation
 -------------
 
-The `README.md` file is written in markdown format. It can be compiled to HTML:
+The ``README.rst`` file is written in reStructuredText format. It can be
+compiled to HTML::
 
-    $ markdown README.md > <output_dir>/README.html
+    $ rst2html README.rst > README.html
 
 You can generate documentation about the source code itself using epydoc. For
-example:
+example::
 
     $ epydoc \
         --config configs/epydocrc \
         --output <output_dir> \
         `find code/ -type f -name \*.py`
 
-`graphviz` must be installed for epydoc to generate graphs.
+graphviz must be installed for epydoc to generate graphs.
 
 Static Analysis
 ---------------
 
 You can use pylint to perform static analysis of individual python files. For
-example:
+example::
 
     $ pylint --init-hook='import sys; sys.path.append("code/")' code/elts/views.py | less
 
 Some warnings are spurious, and you can force pylint to ignore those warnings.
-For example, the following might be placed in a models.py file:
+For example, the following might be placed in a models.py file::
 
     # pylint: disable=R0903
     # "Too few public methods (0/2)" 
@@ -143,11 +144,11 @@ For example, the following might be placed in a models.py file:
     # "Class has no __init__ method" 
     # It is both common and OK for a model to have no __init__ method.
 
-The location of `pylint: diable=XXXX` is important! If "disable" statements are
-placed at the top of a file, the named messages are ignored throughout that
-entire file, but if they are placed within a class, the named messages are
-ignored only within that class. Don't apply a "disable" statement to an
-excessively large scope!
+The location of ``pylint: diable=XXXX`` directives is important! If "disable"
+statements are placed at the top of a file, the named messages are ignored
+throughout that entire file, but if they are placed within a class, the named
+messages are ignored only within that class. Don't apply a "disable" statement
+to an excessively large scope!
 
 Repository Layout
 =================
@@ -157,8 +158,7 @@ project is laid out as it is, read on.
 
 This project is currently housed in a subversion repository, and the branches,
 tags, and trunk folders are used in the usual way. If you don't understand how
-branching under subversion works, go do some reading
-[here](http://svnbook.red-bean.com/en/1.5/svn.branchmerge.html).
+branching under subversion works, read `Version Control with Subversion`_.
 
 code
 ----
@@ -166,20 +166,22 @@ code
 This directory acts as the root of the django project. Each sub-folder is a
 django app.
 
-### code/main
+code/main
+---------
 
-The `main` folder contains project-wide settings and functionas as the "root"
+The ``main`` folder contains project-wide settings and functionas as the "root"
 URL dispatcher.
 
-### code/elts
+code/elts
+---------
 
-Whereas `main` serves as the "root" project application, `elts` contains all
+Whereas ``main`` serves as the "root" project application, ``elts`` contains all
 logic for the actual lending system. Thus, database models for items, item
 reservations, tags, and other facts are housed here.
 
-There's one layout quirk of special note. The `templates` and `static`
-directories contain yet another directory called `elts`. It looks something like
-this:
+There's one layout quirk of special note. The ``templates`` and ``static``
+directories contain yet another directory called ``elts``. It looks something
+like this::
 
     $ tree code/elts/
     code/elts/
@@ -195,7 +197,7 @@ this:
     |-- urls.py
     `-- views.py
 
-At first glance, this is super awkward. Why not do the following instead?
+At first glance, this is super awkward. Why not do the following instead? ::
 
     $ tree code/elts/
     code/elts/
@@ -209,17 +211,19 @@ At first glance, this is super awkward. Why not do the following instead?
     |-- urls.py
     `-- views.py
 
-The latter is a bad idea. The django project documentation [explains
-why](https://docs.djangoproject.com/en/1.5/intro/tutorial03/#write-views-that-actually-do-something):
+The latter is a bad idea.
 
-> Now we might be able to get away with putting our templates directly in
-> polls/templates (rather than creating another polls subdirectory), but it
-> would actually be a bad idea. Django will choose the first template it finds
-> whose name matches, and if you had a template with the same name in a
-> different application, Django would be unable to distinguish between them. We
-> need to be able to point Django at the right one, and the easiest way to
-> ensure this is by namespacing them. That is, by putting those templates
-> inside another directory named for the application itself.
+    Now we might be able to get away with putting our templates directly in
+    polls/templates (rather than creating another polls subdirectory), but it
+    would actually be a bad idea. Django will choose the first template it finds
+    whose name matches, and if you had a template with the same name in a
+    different application, Django would be unable to distinguish between them.
+    We need to be able to point Django at the right one, and the easiest way to
+    ensure this is by namespacing them. That is, by putting those templates
+    inside another directory named for the application itself.
+
+    -- `Django documentation
+    <https://docs.djangoproject.com/en/1.5/intro/tutorial03/#write-views-that-actually-do-something>`__
 
 collectstatic
 -------------
@@ -227,8 +231,8 @@ collectstatic
 Django can collect static files such as CSS files into a single, central
 location for you. A webserver can then do what it's good at (serving static
 files), and django can do what it's good at (generating dynamic content). Run
-the `django-admin.py collectstatic` command to collect files into the
-`collectstatic` folder. The contents of this folder should *not* be version
+the ``django-admin.py collectstatic`` command to collect files into the
+``collectstatic`` folder. The contents of this folder should *not* be version
 controlled.
 
 configs
@@ -241,7 +245,12 @@ sqlite
 ------
 
 By default, this project uses sqlite as a database backend. When you issue
-`manage.py syncdb`, a sqlite database file is created in the `sqlite` folder if
-necessary, and it is populated with necessary tables. This is great for
+``manage.py syncdb``, a sqlite database file is created in the ``sqlite`` folder
+if necessary, and it is populated with necessary tables. This is great for
 development and testing, though it should be changed in production. The contents
 of the this folder should *not* be version controlled.
+
+.. _The Django Book: http://www.djangobook.com/en/2.0/index.html
+.. _Django documentation: https://docs.djangoproject.com/en/dev/
+.. _MySQL-Python: http://mysql-python.sourceforge.net/
+.. _Version Control with Subversion: http://svnbook.red-bean.com/
