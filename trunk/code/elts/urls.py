@@ -53,10 +53,10 @@ from django.conf.urls import patterns, url
 # "Invalid name "urlpatterns" for type constant (should match
 # (([A-Z_][A-Z0-9_]*)|(__.*__))$)"
 urlpatterns = patterns('elts.views',
-    url(r'^$',                                    'index'),
-    url(r'^calendar/$',                           'calendar'),
-    url(r'^item/$',                               'item'),
-    url(r'^item/create-form/$',                   'item_create_form'),
+    url(r'^$',                         'index'),
+    url(r'^calendar/$',                'calendar'),
+    url(r'^item/$',                    'item'),
+    url(r'^item/create-form/$',        'item_create_form'),
     url(r'^item/(\d+)/$',              'item_id'),
     url(r'^item/(\d+)/update-form/$',  'item_id_update_form'),
 )
