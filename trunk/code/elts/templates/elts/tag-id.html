@@ -1,0 +1,13 @@
+{% extends 'elts/base.html' %}
+
+{% block title %}Tag {{ tag_id }}{% endblock %}
+
+{% block body %}
+    <h1>Tag {{ tag_id }}</h1>
+    {% if tag %}
+        <h2>Name</h2>
+        <p>{{ tag.name }}</p>
+    {% else %}
+        <p>Tag {{ tag_id }} does not exist.</p>
+    {% endif %}
+{% endblock %}

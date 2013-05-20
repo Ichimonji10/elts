@@ -18,12 +18,12 @@
             </thead>
             <tbody>
                 {% for item in items %}
-                <tr>
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.description }}</td>
-                    <td>FIXME</td>
-                    <td><a href="{% url 'elts.views.item_id' item.id %}">Details</a></td>
-                </tr>
+                    <tr>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.description }}</td>
+                        <td>FIXME</td>
+                        <td><a href="{% url 'elts.views.item_id' item.id %}">Details</a></td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>

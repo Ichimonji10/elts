@@ -13,9 +13,10 @@
         <div class="navbar">
             <h1>Site Nav</h1>
             <ul>
-                <li><a  href="{%  url  'elts.views.index'        %}">Home</a></li>
-                <li><a  href="{%  url  'elts.views.calendar'     %}">Calendar</a></li>
-                <li><a  href="{%  url  'elts.views.item'         %}">Items</a></li>
+                <li><a href="{% url 'elts.views.index'    %}">Home</a></li>
+                <li><a href="{% url 'elts.views.calendar' %}">Calendar</a></li>
+                <li><a href="{% url 'elts.views.item'     %}">Items</a></li>
+                <li><a href="{% url 'elts.views.tag'      %}">Tags</a></li>
             </ul>
         </div>
         {% block body %}

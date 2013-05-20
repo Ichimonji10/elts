@@ -1,0 +1,13 @@
+{% if errors %}
+    <p>The following errors were detected:</p>
+    <ul>
+        {% for error in errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+<form method='post' action='{% url 'elts.views.tag' %}'>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <p><button>Submit</button></p>
+</form>

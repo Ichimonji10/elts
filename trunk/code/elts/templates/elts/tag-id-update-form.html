@@ -1,0 +1,8 @@
+{% extends 'elts/base.html' %}
+
+{% block title %}Update Tag {{ tag.id }}{% endblock %}
+
+{% block body %}
+    <h1>Update Tag {{ tag.id }}</h1>
+    {% include 'elts/_tag-edit-form.html' %}
+{% endblock %}

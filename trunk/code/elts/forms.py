@@ -14,3 +14,9 @@ class ItemForm(forms.ModelForm):
     class Meta:
         model = models.Item
         fields = ['name', 'description']
+
+class TagForm(forms.ModelForm):
+    """A form for creating a Tag."""
+    class Meta:
+        model = models.Tag
+        fields = ['name']

@@ -77,20 +77,22 @@ def item(request):
             {'items': models.Item.objects.all()}
         )
 
-    # Create a new item.
+    # Create a new item, or update an existing item.
     elif 'POST' == request.method:
         # pylint: disable=E1101
         # Instance of 'ItemForm' has no 'is_valid' member
         form = forms.ItemForm(request.POST)
         if form.is_valid():
-            models.Item(
+            new_or_updated_item = models.Item(
                 name = form.cleaned_data['name'],
                 description = form.cleaned_data['description'],
-            ).save()
+            )
+            new_or_updated_item.save()
             return http.HttpResponseRedirect(
-                # TODO: redirect to specific item page?
-                # TODO: test form validation and data redisplay
-                urlresolvers.reverse('elts.views.item')
+                urlresolvers.reverse(
+                    'elts.views.item_id',
+                    args = [new_or_updated_item.id]
+                )
             )
         else:
             # Put ``form`` into session for retreival by ``item_create_form``.
@@ -117,14 +119,18 @@ def item_create_form(request):
 
 def item_id(request, item_id_):
     """Returns information about a specific item."""
+    try:
+        # pylint: disable=E1101
+        # Class 'Item' has no 'objects' member
+        requested_item = models.Item.objects.filter(id = item_id_)[0]
+    except (IndexError):
+        requested_item = None
     return shortcuts.render(
         request,
         'elts/item-id.html',
         {
-            # pylint: disable=E1101
-            # Class 'Item' has no 'objects' member
             'item_id': item_id_,
-            'item': models.Item.objects.filter(id = item_id_)[0],
+            'item': requested_item,
         }
     )
     # 'item_tags': models.Tag.objects.filter(
@@ -148,4 +154,89 @@ def item_id_update_form(request, item_id_):
         return http.HttpResponseRedirect(
             urlresolvers.reverse('elts.views.item_id'),
             item_id = item_id_,
+        )
+
+def tag(request):
+    """Either shows all tags or creates a new tag."""
+    # Return a list of all tags.
+    if 'GET' == request.method:
+        return shortcuts.render(
+            # pylint: disable=E1101
+            # Class 'Tag' has no 'objects' member
+            request,
+            'elts/tag.html',
+            {'tags': models.Tag.objects.all()}
+        )
+
+    # Create a new tag.
+    elif 'POST' == request.method:
+        # pylint: disable=E1101
+        # Instance of 'TagForm' has no 'is_valid' member
+        form = forms.TagForm(request.POST)
+        if form.is_valid():
+            new_or_udated_tag = models.Tag(name = form.cleaned_data['name'])
+            new_or_udated_tag.save()
+            return http.HttpResponseRedirect(
+                urlresolvers.reverse(
+                    'elts.views.tag_id',
+                    args = [new_or_udated_tag.id],
+                )
+            )
+        else:
+            # Put ``form`` into session for retreival by ``tag_create_form``.
+            request.session['form'] = form
+            return http.HttpResponseRedirect(
+                urlresolvers.reverse('elts.views.tag_create_form')
+            )
+
+    # The HTTP request ain't a GET or POST, so ignore the request.
+    else:
+        pass
+
+def tag_id(request, tag_id_):
+    """Returns information about a specific tag."""
+    try:
+        # pylint: disable=E1101
+        # Class 'Tag' has no 'objects' member
+        requested_tag = models.Tag.objects.filter(id = tag_id_)[0]
+    except (IndexError):
+        requested_tag = None
+    return shortcuts.render(
+        request,
+        'elts/tag-id.html',
+        {
+            'tag_id': tag_id_,
+            'tag': requested_tag,
+        }
+    )
+
+def tag_create_form(request):
+    """Returns a form for creating a new tag."""
+    return shortcuts.render(
+        request,
+        'elts/tag-create-form.html',
+        {
+            # If user submits a form containing errors, method ``tag`` will put
+            # that form into session storage. Use it if available.
+            'form': request.session.pop('form', forms.TagForm())
+        }
+    )
+
+def tag_id_update_form(request, tag_id_):
+    """Returns a form for updating the tag with id ``tag_id_``."""
+    # pylint: disable=E1101
+    tag_ = models.Tag.objects.filter(id = tag_id_)[0]
+    if tag_:
+        tplate = template.loader.get_template('elts/tag-id-update-form.html')
+        ctext = template.RequestContext(
+            request,
+            {
+                'tag': models.Tag.objects.filter(id = tag_id_)[0],
+            }
+        )
+        return http.HttpResponse(tplate.render(ctext))
+    else:
+        return http.HttpResponseRedirect(
+            urlresolvers.reverse('elts.views.tag_id'),
+            tag_id = tag_id_,
         )

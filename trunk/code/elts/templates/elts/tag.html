@@ -1,0 +1,29 @@
+{% extends 'elts/base.html' %}
+
+{% block title %}Tags{% endblock %}
+
+{% block body %}
+    <h1>Tags</h1>
+    <p>You can create a new tag
+    <a href="{% url 'elts.views.tag_create_form' %}">here</a>.</p>
+    {% if tags %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Links</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tag in tags %}
+                    <tr>
+                        <td>{{ tag.name }}</td>
+                        <td><a href="{% url 'elts.views.tag_id' tag.id %}">Details</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No tags in database.</p>
+    {% endif %}
+{% endblock %}
