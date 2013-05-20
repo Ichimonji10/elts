@@ -3,31 +3,31 @@
 {% block title %}Items{% endblock %}
 
 {% block body %}
-<h1>Items</h1>
-<p>You can create a new item
-<a href="{% url 'elts.views.item_create_form' %}">here</a>.</p>
-{% if items %}
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Tags</th>
-                <th>Links</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in items %}
-            <tr>
-                <td>{{ item.name }}</td>
-                <td>{{ item.description }}</td>
-                <td>FIXME</td>
-                <td><a href="{% url 'elts.views.item_id' item.id %}">Details</a></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-<p>No items in database.</p>
-{% endif %}
+    <h1>Items</h1>
+    <p>You can create a new item
+    <a href="{% url 'elts.views.item_create_form' %}">here</a>.</p>
+    {% if items %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Tags</th>
+                    <th>Links</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.description }}</td>
+                    <td>FIXME</td>
+                    <td><a href="{% url 'elts.views.item_id' item.id %}">Details</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No items in database.</p>
+    {% endif %}
 {% endblock %}
