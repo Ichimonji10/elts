@@ -8,26 +8,6 @@
 {% endif %}
 <form method='post' action='{% url 'elts.views.item' %}'>
     {% csrf_token %}
-    <fieldset>
-        <legend>Item Details</legend>
-        <p>
-            <label for='id_name'>Name</label>
-            <br />
-            <input
-                id='id_name'
-                name='name'
-                type='text'
-                value='{{ name }}'
-            />
-        </p>
-        <p>
-            <label for='id_description' >Description</label>
-            <br />
-            <textarea
-                id='id_description'
-                name='description'
-            >{{ description }}</textarea>
-        </p>
-    </fieldset>
+    {{ form.as_p }}
     <p><button>Submit</button></p>
 </form>

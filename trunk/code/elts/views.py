@@ -43,8 +43,9 @@ reads "Class 'Item' has no 'objects' member".
 
 """
 from django.core import urlresolvers
-from django import http, template
+from django import http, shortcuts, template
 from elts import models
+from elts import forms
 
 def index(request):
     """Returns a summary of information about ELTS."""
@@ -66,72 +67,69 @@ def calendar(request):
 
 def item(request):
     """Either shows all items or creates a new item."""
+    # Return a list of all items.
     if 'GET' == request.method:
-        # Return a list of all items.
-        tplate = template.loader.get_template('elts/item.html')
-        ctext = template.RequestContext(
+        return shortcuts.render(
             # pylint: disable=E1101
+            # Class 'Item' has no 'objects' member
             request,
+            'elts/item.html',
             {'items': models.Item.objects.all()}
         )
-        return http.HttpResponse(tplate.render(ctext))
 
+    # Create a new item.
     elif 'POST' == request.method:
-        # Fetch and validate arguments. TODO: improve validation
-        name = request.POST.get('name', '')
-        description = request.POST.get('description', '')
-        errors = []
-        if not name:
-            errors.append('No name was given.')
-
-        if errors:
-            # Send user back to form so they can correct their mistakes and
-            # re-submit it.
-            request.session['errors'] = errors
-            request.session['name'] = name
-            request.session['description'] = description
+        # pylint: disable=E1101
+        # Instance of 'ItemForm' has no 'is_valid' member
+        form = forms.ItemForm(request.POST)
+        if form.is_valid():
+            models.Item(
+                name = form.cleaned_data['name'],
+                description = form.cleaned_data['description'],
+            ).save()
+            return http.HttpResponseRedirect(
+                # TODO: redirect to specific item page?
+                # TODO: test form validation and data redisplay
+                urlresolvers.reverse('elts.views.item')
+            )
+        else:
+            # Put ``form`` into session for retreival by ``item_create_form``.
+            request.session['form'] = form
             return http.HttpResponseRedirect(
                 urlresolvers.reverse('elts.views.item_create_form')
             )
-        else:
-            # Create an ``Item`` and redirect the user to an appropriate page.
-            models.Item(name = name, description = description).save()
-            return http.HttpResponseRedirect(
-                urlresolvers.reverse('elts.views.item')
-            )
 
+    # The HTTP request ain't a GET or POST, so ignore the request.
     else:
-        # The HTTP request ain't a GET or POST, so ignore the request.
         pass
 
 def item_create_form(request):
     """Returns a form for creating a new item."""
-    tplate = template.loader.get_template('elts/item-create-form.html')
-    ctext = template.RequestContext(
+    return shortcuts.render(
         request,
+        'elts/item-create-form.html',
         {
-            'errors': request.session.pop('errors', []),
-            'name': request.session.pop('name', ''),
-            'description': request.session.pop('description', ''),
+            # If user submits a form containing errors, method ``item`` will put
+            # that form into session storage. Use it if available.
+            'form': request.session.pop('form', forms.ItemForm())
         }
     )
-    return http.HttpResponse(tplate.render(ctext))
 
 def item_id(request, item_id_):
     """Returns information about a specific item."""
-    tplate = template.loader.get_template('elts/item-id.html')
-    ctext = template.RequestContext(
+    return shortcuts.render(
         request,
+        'elts/item-id.html',
         {
             # pylint: disable=E1101
+            # Class 'Item' has no 'objects' member
             'item_id': item_id_,
             'item': models.Item.objects.filter(id = item_id_)[0],
-#            'item_tags': models.Tag.objects.filter(
-#                id__in = models.ItemTag.objects.filter(item_id = item_id_)
-#            )
         }
     )
-    return http.HttpResponse(tplate.render(ctext))
+    # 'item_tags': models.Tag.objects.filter(
+    #     id__in = models.ItemTag.objects.filter(item_id = item_id_)
+    # )
 
 def item_id_update_form(request, item_id_):
     """Returns a form for updating the item with id ``item_id_``."""
