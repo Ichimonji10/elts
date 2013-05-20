@@ -43,27 +43,17 @@ reads "Class 'Item' has no 'objects' member".
 
 """
 from django.core import urlresolvers
-from django import http, shortcuts, template
+from django import http, shortcuts
 from elts import models
 from elts import forms
 
 def index(request):
     """Returns a summary of information about ELTS."""
-    tplate = template.loader.get_template('elts/index.html')
-    ctext = template.RequestContext(
-        request,
-        {}
-    )
-    return http.HttpResponse(tplate.render(ctext))
+    return shortcuts.render(request, 'elts/index.html', {})
 
 def calendar(request):
     """Returns a calendar displaying reservations and lends."""
-    tplate = template.loader.get_template('elts/calendar.html')
-    ctext = template.RequestContext(
-        request,
-        {}
-    )
-    return http.HttpResponse(tplate.render(ctext))
+    return shortcuts.render(request, 'elts/calendar.html', {})
 
 def item(request):
     """Either shows all items or creates a new item."""
@@ -119,42 +109,29 @@ def item_create_form(request):
 
 def item_id(request, item_id_):
     """Returns information about a specific item."""
-    try:
-        # pylint: disable=E1101
-        # Class 'Item' has no 'objects' member
-        requested_item = models.Item.objects.filter(id = item_id_)[0]
-    except (IndexError):
-        requested_item = None
     return shortcuts.render(
         request,
         'elts/item-id.html',
         {
             'item_id': item_id_,
-            'item': requested_item,
+            'item': _get_item(item_id_),
         }
     )
-    # 'item_tags': models.Tag.objects.filter(
-    #     id__in = models.ItemTag.objects.filter(item_id = item_id_)
-    # )
 
 def item_id_update_form(request, item_id_):
     """Returns a form for updating the item with id ``item_id_``."""
-    # pylint: disable=E1101
-    item_ = models.Item.objects.filter(id = item_id_)[0]
-    if item_:
-        tplate = template.loader.get_template('elts/item-id-update-form.html')
-        ctext = template.RequestContext(
-            request,
-            {
-                'item': models.Item.objects.filter(id = item_id_)[0],
-            }
-        )
-        return http.HttpResponse(tplate.render(ctext))
-    else:
-        return http.HttpResponseRedirect(
-            urlresolvers.reverse('elts.views.item_id'),
-            item_id = item_id_,
-        )
+    # FIXME: prepopulate form with existing data
+    # FIXME: update existing item instead of creating a new one
+    # https://docs.djangoproject.com/en/dev/topics/forms/formsets/#using-initial-data-with-a-formset
+    return shortcuts.render(
+        request,
+        'elts/item-id-update-form.html',
+        {
+            'item': _get_item(item_id_),
+            'item_id': item_id_,
+            'form': request.session.pop('form', forms.ItemForm()),
+        }
+    )
 
 def tag(request):
     """Either shows all tags or creates a new tag."""
@@ -195,18 +172,12 @@ def tag(request):
 
 def tag_id(request, tag_id_):
     """Returns information about a specific tag."""
-    try:
-        # pylint: disable=E1101
-        # Class 'Tag' has no 'objects' member
-        requested_tag = models.Tag.objects.filter(id = tag_id_)[0]
-    except (IndexError):
-        requested_tag = None
     return shortcuts.render(
         request,
         'elts/tag-id.html',
         {
             'tag_id': tag_id_,
-            'tag': requested_tag,
+            'tag': _get_tag(tag_id_),
         }
     )
 
@@ -224,19 +195,41 @@ def tag_create_form(request):
 
 def tag_id_update_form(request, tag_id_):
     """Returns a form for updating the tag with id ``tag_id_``."""
-    # pylint: disable=E1101
-    tag_ = models.Tag.objects.filter(id = tag_id_)[0]
-    if tag_:
-        tplate = template.loader.get_template('elts/tag-id-update-form.html')
-        ctext = template.RequestContext(
-            request,
-            {
-                'tag': models.Tag.objects.filter(id = tag_id_)[0],
-            }
-        )
-        return http.HttpResponse(tplate.render(ctext))
-    else:
-        return http.HttpResponseRedirect(
-            urlresolvers.reverse('elts.views.tag_id'),
-            tag_id = tag_id_,
-        )
+    # FIXME: prepopulate form with existing data
+    # FIXME: update existing item instead of creating a new one
+    # https://docs.djangoproject.com/en/dev/topics/forms/formsets/#using-initial-data-with-a-formset
+    return shortcuts.render(
+        request,
+        'elts/tag-id-update-form.html',
+        {
+            'tag': _get_tag(tag_id_),
+            'tag_id': tag_id_,
+            'form': request.session.pop('form', forms.TagForm()),
+        }
+    )
+
+def _get_item(item_id_):
+    """Returns a database object for the item with id ``item_id``.
+
+    If item ``item_id`` does not exist, returns ``None``.
+
+    """
+    try:
+        # pylint: disable=E1101
+        # Class 'Item' has no 'objects' member
+        return models.Item.objects.filter(id = item_id_)[0]
+    except (IndexError):
+        return None
+
+def _get_tag(tag_id_):
+    """Returns a database object for the tag with id ``tag_id``.
+
+    If tag ``tag_id`` does not exist, returns ``None``.
+
+    """
+    try:
+        # pylint: disable=E1101
+        # Class 'Tag' has no 'objects' member
+        return models.Tag.objects.filter(id = tag_id_)[0]
+    except (IndexError):
+        return None

@@ -4,5 +4,9 @@
 
 {% block body %}
     <h1>Update Item {{ item.id }}</h1>
-    {% include 'elts/_item-edit-form.html' %}
+    {% if item %}
+        {% include 'elts/_item-edit-form.html' %}
+    {% else %}
+        <p>Item {{ item_id }} does not exist.</p>
+    {% endif %}
 {% endblock %}

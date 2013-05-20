@@ -4,5 +4,9 @@
 
 {% block body %}
     <h1>Update Tag {{ tag.id }}</h1>
-    {% include 'elts/_tag-edit-form.html' %}
+    {% if tag %}
+        {% include 'elts/_tag-edit-form.html' %}
+    {% else %}
+        <p>Tag {{ tag_id }} does not exist.</p>
+    {% endif %}
 {% endblock %}
