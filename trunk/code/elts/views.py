@@ -38,8 +38,14 @@ normal template that is intended to be included in other templates with an
 Other Notes
 ===========
 
-Pylint error 1101 is ignored at several places in this file. The error typically
-reads "Class 'Item' has no 'objects' member".
+Pylint error 1101 is ignored at several places in this file. Examples of this
+error include:
+
+    Class 'Item' has no 'objects' member
+    Instance of 'ItemForm' has no 'is_valid' member
+    Instance of 'ItemForm' has no 'cleaned_data' member
+    Instance of 'TagForm' has no 'is_valid' member
+    Instance of 'TagForm' has no 'cleaned_data' member
 
 """
 from django.core import urlresolvers
@@ -61,7 +67,6 @@ def item(request):
     if 'GET' == request.method:
         return shortcuts.render(
             # pylint: disable=E1101
-            # Class 'Item' has no 'objects' member
             request,
             'elts/item.html',
             {'items': models.Item.objects.all()}
@@ -70,7 +75,6 @@ def item(request):
     # Create a new item, or update an existing item.
     elif 'POST' == request.method:
         # pylint: disable=E1101
-        # Instance of 'ItemForm' has no 'is_valid' member
         form = forms.ItemForm(request.POST)
         if form.is_valid():
             new_or_updated_item = models.Item(
@@ -109,20 +113,51 @@ def item_create_form(request):
 
 def item_id(request, item_id_):
     """Read, update, or delete item ``item_id_``."""
-    return shortcuts.render(
-        request,
-        'elts/item-id.html',
-        {
-            'item_id': item_id_,
-            'item': _get_item(item_id_),
-        }
-    )
+    if 'GET' == request.method:
+        return shortcuts.render(
+            request,
+            'elts/item-id.html',
+            {
+                'item_id': item_id_,
+                'item': _get_item(item_id_),
+            }
+        )
+
+    elif 'POST' == request.method \
+    and  'PUT'  == request.POST.get('method_override', False):
+        form = forms.ItemForm(request.POST)
+        # pylint: disable=E1101
+        if form.is_valid():
+            item_being_updated = _get_item(item_id_)
+            item_being_updated.name = form.cleaned_data['name']
+            item_being_updated.description = form.cleaned_data['description']
+            item_being_updated.save()
+            return http.HttpResponseRedirect(
+                urlresolvers.reverse(
+                    'elts.views.item_id',
+                    args = [item_id_]
+                )
+            )
+        else:
+            pass
+            # FIXME: return user to update page with existing data pre-filled
+            # into form.
+
+    elif 'POST'   == request.method \
+    and  'DELETE' == request.POST.get('method_override', False):
+        #try:
+        #    _get_item(item_id_).delete()
+        #except NoMethodError:
+        #    pass
+        ## redirect to list of all items
+        pass
+
+    else:
+        pass
 
 def item_id_update_form(request, item_id_):
     """Returns a form for updating item ``item_id_``."""
     # FIXME: prepopulate form with existing data
-    # FIXME: update existing item instead of creating a new one
-    # https://docs.djangoproject.com/en/dev/topics/forms/formsets/#using-initial-data-with-a-formset
     return shortcuts.render(
         request,
         'elts/item-id-update-form.html',
@@ -139,7 +174,6 @@ def tag(request):
     if 'GET' == request.method:
         return shortcuts.render(
             # pylint: disable=E1101
-            # Class 'Tag' has no 'objects' member
             request,
             'elts/tag.html',
             {'tags': models.Tag.objects.all()}
@@ -148,7 +182,6 @@ def tag(request):
     # Create a new tag.
     elif 'POST' == request.method:
         # pylint: disable=E1101
-        # Instance of 'TagForm' has no 'is_valid' member
         form = forms.TagForm(request.POST)
         if form.is_valid():
             new_or_udated_tag = models.Tag(name = form.cleaned_data['name'])
@@ -172,14 +205,46 @@ def tag(request):
 
 def tag_id(request, tag_id_):
     """Read, update, or delete tag ``tag_id_``."""
-    return shortcuts.render(
-        request,
-        'elts/tag-id.html',
-        {
-            'tag_id': tag_id_,
-            'tag': _get_tag(tag_id_),
-        }
-    )
+    if 'GET' == request.method:
+        return shortcuts.render(
+            request,
+            'elts/tag-id.html',
+            {
+                'tag_id': tag_id_,
+                'tag': _get_tag(tag_id_),
+            }
+        )
+
+    elif 'POST' == request.method \
+    and  'PUT'  == request.POST.get('method_override', False):
+        form = forms.TagForm(request.POST)
+        # pylint: disable=E1101
+        if form.is_valid():
+            tag_being_updated = _get_tag(tag_id_)
+            tag_being_updated.name = form.cleaned_data['name']
+            tag_being_updated.save()
+            return http.HttpResponseRedirect(
+                urlresolvers.reverse(
+                    'elts.views.tag_id',
+                    args = [tag_id_]
+                )
+            )
+        else:
+            pass
+            # FIXME: return user to update page with existing data pre-filled
+            # into form.
+
+    elif 'POST'   == request.method \
+    and  'DELETE' == request.POST.get('method_override', False):
+        #try:
+        #    _get_tag(tag_id_).delete()
+        #except NoMethodError:
+        #    pass
+        ## redirect to list of all tags
+        pass
+
+    else:
+        pass
 
 def tag_create_form(request):
     """Returns a form for creating a new tag."""
@@ -196,8 +261,6 @@ def tag_create_form(request):
 def tag_id_update_form(request, tag_id_):
     """Returns a form for updating tag ``tag_id_``."""
     # FIXME: prepopulate form with existing data
-    # FIXME: update existing item instead of creating a new one
-    # https://docs.djangoproject.com/en/dev/topics/forms/formsets/#using-initial-data-with-a-formset
     return shortcuts.render(
         request,
         'elts/tag-id-update-form.html',
@@ -216,7 +279,6 @@ def _get_item(item_id_):
     """
     try:
         # pylint: disable=E1101
-        # Class 'Item' has no 'objects' member
         return models.Item.objects.filter(id = item_id_)[0]
     except (IndexError):
         return None
@@ -229,7 +291,6 @@ def _get_tag(tag_id_):
     """
     try:
         # pylint: disable=E1101
-        # Class 'Tag' has no 'objects' member
         return models.Tag.objects.filter(id = tag_id_)[0]
     except (IndexError):
         return None

@@ -18,7 +18,10 @@
                 {% for tag in tags %}
                     <tr>
                         <td>{{ tag.name }}</td>
-                        <td><a href="{% url 'elts.views.tag_id' tag.id %}">Details</a></td>
+                        <td>
+                            <a href="{% url 'elts.views.tag_id' tag.id %}">Details</a>
+                            <a href="{% url 'elts.views.tag_id_update_form' tag.id %}">Edit</a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>

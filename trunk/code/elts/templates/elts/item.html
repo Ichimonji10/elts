@@ -22,7 +22,10 @@
                         <td>{{ item.name }}</td>
                         <td>{{ item.description }}</td>
                         <td>FIXME</td>
-                        <td><a href="{% url 'elts.views.item_id' item.id %}">Details</a></td>
+                        <td>
+                            <a href="{% url 'elts.views.item_id' item.id %}">Details</a>
+                            <a href="{% url 'elts.views.item_id_update_form' item.id %}">Edit</a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
