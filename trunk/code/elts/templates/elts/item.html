@@ -25,6 +25,7 @@
                         <td>
                             <a href="{% url 'elts.views.item_id' item.id %}">Details</a>
                             <a href="{% url 'elts.views.item_id_update_form' item.id %}">Edit</a>
+                            <a href="{% url 'elts.views.item_id_delete_form' item.id %}">Delete</a>
                         </td>
                     </tr>
                 {% endfor %}

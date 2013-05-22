@@ -1,0 +1,17 @@
+{% extends 'elts/base.html' %}
+
+{% block title %}Delete Item {{ item.id }}{% endblock %}
+
+{% block body %}
+    <h1>Delete Item {{ item.id }}</h1>
+    {% if item %}
+        <p>Are you <strong>sure</strong> you want to delete this item?</p>
+        <form method='post' action='{% url 'elts.views.item_id' item_id %}'>
+            {% csrf_token %}
+            <input type='hidden' name='method_override' value='DELETE' />
+            <p><button>Submit</button></p>
+        </form>
+    {% else %}
+        <p>Item {{ item_id }} does not exist.</p>
+    {% endif %}
+{% endblock %}

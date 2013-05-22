@@ -145,12 +145,13 @@ def item_id(request, item_id_):
 
     elif 'POST'   == request.method \
     and  'DELETE' == request.POST.get('method_override', False):
-        #try:
-        #    _get_item(item_id_).delete()
-        #except NoMethodError:
-        #    pass
-        ## redirect to list of all items
-        pass
+        try:
+            _get_item(item_id_).delete()
+        except AttributeError:
+            pass
+        return http.HttpResponseRedirect(
+            urlresolvers.reverse('elts.views.item')
+        )
 
     else:
         pass
@@ -165,6 +166,17 @@ def item_id_update_form(request, item_id_):
             'item': _get_item(item_id_),
             'item_id': item_id_,
             'form': request.session.pop('form', forms.ItemForm()),
+        }
+    )
+
+def item_id_delete_form(request, item_id_):
+    """Returns a form for deleting item ``item_id_``."""
+    return shortcuts.render(
+        request,
+        'elts/item-id-delete-form.html',
+        {
+            'item': _get_item(item_id_),
+            'item_id': item_id_,
         }
     )
 
@@ -236,12 +248,13 @@ def tag_id(request, tag_id_):
 
     elif 'POST'   == request.method \
     and  'DELETE' == request.POST.get('method_override', False):
-        #try:
-        #    _get_tag(tag_id_).delete()
-        #except NoMethodError:
-        #    pass
-        ## redirect to list of all tags
-        pass
+        try:
+            _get_tag(tag_id_).delete()
+        except AttributeError:
+            pass
+        return http.HttpResponseRedirect(
+            urlresolvers.reverse('elts.views.tag')
+        )
 
     else:
         pass
@@ -268,6 +281,17 @@ def tag_id_update_form(request, tag_id_):
             'tag': _get_tag(tag_id_),
             'tag_id': tag_id_,
             'form': request.session.pop('form', forms.TagForm()),
+        }
+    )
+
+def tag_id_delete_form(request, tag_id_):
+    """Returns a form for updating tag ``tag_id_``."""
+    return shortcuts.render(
+        request,
+        'elts/tag-id-delete-form.html',
+        {
+            'tag': _get_tag(tag_id_),
+            'tag_id': tag_id_,
         }
     )
 
