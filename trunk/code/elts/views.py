@@ -52,11 +52,11 @@ def index(request):
     return shortcuts.render(request, 'elts/index.html', {})
 
 def calendar(request):
-    """Returns a calendar displaying reservations and lends."""
+    """Returns an HTML calendar displaying reservations and lends."""
     return shortcuts.render(request, 'elts/calendar.html', {})
 
 def item(request):
-    """Either shows all items or creates a new item."""
+    """Returns information about all items or creates a new item."""
     # Return a list of all items.
     if 'GET' == request.method:
         return shortcuts.render(
@@ -108,7 +108,7 @@ def item_create_form(request):
     )
 
 def item_id(request, item_id_):
-    """Returns information about a specific item."""
+    """Read, update, or delete item ``item_id_``."""
     return shortcuts.render(
         request,
         'elts/item-id.html',
@@ -119,7 +119,7 @@ def item_id(request, item_id_):
     )
 
 def item_id_update_form(request, item_id_):
-    """Returns a form for updating the item with id ``item_id_``."""
+    """Returns a form for updating item ``item_id_``."""
     # FIXME: prepopulate form with existing data
     # FIXME: update existing item instead of creating a new one
     # https://docs.djangoproject.com/en/dev/topics/forms/formsets/#using-initial-data-with-a-formset
@@ -134,7 +134,7 @@ def item_id_update_form(request, item_id_):
     )
 
 def tag(request):
-    """Either shows all tags or creates a new tag."""
+    """Returns information about all tags or creates a new tag."""
     # Return a list of all tags.
     if 'GET' == request.method:
         return shortcuts.render(
@@ -171,7 +171,7 @@ def tag(request):
         pass
 
 def tag_id(request, tag_id_):
-    """Returns information about a specific tag."""
+    """Read, update, or delete tag ``tag_id_``."""
     return shortcuts.render(
         request,
         'elts/tag-id.html',
@@ -194,7 +194,7 @@ def tag_create_form(request):
     )
 
 def tag_id_update_form(request, tag_id_):
-    """Returns a form for updating the tag with id ``tag_id_``."""
+    """Returns a form for updating tag ``tag_id_``."""
     # FIXME: prepopulate form with existing data
     # FIXME: update existing item instead of creating a new one
     # https://docs.djangoproject.com/en/dev/topics/forms/formsets/#using-initial-data-with-a-formset

@@ -34,9 +34,9 @@ plans are in place to do so.
 
 Web browsers do not support ``PUT`` and ``DELETE`` operations. Instead, they
 only support ``POST`` and ``GET`` operations. To accomodate this limitation, a
-hidden input tag named "http_action" is inserted into forms. For example:
+hidden input tag named "method_override" is inserted into forms. For example:
 
-    <input type="hidden" name="http_action" value="PUT" />
+    <input type="hidden" name="method_override" value="PUT" />
 
 If any request cannot be completed due to logical errors, the user is informed
 of the reason(s). If this occurs when performing a ``POST`` operation, the

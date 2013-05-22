@@ -6,9 +6,9 @@
     <h1>Update Item {{ item.id }}</h1>
     {% if item %}
         {% include 'elts/_show-errors.html' %}
-        <form method='post' action='{% url 'elts.views.item' %}'>
+        <form method='post' action='{% url 'elts.views.item_id' item_id %}'>
             {% csrf_token %}
-            <input type='hidden' name='http_action' value='PUT' />
+            <input type='hidden' name='method_override' value='PUT' />
             {{ form.as_p }}
             <p><button>Submit</button></p>
         </form>
