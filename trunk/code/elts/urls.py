@@ -12,47 +12,35 @@ URL                         POST     GET    PUT      DELETE
 ``calendar/``                        *
 ``item/``                   *        *
 ``item/create-form/``                *
-``item/lend/``                       *
 ``item/<id>/``                       *      *        *
 ``item/<id>/update-form/``           *
 ``item/<id>/lend/``                  *
-``item/<id>/reservation/``  *        *      *        *
-``item/<id>/tag/``          *        *      *        *
 ``tag/``                    *        *
 ``tag/<id>/                          *      *        *
 =========================== ======== ====== ======== ========
 
-``/``
-    ``GET`` returns a home page containing a summary of information in ELTS,
-    such as which items are due back on that day.
+The URLs in this application are organized in a typical RESTful manner. This
+means that a URL consists soley of nouns. For example, if trying to delete tag
+15, the URL ``item/15/delete/`` would be incorrect. Instead, a client should
+make a ``DELETE`` HTTP request to ``item/15/``. Being RESTful also means that
+URLs are decomposable. If ``tag/15/lend/`` is available to clients, then
+``tag/15/``, ``tag/``, and ``/`` should also be available. There is much to the
+RESTful design philosophy beyond these few points, and the curious are
+encouraged to do some research.
 
-``calendar/``
-    ``GET`` returns a calendar displaying reservations and lends within a
-    certain time period, such as the current week or month.
+Currently, web browsers are the *only* type of supported client. It is desirable
+to extend ELTS so that it can support other types of clients, but no concrete
+plans are in place to do so.
 
-``item/``
-    ``POST`` creates a new item. If the request cannot be completed, the user is
-    informed of the reason(s). Optionally, the information submitted by the
-    client may be repeated back to them.
+Web browsers do not support ``PUT`` and ``DELETE`` operations. Instead, they
+only support ``POST`` and ``GET`` operations. To accomodate this limitation, a
+hidden input tag named "http_action" is inserted into forms. For example:
 
-    ``GET`` returns a list of all items. One argument may be given: ``tag``. For
-    example, if ``tag=xyz``, a list of all items who have the tag with "xyz" is
-    returned.  ``tag`` may be specified more than once, in order to narrow the
-    search. If the tag given does not exist, TODO: clarify this
+    <input type="hidden" name="http_action" value="PUT" />
 
-``item/create-form/``
-    ``GET`` returns a form for creating an item.
-
-``item/<id>/update-form/``
-    ``GET`` returns a form for updating an item. If item ``id`` does not exist,
-    user is redirected to ``item/<id>/``
-
-``tag/``
-    ``POST`` creates a new tag. If the request cannot be completed, the user is
-    informed of the reason(s). Optionally, the information submitted by the user
-    may be repeated back to them.
-
-    ``GET`` returns a list of all tags.
+If any request cannot be completed due to logical errors, the user is informed
+of the reason(s). If this occurs when performing a ``POST`` operation, the
+information submitted by the client may be repeated back to them.
 
 """
 from django.conf.urls import patterns, url

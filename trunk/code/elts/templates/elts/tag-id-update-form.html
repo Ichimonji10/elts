@@ -5,7 +5,13 @@
 {% block body %}
     <h1>Update Tag {{ tag.id }}</h1>
     {% if tag %}
-        {% include 'elts/_tag-edit-form.html' %}
+        {% include 'elts/_show-errors.html' %}
+        <form method='post' action='{% url 'elts.views.tag' %}'>
+            {% csrf_token %}
+            <input type='hidden' name='http_action' value='PUT' />
+            {{ form.as_p }}
+            <p><button>Submit</button></p>
+        </form>
     {% else %}
         <p>Tag {{ tag_id }} does not exist.</p>
     {% endif %}

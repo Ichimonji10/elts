@@ -5,7 +5,13 @@
 {% block body %}
     <h1>Update Item {{ item.id }}</h1>
     {% if item %}
-        {% include 'elts/_item-edit-form.html' %}
+        {% include 'elts/_show-errors.html' %}
+        <form method='post' action='{% url 'elts.views.item' %}'>
+            {% csrf_token %}
+            <input type='hidden' name='http_action' value='PUT' />
+            {{ form.as_p }}
+            <p><button>Submit</button></p>
+        </form>
     {% else %}
         <p>Item {{ item_id }} does not exist.</p>
     {% endif %}
