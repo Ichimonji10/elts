@@ -154,14 +154,19 @@ def item_id(request, item_id_):
         pass
 
 def item_id_update_form(request, item_id_):
-    """Returns a form for updating item ``item_id_``."""
-    # FIXME: prepopulate form with existing data
+    """Returns a form for updating item ``item_id_``.
+
+    The form is pre-populated with existind data about item ``item_id_``.
+
+    """
+    item_ = _get_item(item_id_)
+    init_form_data = {'name': item_.name, 'description': item_.description}
     return shortcuts.render(
         request,
         'elts/item-id-update-form.html',
         {
-            'item': _get_item(item_id_),
-            'form': request.session.pop('form', forms.ItemForm()),
+            'item': item_,
+            'form': request.session.pop('form', forms.ItemForm(init_form_data)),
         }
     )
 
@@ -263,13 +268,14 @@ def tag_create_form(request):
 
 def tag_id_update_form(request, tag_id_):
     """Returns a form for updating tag ``tag_id_``."""
-    # FIXME: prepopulate form with existing data
+    tag_ = _get_tag(tag_id_)
+    init_form_data = {'name': tag_.name}
     return shortcuts.render(
         request,
         'elts/tag-id-update-form.html',
         {
-            'tag': _get_tag(tag_id_),
-            'form': request.session.pop('form', forms.TagForm()),
+            'tag': tag_,
+            'form': request.session.pop('form', forms.TagForm(init_form_data)),
         }
     )
 
