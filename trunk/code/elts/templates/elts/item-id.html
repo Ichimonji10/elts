@@ -1,9 +1,9 @@
 {% extends 'elts/base.html' %}
 
-{% block title %}Item {{ item_id }}{% endblock %}
+{% block title %}Item {{ item.id }}{% endblock %}
 
 {% block body %}
-    <h1>Item {{ item_id }}</h1>
+    <h1>Item {{ item.id }}</h1>
     {% if item %}
         <h2>Name</h2>
         <p>{{ item.name }}</p>
@@ -16,6 +16,6 @@
         <h2>Tags</h2>
         <p>FIXME</p>
     {% else %}
-        <p>Item {{ item_id }} does not exist.</p>
+        <p>Item {{ item.id }} does not exist.</p>
     {% endif %}
 {% endblock %}

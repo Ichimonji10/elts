@@ -117,10 +117,7 @@ def item_id(request, item_id_):
         return shortcuts.render(
             request,
             'elts/item-id.html',
-            {
-                'item_id': item_id_,
-                'item': _get_item(item_id_),
-            }
+            {'item': _get_item(item_id_)}
         )
 
     elif 'POST' == request.method \
@@ -164,7 +161,6 @@ def item_id_update_form(request, item_id_):
         'elts/item-id-update-form.html',
         {
             'item': _get_item(item_id_),
-            'item_id': item_id_,
             'form': request.session.pop('form', forms.ItemForm()),
         }
     )
@@ -174,10 +170,7 @@ def item_id_delete_form(request, item_id_):
     return shortcuts.render(
         request,
         'elts/item-id-delete-form.html',
-        {
-            'item': _get_item(item_id_),
-            'item_id': item_id_,
-        }
+        {'item': _get_item(item_id_)}
     )
 
 def tag(request):
@@ -221,10 +214,7 @@ def tag_id(request, tag_id_):
         return shortcuts.render(
             request,
             'elts/tag-id.html',
-            {
-                'tag_id': tag_id_,
-                'tag': _get_tag(tag_id_),
-            }
+            {'tag': _get_tag(tag_id_)}
         )
 
     elif 'POST' == request.method \
@@ -279,7 +269,6 @@ def tag_id_update_form(request, tag_id_):
         'elts/tag-id-update-form.html',
         {
             'tag': _get_tag(tag_id_),
-            'tag_id': tag_id_,
             'form': request.session.pop('form', forms.TagForm()),
         }
     )
@@ -289,10 +278,7 @@ def tag_id_delete_form(request, tag_id_):
     return shortcuts.render(
         request,
         'elts/tag-id-delete-form.html',
-        {
-            'tag': _get_tag(tag_id_),
-            'tag_id': tag_id_,
-        }
+        {'tag': _get_tag(tag_id_)}
     )
 
 def _get_item(item_id_):

@@ -6,13 +6,13 @@
     <h1>Update Item {{ item.id }}</h1>
     {% if item %}
         {% include 'elts/_show-errors.html' %}
-        <form method='post' action='{% url 'elts.views.item_id' item_id %}'>
+        <form method='post' action='{% url 'elts.views.item_id' item.id %}'>
             {% csrf_token %}
             <input type='hidden' name='method_override' value='PUT' />
             {{ form.as_p }}
             <p><button>Submit</button></p>
         </form>
     {% else %}
-        <p>Item {{ item_id }} does not exist.</p>
+        <p>Item {{ item.id }} does not exist.</p>
     {% endif %}
 {% endblock %}
