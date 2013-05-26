@@ -136,9 +136,13 @@ def item_id(request, item_id_):
                 )
             )
         else:
-            pass
-            # FIXME: return user to update page with existing data pre-filled
-            # into form.
+            request.session['form'] = form
+            return http.HttpResponseRedirect(
+                urlresolvers.reverse(
+                    'elts.views.item_id_update_form',
+                    args = [item_id_]
+                )
+            )
 
     elif 'POST'   == request.method \
     and  'DELETE' == request.POST.get('method_override', False):
@@ -237,9 +241,13 @@ def tag_id(request, tag_id_):
                 )
             )
         else:
-            pass
-            # FIXME: return user to update page with existing data pre-filled
-            # into form.
+            request.session['form'] = form
+            return http.HttpResponseRedirect(
+                urlresolvers.reverse(
+                    'elts.views.tag_id_update_form',
+                    args = [tag_id_]
+                )
+            )
 
     elif 'POST'   == request.method \
     and  'DELETE' == request.POST.get('method_override', False):
