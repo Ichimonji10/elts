@@ -275,7 +275,11 @@ def tag_create_form(request):
     )
 
 def tag_id_update_form(request, tag_id_):
-    """Returns a form for updating tag ``tag_id_``."""
+    """Returns a form for updating tag ``tag_id_``.
+
+    The form is pre-populated with existind data about tag ``tag_id_``.
+
+    """
     tag_ = _get_tag(tag_id_)
     init_form_data = {'name': tag_.name}
     return shortcuts.render(

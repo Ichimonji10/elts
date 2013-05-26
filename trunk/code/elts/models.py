@@ -11,6 +11,9 @@ The database tables are laid out as follows::
 """
 from django.db import models
 
+# TODO: Flesh out many-to-many relationships by adding ``ManyToManyField``s to
+# models.
+
 # pylint: disable=R0903
 # "Too few public methods (0/2)" 
 # It is both common and OK for a model to have no methods.
@@ -25,6 +28,7 @@ class Item(models.Model):
     name = models.CharField(max_length = 50, db_index = True)
     description = models.CharField(max_length = 500, blank = True)
     due_back_date = models.DateField(blank = True, null = True)
+    tags = models.ManyToManyField('Tag', through = 'ItemTag')
 
     def __unicode__(self):
         """Used by Python and Django when coercing a model instance to a str."""
@@ -86,7 +90,13 @@ class Note(models.Model):
             return "{}...".format(str(self.note_text)[0:77])
 
 class Tag(models.Model):
-    """A categorization for an item. (e.g. "laptop")"""
+    """A one-word description of an item. For example: "laptop"
+
+    Tags are related to Items via a many-to-many relationship. Here, the
+    ``Item`` class contains the relevant declaration. See:
+    https://docs.djangoproject.com/en/dev/topics/db/models/#many-to-many-relationships
+
+    """
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length = 30, unique = True) # implies db_index
 
