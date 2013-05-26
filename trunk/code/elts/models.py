@@ -26,9 +26,9 @@ class Item(models.Model):
     """An item which can be lent out to a person."""
     id = models.AutoField(primary_key = True)
     name = models.CharField(max_length = 50, db_index = True)
-    description = models.CharField(max_length = 500, blank = True)
+    description = models.TextField(max_length = 500, blank = True)
     due_back_date = models.DateField(blank = True, null = True)
-    tags = models.ManyToManyField('Tag', through = 'ItemTag')
+    tags = models.ManyToManyField('Tag', through = 'ItemTag', blank = True)
 
     def __unicode__(self):
         """Used by Python and Django when coercing a model instance to a str."""
@@ -78,7 +78,7 @@ class Note(models.Model):
     """An arbitrary, descriptive note about an item."""
     id = models.AutoField(primary_key=True)
     note_date = models.DateTimeField()
-    note_text = models.CharField(max_length = 5000)
+    note_text = models.TextField(max_length = 5000)
     item_id = models.ForeignKey('Item', to_field = 'id')
     person_ad_guid = models.ForeignKey('Person', to_field = 'ad_guid')
 
