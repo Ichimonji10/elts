@@ -14,7 +14,15 @@
             <p>No description available.</p>
         {% endif %}
         <h2>Tags</h2>
-        <p>FIXME</p>
+        {% if tags %}
+            <ul>
+                {% for tag in tags %}
+                    <li>{{ tag }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>None.</p>
+        {% endif %}
     {% else %}
         <p>Item {{ item.id }} does not exist.</p>
     {% endif %}

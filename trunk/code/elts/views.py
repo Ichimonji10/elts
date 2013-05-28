@@ -72,20 +72,21 @@ def item(request):
             {'items': models.Item.objects.all()}
         )
 
-    # Create a new item, or update an existing item.
+    # Create a new item.
     elif 'POST' == request.method:
         # pylint: disable=E1101
         form = forms.ItemForm(request.POST)
         if form.is_valid():
-            new_or_updated_item = models.Item(
+            new_item = models.Item(
                 name = form.cleaned_data['name'],
                 description = form.cleaned_data['description'],
             )
-            new_or_updated_item.save()
+            new_item.save()
+            new_item.tags = form.cleaned_data['tags']
             return http.HttpResponseRedirect(
                 urlresolvers.reverse(
                     'elts.views.item_id',
-                    args = [new_or_updated_item.id]
+                    args = [new_item.id]
                 )
             )
         else:
@@ -114,10 +115,14 @@ def item_create_form(request):
 def item_id(request, item_id_):
     """Read, update, or delete item ``item_id_``."""
     if 'GET' == request.method:
+        existing_item = _get_item(item_id_)
         return shortcuts.render(
             request,
             'elts/item-id.html',
-            {'item': _get_item(item_id_)}
+            {
+                'item': existing_item,
+                'tags': models.Tag.objects.filter(item__pk = existing_item.id),
+            }
         )
 
     elif 'POST' == request.method \
@@ -125,10 +130,10 @@ def item_id(request, item_id_):
         form = forms.ItemForm(request.POST)
         # pylint: disable=E1101
         if form.is_valid():
-            item_being_updated = _get_item(item_id_)
-            item_being_updated.name = form.cleaned_data['name']
-            item_being_updated.description = form.cleaned_data['description']
-            item_being_updated.save()
+            existing_item = _get_item(item_id_)
+            existing_item.name = form.cleaned_data['name']
+            existing_item.description = form.cleaned_data['description']
+            existing_item.save()
             return http.HttpResponseRedirect(
                 urlresolvers.reverse(
                     'elts.views.item_id',
@@ -163,13 +168,16 @@ def item_id_update_form(request, item_id_):
     The form is pre-populated with existind data about item ``item_id_``.
 
     """
-    item_ = _get_item(item_id_)
-    init_form_data = {'name': item_.name, 'description': item_.description}
+    existing_item = _get_item(item_id_)
+    init_form_data = {
+        'name': existing_item.name,
+        'description': existing_item.description,
+    }
     return shortcuts.render(
         request,
         'elts/item-id-update-form.html',
         {
-            'item': item_,
+            'item': existing_item,
             'form': request.session.pop('form', forms.ItemForm(init_form_data)),
         }
     )
@@ -198,12 +206,12 @@ def tag(request):
         # pylint: disable=E1101
         form = forms.TagForm(request.POST)
         if form.is_valid():
-            new_or_udated_tag = models.Tag(name = form.cleaned_data['name'])
-            new_or_udated_tag.save()
+            new_tag = models.Tag(name = form.cleaned_data['name'])
+            new_tag.save()
             return http.HttpResponseRedirect(
                 urlresolvers.reverse(
                     'elts.views.tag_id',
-                    args = [new_or_udated_tag.id],
+                    args = [new_tag.id],
                 )
             )
         else:
@@ -231,9 +239,9 @@ def tag_id(request, tag_id_):
         form = forms.TagForm(request.POST)
         # pylint: disable=E1101
         if form.is_valid():
-            tag_being_updated = _get_tag(tag_id_)
-            tag_being_updated.name = form.cleaned_data['name']
-            tag_being_updated.save()
+            existing_tag = _get_tag(tag_id_)
+            existing_tag.name = form.cleaned_data['name']
+            existing_tag.save()
             return http.HttpResponseRedirect(
                 urlresolvers.reverse(
                     'elts.views.tag_id',
@@ -280,13 +288,13 @@ def tag_id_update_form(request, tag_id_):
     The form is pre-populated with existind data about tag ``tag_id_``.
 
     """
-    tag_ = _get_tag(tag_id_)
-    init_form_data = {'name': tag_.name}
+    existing_tag = _get_tag(tag_id_)
+    init_form_data = {'name': existing_tag.name}
     return shortcuts.render(
         request,
         'elts/tag-id-update-form.html',
         {
-            'tag': tag_,
+            'tag': existing_tag,
             'form': request.session.pop('form', forms.TagForm(init_form_data)),
         }
     )

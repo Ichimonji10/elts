@@ -13,7 +13,7 @@ class ItemForm(forms.ModelForm):
     """A form for creating an Item."""
     class Meta:
         model = models.Item
-        fields = ['name', 'description']
+        fields = ['name', 'description', 'tags']
 
 class TagForm(forms.ModelForm):
     """A form for creating a Tag."""
