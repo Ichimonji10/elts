@@ -1,3 +1,7 @@
+select option {
+    min-width: 10em;
+}
+
 /*------------------------------------------------------------------------------
 Tables
 ------------------------------------------------------------------------------*/
@@ -51,9 +55,9 @@ div.navbar {
     margin-right: 1.5em;
     /* Create a border, and put a little space between it and the navbar
      * contents. */
-    border-right: thin solid black;
-    border-bottom: thin solid black;
-    border-radius: 1em;
+    border-right: medium solid grey;
+    border-bottom: medium solid grey;
+    border-radius: 0.5em;
     padding-right: 0.5em;
     padding-left: 0.5em;
 }
@@ -82,10 +86,10 @@ div.navbar ul li a {
 
 /* An unfortunate hack. Thorough explanation below. */
 ol {
-    list-style-position: inside;
+    overflow: hidden;
 }
 ul {
-    list-style-position: inside;
+    overflow: hidden;
 }
 
 /* If a "float: left" block is placed right next to <li> elements, the <li>
@@ -105,7 +109,7 @@ ul {
  *         overflow: hidden;
  *     }
  *
- * How... magical. I don't understand why this works, so I'm avoiding it.
+ * How... magical. I don't understand why this works, but it works.
  *
  *     ul {
  *         list-style-position: inside;
