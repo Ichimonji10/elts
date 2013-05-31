@@ -1,5 +1,7 @@
 {% extends 'elts/base.html' %}
 
+{% load tag_tools %}
+
 {% block title %}Item {{ item.id }}{% endblock %}
 
 {% block body %}
@@ -14,15 +16,17 @@
             <p>No description available.</p>
         {% endif %}
         <h2>Tags</h2>
-        {% if tags %}
-            <ul>
-                {% for tag in tags %}
-                    <li>{{ tag }}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>None.</p>
-        {% endif %}
+        {% with item|item_tags_as_links as links %}
+            {% if links %}
+                <ul>
+                    {% for link in links %}
+                        <li>{{ link|safe }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No tags.</p>
+            {% endif %}
+        {% endwith %}
     {% else %}
         <p>Item {{ item.id }} does not exist.</p>
     {% endif %}

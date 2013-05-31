@@ -1,5 +1,7 @@
 {% extends 'elts/base.html' %}
 
+{% load tag_tools %}
+
 {% block title %}Items{% endblock %}
 
 {% block body %}
@@ -21,7 +23,9 @@
                     <tr>
                         <td>{{ item.name }}</td>
                         <td>{{ item.description }}</td>
-                        <td>FIXME</td>
+                        {% autoescape off %}
+                        <td>{{ item|item_tags_as_links|join:", "|default:"No tags." }}</td>
+                        {% endautoescape %}
                         <td>
                             <a href="{% url 'elts.views.item_id' item.id %}">Details</a>
                             <a href="{% url 'elts.views.item_id_update_form' item.id %}">Edit</a>

@@ -119,10 +119,7 @@ def item_id(request, item_id_):
         return shortcuts.render(
             request,
             'elts/item-id.html',
-            {
-                'item': existing_item,
-                'tags': models.Tag.objects.filter(item__pk = existing_item.id),
-            }
+            {'item': existing_item}
         )
 
     elif 'POST' == request.method \
@@ -134,6 +131,7 @@ def item_id(request, item_id_):
             existing_item.name = form.cleaned_data['name']
             existing_item.description = form.cleaned_data['description']
             existing_item.save()
+            existing_item.tags = form.cleaned_data['tags']
             return http.HttpResponseRedirect(
                 urlresolvers.reverse(
                     'elts.views.item_id',
