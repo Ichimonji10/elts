@@ -23,9 +23,11 @@
                     <tr>
                         <td>{{ item.name }}</td>
                         <td>{{ item.description }}</td>
-                        {% autoescape off %}
-                        <td>{{ item|item_tags_as_links|join:", "|default:"No tags." }}</td>
-                        {% endautoescape %}
+                        <td>
+                            {% for tag in item|item_tags %}
+                                {{ tag|tag_link|safe }}
+                            {% endfor %}
+                        </td>
                         <td>
                             <a href="{% url 'elts.views.item_id' item.id %}">Details</a>
                             <a href="{% url 'elts.views.item_id_update_form' item.id %}">Edit</a>

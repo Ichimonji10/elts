@@ -12,17 +12,11 @@
         <h2>Description</h2>
         <p>{{ item.description|default:"No description." }}</p>
         <h2>Tags</h2>
-        {% with item|item_tags_as_links as links %}
-            {% if links %}
-                <ul>
-                    {% for link in links %}
-                        <li>{{ link|safe }}</li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No tags.</p>
-            {% endif %}
-        {% endwith %}
+        <ul>
+            {% for tag in item|item_tags %}
+                <li>{{ tag|tag_link|safe }} ({{ tag|tag_items|length }} items)</li>
+            {% endfor %}
+        </ul>
     {% else %}
         <p>Item {{ item.id }} does not exist.</p>
     {% endif %}
