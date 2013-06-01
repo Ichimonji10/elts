@@ -29,7 +29,7 @@ from django.db import models
 class Item(models.Model):
     """An item which can be lent out to a person."""
     name = models.CharField(max_length = 50, db_index = True)
-    description = models.TextField(max_length = 500, blank = True)
+    description = models.TextField(max_length = 2000, blank = True)
     due_back_date = models.DateField(blank = True, null = True)
     tags = models.ManyToManyField('Tag', blank = True)
 
@@ -77,6 +77,7 @@ class Tag(models.Model):
 
     """
     name = models.CharField(max_length = 30, unique = True) # implies db_index
+    description = models.TextField(max_length = 2000, blank = True)
 
     def __unicode__(self):
         """Used by Python and Django when coercing a model instance to a str."""

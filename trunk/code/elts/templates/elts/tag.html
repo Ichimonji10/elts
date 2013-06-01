@@ -1,5 +1,7 @@
 {% extends 'elts/base.html' %}
 
+{% load tag_tools %}
+
 {% block title %}Tags{% endblock %}
 
 {% block body %}
@@ -11,6 +13,7 @@
             <thead>
                 <tr>
                     <th>Name</th>
+                    <th>Description</th>
                     <th>Links</th>
                 </tr>
             </thead>
@@ -18,6 +21,7 @@
                 {% for tag in tags %}
                     <tr>
                         <td>{{ tag.name }}</td>
+                        <td>{{ tag.description }}</td>
                         <td>
                             <a href="{% url 'elts.views.tag_id' tag.id %}">Details</a>
                             <a href="{% url 'elts.views.tag_id_update_form' tag.id %}">Edit</a>

@@ -10,11 +10,7 @@
         <h2>Name</h2>
         <p>{{ item.name }}</p>
         <h2>Description</h2>
-        {% if item.description %}
-            <p>{{ item.description }}</p>
-        {% else %}
-            <p>No description available.</p>
-        {% endif %}
+        <p>{{ item.description|default:"No description." }}</p>
         <h2>Tags</h2>
         {% with item|item_tags_as_links as links %}
             {% if links %}
