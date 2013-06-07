@@ -115,11 +115,10 @@ def item_create_form(request):
 def item_id(request, item_id_):
     """Read, update, or delete item ``item_id_``."""
     if 'GET' == request.method:
-        existing_item = _get_item(item_id_)
         return shortcuts.render(
             request,
             'elts/item-id.html',
-            {'item': existing_item}
+            {'item': _get_item(item_id_)}
         )
 
     elif 'POST' == request.method \
@@ -131,6 +130,7 @@ def item_id(request, item_id_):
             existing_item.name = form.cleaned_data['name']
             existing_item.description = form.cleaned_data['description']
             existing_item.save()
+            # Update many-to-many item-tag relationship.
             existing_item.tags = form.cleaned_data['tags']
             return http.HttpResponseRedirect(
                 urlresolvers.reverse(
@@ -225,26 +225,18 @@ def tag(request):
 
 def tag_id(request, tag_id_):
     """Read, update, or delete tag ``tag_id_``."""
+    # pylint: disable=E1101
+    tag_ = models.Tag.objects.get(id = tag_id_)
     if 'GET' == request.method:
-        return shortcuts.render(
-            request,
-            'elts/tag-id.html',
-            {'tag': _get_tag(tag_id_)}
-        )
+        return shortcuts.render(request, 'elts/tag-id.html', {'tag': tag_})
 
     elif 'POST' == request.method \
     and  'PUT'  == request.POST.get('method_override', False):
-        form = forms.TagForm(request.POST)
-        # pylint: disable=E1101
+        form = forms.TagForm(request.POST, instance = tag_)
         if form.is_valid():
-            existing_tag = _get_tag(tag_id_)
-            existing_tag.name = form.cleaned_data['name']
-            existing_tag.save()
+            form.save()
             return http.HttpResponseRedirect(
-                urlresolvers.reverse(
-                    'elts.views.tag_id',
-                    args = [tag_id_]
-                )
+                urlresolvers.reverse('elts.views.tag_id', args = [tag_id_])
             )
         else:
             request.session['form'] = form
@@ -258,7 +250,7 @@ def tag_id(request, tag_id_):
     elif 'POST'   == request.method \
     and  'DELETE' == request.POST.get('method_override', False):
         try:
-            _get_tag(tag_id_).delete()
+            models.Tag.objects.get(id = tag_id_).delete()
         except AttributeError:
             pass
         return http.HttpResponseRedirect(
@@ -287,7 +279,10 @@ def tag_id_update_form(request, tag_id_):
 
     """
     existing_tag = _get_tag(tag_id_)
-    init_form_data = {'name': existing_tag.name}
+    init_form_data = {
+        'name': existing_tag.name,
+        'description': existing_tag.description,
+    }
     return shortcuts.render(
         request,
         'elts/tag-id-update-form.html',

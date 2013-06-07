@@ -19,4 +19,4 @@ class TagForm(forms.ModelForm):
     """A form for creating a Tag."""
     class Meta:
         model = models.Tag
-        fields = ['name']
+        fields = ['name', 'description']
