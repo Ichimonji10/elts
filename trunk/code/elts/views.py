@@ -114,29 +114,20 @@ def item_create_form(request):
 
 def item_id(request, item_id_):
     """Read, update, or delete item ``item_id_``."""
+    # pylint: disable=E1101
+    item_ = models.Item.objects.get(id = item_id_)
     if 'GET' == request.method:
-        return shortcuts.render(
-            request,
-            'elts/item-id.html',
-            {'item': _get_item(item_id_)}
-        )
+        return shortcuts.render(request, 'elts/item-id.html', {'item': item_})
 
     elif 'POST' == request.method \
     and  'PUT'  == request.POST.get('method_override', False):
-        form = forms.ItemForm(request.POST)
-        # pylint: disable=E1101
+        form = forms.ItemForm(request.POST, instance = item_)
         if form.is_valid():
-            existing_item = _get_item(item_id_)
-            existing_item.name = form.cleaned_data['name']
-            existing_item.description = form.cleaned_data['description']
-            existing_item.save()
+            form.save()
             # Update many-to-many item-tag relationship.
-            existing_item.tags = form.cleaned_data['tags']
+            item_.tags = form.cleaned_data['tags']
             return http.HttpResponseRedirect(
-                urlresolvers.reverse(
-                    'elts.views.item_id',
-                    args = [item_id_]
-                )
+                urlresolvers.reverse('elts.views.item_id', args = [item_id_])
             )
         else:
             request.session['form'] = form
@@ -150,7 +141,7 @@ def item_id(request, item_id_):
     elif 'POST'   == request.method \
     and  'DELETE' == request.POST.get('method_override', False):
         try:
-            _get_item(item_id_).delete()
+            models.Item.objects.get(id = item_id_).delete()
         except AttributeError:
             pass
         return http.HttpResponseRedirect(
@@ -166,26 +157,27 @@ def item_id_update_form(request, item_id_):
     The form is pre-populated with existind data about item ``item_id_``.
 
     """
-    existing_item = _get_item(item_id_)
-    init_form_data = {
-        'name': existing_item.name,
-        'description': existing_item.description,
-    }
+    # pylint: disable=E1101
+    item_ = models.Item.objects.get(id = item_id_)
     return shortcuts.render(
         request,
         'elts/item-id-update-form.html',
         {
-            'item': existing_item,
-            'form': request.session.pop('form', forms.ItemForm(init_form_data)),
+            'item': item_,
+            'form': request.session.pop(
+                'form',
+                forms.ItemForm(instance = item_)
+            ),
         }
     )
 
 def item_id_delete_form(request, item_id_):
     """Returns a form for deleting item ``item_id_``."""
     return shortcuts.render(
+        # pylint: disable=E1101
         request,
         'elts/item-id-delete-form.html',
-        {'item': _get_item(item_id_)}
+        {'item': models.Item.objects.get(id = item_id_)}
     )
 
 def tag(request):
@@ -266,8 +258,7 @@ def tag_create_form(request):
         request,
         'elts/tag-create-form.html',
         {
-            # If user submits a form containing errors, method ``tag`` will put
-            # that form into session storage. Use it if available.
+            # Put ``form`` into session for retreival by ``tag_create_form``.
             'form': request.session.pop('form', forms.TagForm())
         }
     )
@@ -278,48 +269,25 @@ def tag_id_update_form(request, tag_id_):
     The form is pre-populated with existind data about tag ``tag_id_``.
 
     """
-    existing_tag = _get_tag(tag_id_)
-    init_form_data = {
-        'name': existing_tag.name,
-        'description': existing_tag.description,
-    }
+    # pylint: disable=E1101
+    tag_ = models.Tag.objects.get(id = tag_id_)
     return shortcuts.render(
         request,
         'elts/tag-id-update-form.html',
         {
-            'tag': existing_tag,
-            'form': request.session.pop('form', forms.TagForm(init_form_data)),
+            'tag': tag_,
+            'form': request.session.pop(
+                'form',
+                forms.TagForm(instance = tag_)
+            ),
         }
     )
 
 def tag_id_delete_form(request, tag_id_):
     """Returns a form for updating tag ``tag_id_``."""
     return shortcuts.render(
+        # pylint: disable=E1101
         request,
         'elts/tag-id-delete-form.html',
-        {'tag': _get_tag(tag_id_)}
+        {'tag': models.Tag.objects.get(id = tag_id_)}
     )
-
-def _get_item(item_id_):
-    """Returns a database object for the item with id ``item_id``.
-
-    If item ``item_id`` does not exist, returns ``None``.
-
-    """
-    try:
-        # pylint: disable=E1101
-        return models.Item.objects.filter(id = item_id_)[0]
-    except (IndexError):
-        return None
-
-def _get_tag(tag_id_):
-    """Returns a database object for the tag with id ``tag_id``.
-
-    If tag ``tag_id`` does not exist, returns ``None``.
-
-    """
-    try:
-        # pylint: disable=E1101
-        return models.Tag.objects.filter(id = tag_id_)[0]
-    except (IndexError):
-        return None
