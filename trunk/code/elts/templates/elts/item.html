@@ -22,7 +22,7 @@
                 {% for item in items %}
                     <tr>
                         <td>{{ item.name }}</td>
-                        <td>{{ item.description }}</td>
+                        <td>{{ item.description|truncatechars:80 }}</td>
                         <td>
                             {% for tag in item|item_tags %}
                                 {{ tag|tag_link|safe }}

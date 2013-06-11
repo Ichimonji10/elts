@@ -77,12 +77,7 @@ def item(request):
         # pylint: disable=E1101
         form = forms.ItemForm(request.POST)
         if form.is_valid():
-            new_item = models.Item(
-                name = form.cleaned_data['name'],
-                description = form.cleaned_data['description'],
-            )
-            new_item.save()
-            new_item.tags = form.cleaned_data['tags']
+            new_item = form.save()
             return http.HttpResponseRedirect(
                 urlresolvers.reverse(
                     'elts.views.item_id',
@@ -124,8 +119,6 @@ def item_id(request, item_id_):
         form = forms.ItemForm(request.POST, instance = item_)
         if form.is_valid():
             form.save()
-            # Update many-to-many item-tag relationship.
-            item_.tags = form.cleaned_data['tags']
             return http.HttpResponseRedirect(
                 urlresolvers.reverse('elts.views.item_id', args = [item_id_])
             )
@@ -196,8 +189,7 @@ def tag(request):
         # pylint: disable=E1101
         form = forms.TagForm(request.POST)
         if form.is_valid():
-            new_tag = models.Tag(name = form.cleaned_data['name'])
-            new_tag.save()
+            new_tag = form.save()
             return http.HttpResponseRedirect(
                 urlresolvers.reverse(
                     'elts.views.tag_id',

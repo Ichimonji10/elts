@@ -21,7 +21,7 @@
                 {% for tag in tags %}
                     <tr>
                         <td>{{ tag.name }}</td>
-                        <td>{{ tag.description }}</td>
+                        <td>{{ tag.description|truncatechars:80 }}</td>
                         <td>
                             <a href="{% url 'elts.views.tag_id' tag.id %}">Details</a>
                             <a href="{% url 'elts.views.tag_id_update_form' tag.id %}">Edit</a>
