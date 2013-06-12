@@ -12,11 +12,22 @@
         <h2>Description</h2>
         <p>{{ item.description|default:"No description." }}</p>
         <h2>Tags</h2>
+        <p>This item has the following tags:</p>
         <ul>
             {% for tag in item|item_tags %}
-                <li>{{ tag|tag_link|safe }} ({{ tag|tag_items|length }} items)</li>
+                <li>{{ tag|tag_link|safe }} ({{ tag|tag_items|length }})</li>
             {% endfor %}
         </ul>
+        <p>Items having the tags listed above also have the following tags:</p>
+        <ul>
+            {% for tag in item|related_tags %}
+                <li>{{ tag|tag_link|safe }} ({{ tag|tag_items|length }})</li>
+            {% endfor %}
+        </ul>
+        <p>
+            Note: the total number of times each tag is used is displayed in
+            parentheses.
+        </p>
     {% else %}
         <p>Item {{ item.id }} does not exist.</p>
     {% endif %}

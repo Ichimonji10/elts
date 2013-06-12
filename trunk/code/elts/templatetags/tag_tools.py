@@ -48,3 +48,26 @@ def item_link(item):
         ),
         item.name,
     )
+
+@register.filter
+def related_tags(item):
+    """Returns tags related to, but not used by, ``item``.
+
+    This function compiles a tuple of all tags used by this item. It then finds
+    all items which use those tags and compiles a tuple of all of *their* tags.
+    All tags used by ``item`` are stripped out, duplicate tags are removed, and
+    the tuple of tags is returned.
+
+    """
+    # sets are an unordered collection of unique objects
+    tags = set(item_tags(item))
+
+    related_items = set()
+    for tag in tags:
+        related_items = related_items.union(tag_items(tag))
+
+    related_tags = set()
+    for related_item in related_items:
+        related_tags = related_tags.union(item_tags(related_item))
+
+    return related_tags - tags
