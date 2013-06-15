@@ -24,6 +24,7 @@ class Item(models.Model):
     description = models.TextField(max_length = 2000, blank = True)
     due_back_date = models.DateField(blank = True, null = True)
     tags = models.ManyToManyField('Tag', blank = True)
+    notes = models.ManyToManyField('Note', blank = True)
 
     def __unicode__(self):
         """Used by Python and Django when coercing a model instance to a str."""
@@ -37,21 +38,22 @@ class Lend(models.Model):
         blank = True,
     )
     item_id = models.ForeignKey('Item', to_field = 'id')
-    person_ad_guid = models.ForeignKey('Person', to_field = 'ad_guid')
+    person_id = models.ForeignKey('Person', to_field = 'id')
+    notes = models.ManyToManyField('Note', blank = True)
 
 class Reservation(models.Model):
     """Reserves the lending of an item to a person in the future."""
     date_in = models.DateField()
     date_out = models.DateField()
     item_id = models.ForeignKey('Item', to_field = 'id')
-    person_ad_guid = models.ForeignKey('Person', to_field = 'ad_guid')
+    person_id = models.ForeignKey('Person', to_field = 'id')
+    notes = models.ManyToManyField('Note', blank = True)
 
 class Note(models.Model):
     """An arbitrary, descriptive note about an item."""
-    note_date = models.DateTimeField()
     note_text = models.TextField(max_length = 5000)
-    item_id = models.ForeignKey('Item', to_field = 'id')
-    person_ad_guid = models.ForeignKey('Person', to_field = 'ad_guid')
+    note_date = models.DateTimeField()
+    person_id = models.ForeignKey('Person', to_field = 'id')
 
     def __unicode__(self):
         """Used by Python and Django when coercing a model instance to a str."""
@@ -88,10 +90,10 @@ class Person(models.Model):
     ad_guid = models.CharField(
         verbose_name = 'active directory guid',
         max_length = 16,
-        primary_key = True,
     )
     full_name = models.CharField(max_length = 50, blank = True)
     email = models.CharField(max_length = 50, blank = True)
+    notes = models.ManyToManyField('Note', blank = True)
     # Can a CharField properly handle an AD GUID? GUIDs can have *any* value,
     # and the UTF-8 characterset may not be able to represent every possible
     # value. Some 16-byte (128-bit) long binary representation would be better.
