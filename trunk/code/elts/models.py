@@ -24,7 +24,6 @@ class Item(models.Model):
     description = models.TextField(max_length = 2000, blank = True)
     due_back_date = models.DateField(blank = True, null = True)
     tags = models.ManyToManyField('Tag', blank = True)
-    notes = models.ManyToManyField('Note', blank = True)
 
     def __unicode__(self):
         """Used by Python and Django when coercing a model instance to a str."""
@@ -37,30 +36,15 @@ class Lend(models.Model):
         verbose_name = 'date and time in',
         blank = True,
     )
-    item_id = models.ForeignKey('Item', to_field = 'id')
-    person_id = models.ForeignKey('Person', to_field = 'id')
-    notes = models.ManyToManyField('Note', blank = True)
+    item_id = models.ForeignKey('Item')
+    person_id = models.ForeignKey('Person')
 
 class Reservation(models.Model):
     """Reserves the lending of an item to a person in the future."""
     date_in = models.DateField()
     date_out = models.DateField()
-    item_id = models.ForeignKey('Item', to_field = 'id')
-    person_id = models.ForeignKey('Person', to_field = 'id')
-    notes = models.ManyToManyField('Note', blank = True)
-
-class Note(models.Model):
-    """An arbitrary, descriptive note about an item."""
-    note_text = models.TextField(max_length = 5000)
-    note_date = models.DateTimeField()
-    person_id = models.ForeignKey('Person', to_field = 'id')
-
-    def __unicode__(self):
-        """Used by Python and Django when coercing a model instance to a str."""
-        if 80 >= len(str(self.note_text)):
-            return self.note_text
-        else:
-            return u'{}...'.format(str(self.note_text)[0:77])
+    item_id = models.ForeignKey('Item')
+    person_id = models.ForeignKey('Person')
 
 class Tag(models.Model):
     """A one-word description of an item. For example: "laptop"
@@ -93,7 +77,6 @@ class Person(models.Model):
     )
     full_name = models.CharField(max_length = 50, blank = True)
     email = models.CharField(max_length = 50, blank = True)
-    notes = models.ManyToManyField('Note', blank = True)
     # Can a CharField properly handle an AD GUID? GUIDs can have *any* value,
     # and the UTF-8 characterset may not be able to represent every possible
     # value. Some 16-byte (128-bit) long binary representation would be better.
@@ -101,3 +84,53 @@ class Person(models.Model):
     def __unicode__(self):
         """Used by Python and Django when coercing a model instance to a str."""
         return self.full_name
+
+class Note(models.Model):
+    """A note about _something_.
+
+    This model is abstract. A child class (say, ``ItemNote``) should include a
+    foreign key (say, ``item_id``) pointing to some other table (say, ``Item``).
+
+    The funny looking argument to ``related_name`` will allow reverse queries to
+    be performed on ``Person`` objects. For example:
+
+        Person.elts_childclassname_related.all()
+
+    See also:
+    https://docs.djangoproject.com/en/dev/topics/db/models/#meta-inheritance
+    https://docs.djangoproject.com/en/dev/topics/db/queries/#backwards-related-objects
+
+    """
+    note_text = models.TextField(max_length = 5000)
+    note_date = models.DateTimeField()
+    note_author = models.ForeignKey(
+        Person,
+        related_name = '%(app_label)s_%(class)s_related',
+    )
+
+    def __unicode__(self):
+        """Used by Python and Django when coercing a model instance to a str."""
+        if 80 >= len(str(self.note_text)):
+            return self.note_text
+        else:
+            return u'{}...'.format(str(self.note_text)[0:77])
+
+    class Meta:
+        """Make this model abstract."""
+        abstract = True
+
+class ItemNote(Note):
+    """A note about an ``Item``."""
+    item_id = models.ForeignKey('Item')
+
+class PersonNote(Note):
+    """A note about an ``Person``."""
+    person_id = models.ForeignKey('Person')
+
+class ReservationNote(Note):
+    """A note about an ``Reservation``."""
+    reservation_id = models.ForeignKey('Reservation')
+
+class LendNote(Note):
+    """A note about an ``Lend``."""
+    lend_id = models.ForeignKey('Lend')
