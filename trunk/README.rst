@@ -23,9 +23,10 @@ lighttpd + flup + sqlite
 
 Start by installing the following:
 
-* lighttpd
-* flup (python 2 version)
+* django-extensions
 * django (python 2 version)
+* flup (python 2 version)
+* lighttpd
 * mysql
 
 Unfortunately, flup (and seemingly every other FastCGI and SCGI handler
@@ -110,8 +111,8 @@ use the setup by heading to http://localhost:8000/ in a web browser.
 Documentation
 -------------
 
-The ``README.rst`` file is written in reStructuredText format. It can be
-compiled to HTML::
+``README.rst`` is written in reStructuredText format. It can be compiled to
+HTML::
 
     $ rst2html README.rst > README.html
 
@@ -124,6 +125,13 @@ example::
         `find code/ -type f -name \*.py`
 
 graphviz must be installed for epydoc to generate graphs.
+
+You can generate a diagram of the database models::
+
+    $ ./manage.py graph_models elts > elts.dot
+    $ dot -Tsvg -o elts.svg elts.dot
+
+Again, graphviz must be installed to generate images.
 
 Static Analysis
 ---------------

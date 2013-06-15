@@ -1,15 +1,7 @@
 """Data models at the core of ELTS.
 
-The database tables are laid out as follows::
-
-    Item-----+-------+------------+
-    |        |       |            |
-    <jct>    Lend    Reservation  Note
-    |        |       |            |
-    Tag      Person--+------------+
-
-<jct> is an automatically-generated junction table. It is used to support a
-many-to-many relationship.
+`manage.py` can be used to generate a diagram of the tables defined herein. See
+the readme for details.
 
 If a model does not specify a primary key, django automatically generates a
 column named `id`. Django will not generate `id` if you pass `primary_key =
