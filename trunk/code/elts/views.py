@@ -50,8 +50,8 @@ error include:
 """
 from django.core import urlresolvers
 from django import http, shortcuts
-from elts import models
 from elts import forms
+from elts import models
 
 def index(request):
     """Returns a summary of information about ELTS."""
@@ -112,7 +112,14 @@ def item_id(request, item_id_):
     # pylint: disable=E1101
     item_ = models.Item.objects.get(id = item_id_)
     if 'GET' == request.method:
-        return shortcuts.render(request, 'elts/item-id.html', {'item': item_})
+        return shortcuts.render(
+            request,
+            'elts/item-id.html',
+            {
+                'item': item_,
+                'form': request.session.pop('form', forms.ItemNoteForm()),
+            }
+        )
 
     elif 'POST' == request.method \
     and  'PUT'  == request.POST.get('method_override', False):
@@ -268,10 +275,7 @@ def tag_id_update_form(request, tag_id_):
         'elts/tag-id-update-form.html',
         {
             'tag': tag_,
-            'form': request.session.pop(
-                'form',
-                forms.TagForm(instance = tag_)
-            ),
+            'form': request.session.pop('form', forms.TagForm(instance = tag_)),
         }
     )
 
@@ -283,3 +287,35 @@ def tag_id_delete_form(request, tag_id_):
         'elts/tag-id-delete-form.html',
         {'tag': models.Tag.objects.get(id = tag_id_)}
     )
+
+def item_note(request):
+    """Creates a new ItemNote."""
+    if 'POST' == request.method:
+        # For which item is this note being created?
+        try:
+            item_ = models.Item.objects.get(
+                id = request.POST.get('item_id', None)
+            )
+        except models.Item.DoesNotExist:
+            return http.HttpResponseRedirect(
+                urlresolvers.reverse('elts.views.item')
+            )
+
+        # Get note text and, if valid, save the note.
+        form = forms.ItemNoteForm(request.POST)
+        if form.is_valid():
+            models.ItemNote(
+                note_text = form.cleaned_data['note_text'],
+                #author_id = None, # FIXME
+                item_id = item_,
+            ).save()
+        else:
+            request.session['form'] = form
+
+        # Return the user to this page whether or not the note was saved.
+        return http.HttpResponseRedirect(
+            urlresolvers.reverse('elts.views.item_id', args = [item_.id])
+        )
+
+    else:
+        pass

@@ -91,22 +91,26 @@ class Note(models.Model):
     This model is abstract. A child class (say, ``ItemNote``) should include a
     foreign key (say, ``item_id``) pointing to some other table (say, ``Item``).
 
-    The funny looking argument to ``related_name`` will allow reverse queries to
-    be performed on ``Person`` objects. For example:
+    The funny looking value for ``related_name`` allows reverse queries to be
+    performed on ``Person`` objects. For example:
 
-        Person.elts_childclassname_related.all()
+        Person.elts_<child_class_name>_set.all()
 
     See also:
     https://docs.djangoproject.com/en/dev/topics/db/models/#meta-inheritance
     https://docs.djangoproject.com/en/dev/topics/db/queries/#backwards-related-objects
 
+    ``auto_now_add`` is useful for automatic creation timestamps. See:
+    https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.DateTimeField
+
     """
     note_text = models.TextField(max_length = 5000)
-    note_date = models.DateTimeField()
-    note_author = models.ForeignKey(
-        Person,
-        related_name = '%(app_label)s_%(class)s_related',
-    )
+    note_date = models.DateTimeField(auto_now_add = True)
+    # FIXME
+    #author_id = models.ForeignKey(
+    #    'Person',
+    #    related_name = '%(app_label)s_%(class)s_set',
+    #)
 
     def __unicode__(self):
         """Used by Python and Django when coercing a model instance to a str."""

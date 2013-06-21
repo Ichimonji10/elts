@@ -11,6 +11,11 @@ def item_tags(item):
     return models.Tag.objects.filter(item__id = item.id)
 
 @register.filter
+def item_notes(item):
+    """Returns ``item``'s notes as a list."""
+    return models.ItemNote.objects.filter(item_id = item.id)
+
+@register.filter
 def tag_link(tag):
     """Returns URI for the given ``tag``.
 

@@ -19,30 +19,27 @@ URL                         POST     GET    PUT      DELETE
 ``tag/<id>/                          *      *        *
 ``tag/<id>/update-form/``            *
 ``tag/<id>/delete-form/``            *
+``item-note/``              *
 =========================== ======== ====== ======== ========
 
 The URLs in this application are organized in a typical RESTful manner. This
 means that a URL consists soley of nouns. For example, if trying to delete tag
-15, the URL ``item/15/delete/`` would be incorrect. Instead, a client should
-make a ``DELETE`` HTTP request to ``item/15/``. Being RESTful also means that
-URLs are decomposable. If ``tag/15/lend/`` is available to clients, then
-``tag/15/``, ``tag/``, and ``/`` should also be available. There is much to the
-RESTful design philosophy beyond these few points, and the curious are
-encouraged to do some research.
+15, the URL ``/item/15/delete/`` would be incorrect. Instead, a client should
+make a ``DELETE`` HTTP request to ``/item/15/``. Being RESTful also means that
+URLs are decomposable. If ``/tag/15/lend/`` is available, then ``/tag/15/``,
+``/tag/``, and ``/`` should also be available. There is much to the RESTful
+design philosophy beyond these few points, and the curious are encouraged to do
+some research.
 
 Currently, web browsers are the *only* type of supported client. It is desirable
 to extend ELTS so that it can support other types of clients, but no concrete
 plans are in place to do so.
 
-Web browsers do not support ``PUT`` and ``DELETE`` operations. Instead, they
-only support ``POST`` and ``GET`` operations. To accomodate this limitation, a
-hidden input tag named "method_override" is inserted into forms. For example:
+Web browsers only support ``POST`` and ``GET`` operations; ``PUT`` and
+``DELETE`` operations cannot be performed. To accomodate this limitation, a
+hidden form field named "method_override" is present in forms. For example:
 
     <input type="hidden" name="method_override" value="PUT" />
-
-If any request cannot be completed due to logical errors, the user is informed
-of the reason(s). If this occurs when performing a ``POST`` operation, the
-information submitted by the client may be repeated back to them.
 
 """
 from django.conf.urls import patterns, url
@@ -63,4 +60,5 @@ urlpatterns = patterns('elts.views',
     url(r'^tag/(\d+)/$',               'tag_id'),
     url(r'^tag/(\d+)/update-form/$',   'tag_id_update_form'),
     url(r'^tag/(\d+)/delete-form/$',   'tag_id_delete_form'),
+    url(r'^item-note/$',               'item_note'),
 )

@@ -12,22 +12,45 @@
         <h2>Description</h2>
         <p>{{ item.description|default:"No description." }}</p>
         <h2>Tags</h2>
-        <p>This item has the following tags:</p>
-        <ul>
-            {% for tag in item|item_tags %}
-                <li>{{ tag|tag_link|safe }} ({{ tag|tag_items|length }})</li>
+        {% if item|item_tags %}
+            <ul>
+                {% for tag in item|item_tags %}
+                    <li>{{ tag|tag_link|safe }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No tags.</p>
+        {% endif %}
+        <h2>Related Tags</h2>
+        {% if item|related_tags %}
+            <ul>
+                {% for tag in item|related_tags %}
+                    <li>{{ tag|tag_link|safe }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No related tags.</p>
+        {% endif %}
+        <h2>Notes</h2>
+        {% if item|item_notes %}
+            {% for note in item|item_notes %}
+                <article>
+                    <p>
+                        Author: FIXME<br />
+                        Date: {{ note.note_date }}
+                    </p>
+                    <p>{{ note.note_text }}</p>
+                </article>
             {% endfor %}
-        </ul>
-        <p>Items having the tags listed above also have the following tags:</p>
-        <ul>
-            {% for tag in item|related_tags %}
-                <li>{{ tag|tag_link|safe }} ({{ tag|tag_items|length }})</li>
-            {% endfor %}
-        </ul>
-        <p>
-            Note: the total number of times each tag is used is displayed in
-            parentheses.
-        </p>
+        {% else %}
+            <p>This item has no comments.</p>
+        {% endif %}
+        <form method='post' action='{% url 'elts.views.item_note' %}'>
+            {% csrf_token %}
+            <input type='hidden' name='item_id' value='{{item.id}}' />
+            {{ form.as_p }}
+            <p><button>Submit</button></p>
+        </form>
     {% else %}
         <p>Item {{ item.id }} does not exist.</p>
     {% endif %}
