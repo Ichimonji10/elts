@@ -22,112 +22,15 @@ tr:hover td {
     background-color: #E6F2F7;
 }
 
-/*------------------------------------------------------------------------------
-Forms
-------------------------------------------------------------------------------*/
-
-/* Forces all fields to fit into a single, rectangular area instead of flowing
- * normally. */
-form {
-    display: table;
+div#navbar {
+    float: left;
+    width: 12em;
 }
 
-form p input {
-    width: 15em;
-}
-
-form p textarea {
-    width: 25em;
-    height: 8em;
-}
-
-/*------------------------------------------------------------------------------
-Navbar
-------------------------------------------------------------------------------*/
-
-/* Sits on left side of page. */
-div.navbar {
-    float:left;
-    width: 10em;
-
-    /* Make sure there's a bit of separation between div.navbar and everything
-     * else. */
-    margin-right: 1.5em;
-    /* Create a border, and put a little space between it and the navbar
-     * contents. */
-    border-right: medium solid grey;
-    border-bottom: medium solid grey;
-    border-radius: 0.5em;
-    padding-right: 0.5em;
-    padding-left: 0.5em;
-}
-
-div.navbar h1 {
+div#navbar h1 {
     margin-top: 0;
 }
 
-div.navbar ul {
-    /* Get rid of bullet points and push text to the left. */
-    list-style-type: none;
-    list-style-position: outside;
-    padding-left: 0;
+div#body {
+    margin-left: 13em;
 }
-
-div.navbar ul li a {
-    /* Make entire link area, not just link text. */
-    display: block;
-
-    /* These anchors are used for navigation, so they should look a bit
-     * different from a normal anchor. */
-    text-decoration: none;
-    line-height: 200%;
-    color: black;
-}
-
-/* An unfortunate hack. Thorough explanation below. */
-ol {
-    overflow: hidden;
-}
-ul {
-    overflow: hidden;
-}
-
-/* If a "float: left" block is placed right next to <li> elements, the <li>
- * bullets will overflow onto the float. This looks disgusting, and is annoying.
- * There are several possible solutions:
- *
- *     ul li {
- *         position: relative;
- *         left: 1em;
- *         padding-right: 1em;
- *     }
- *
- * A bad solution. The resultant page is always wider than the browser's
- * viewport, which produces a scrollbar on the bottom of the viewport. Annoying.
- *
- *     ul {
- *         overflow: hidden;
- *     }
- *
- * How... magical. I don't understand why this works, but it works.
- *
- *     ul {
- *         list-style-position: inside;
- *     }
- *
- * Works well, and easily comprehensible. The downside? It destroys the
- * indentation normally produced by a <li>. (which is what's supposed to happen
- * with this CSS rule) As a result, any decently long <li> looks fugly.
- *
- *     ul {
- *         display: table;
- *     }
- *
- * Forces the entire <ul> into a single, rectangular area. Works well, except
- * when a list gets decently long. Then, this rule just destroys the normal flow
- * of the document.
- *
- * Further reading:
- * http://stackoverflow.com/questions/2759354/left-floated-element-and-unordered-lists-ul
- * dvoxdesign.com/website_design_blog/?p=224
- */
