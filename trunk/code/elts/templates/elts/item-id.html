@@ -2,15 +2,12 @@
 
 {% load tag_tools %}
 
-{% block title %}Item {{ item.id }}{% endblock %}
+{% block title %}{{ item.name }}{% endblock %}
 
 {% block body %}
-    <h1>Item {{ item.id }}</h1>
     {% if item %}
-        <h2>Name</h2>
-        <p>{{ item.name }}</p>
-        <h2>Description</h2>
-        <p>{{ item.description|default:"No description." }}</p>
+        <h1>{{ item.name }}</h1>
+        <p>{{ item.description|default:'No description.' }}</p>
         <h2>Tags</h2>
         {% if item|item_tags %}
             <ul>
@@ -36,14 +33,20 @@
             {% for note in item|item_notes %}
                 <article>
                     <p>
-                        Author: FIXME<br />
-                        Date: {{ note.note_date }}
+                        Comment by FIXME - {{ note.note_date }}<br />
+                        <a href='{% url 'elts.views.item_note_id_update_form' note.id %}'>
+                            Update
+                        </a>
+                        -
+                        <a href='{% url 'elts.views.item_note_id_delete_form' note.id %}'>
+                            Delete
+                        </a>
                     </p>
                     <p>{{ note.note_text }}</p>
                 </article>
             {% endfor %}
         {% else %}
-            <p>This item has no comments.</p>
+            <p>No notes.</p>
         {% endif %}
         <form method='post' action='{% url 'elts.views.item_note' %}'>
             {% csrf_token %}

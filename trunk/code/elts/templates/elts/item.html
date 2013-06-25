@@ -7,7 +7,7 @@
 {% block body %}
     <h1>Items</h1>
     <p>You can create a new item
-    <a href="{% url 'elts.views.item_create_form' %}">here</a>.</p>
+    <a href='{% url 'elts.views.item_create_form' %}'>here</a>.</p>
     {% if items %}
         <table>
             <thead>
@@ -29,9 +29,9 @@
                             {% endfor %}
                         </td>
                         <td>
-                            <a href="{% url 'elts.views.item_id' item.id %}">Details</a>
-                            <a href="{% url 'elts.views.item_id_update_form' item.id %}">Edit</a>
-                            <a href="{% url 'elts.views.item_id_delete_form' item.id %}">Delete</a>
+                            <a href='{% url 'elts.views.item_id' item.id %}'>Details</a>
+                            <a href='{% url 'elts.views.item_id_update_form' item.id %}'>Edit</a>
+                            <a href='{% url 'elts.views.item_id_delete_form' item.id %}'>Delete</a>
                         </td>
                     </tr>
                 {% endfor %}

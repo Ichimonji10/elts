@@ -4,23 +4,26 @@ This table summarizes what URLs are available for use and what types of HTTP
 requests can be accepted by each. Details about each URL, including arguments,
 are given after the table.
 
-=========================== ======== ====== ======== ========
-URL                         POST     GET    PUT      DELETE
-                            (create) (read) (update) (delete)
-=========================== ======== ====== ======== ========
-``/``                                *
-``calendar/``                        *
-``item/``                   *        *
-``item/create-form/``                *
-``item/<id>/``                       *      *        *
-``item/<id>/update-form/``           *
-``item/<id>/delete-form/``           *
-``tag/``                    *        *
-``tag/<id>/                          *      *        *
-``tag/<id>/update-form/``            *
-``tag/<id>/delete-form/``            *
-``item-note/``              *
-=========================== ======== ====== ======== ========
+=============================== ======== ====== ======== ========
+URL                             POST     GET    PUT      DELETE
+                                (create) (read) (update) (delete)
+=============================== ======== ====== ======== ========
+``/``                                    *
+``calendar/``                            *
+``item/``                       *        *
+``item/create-form/``                    *
+``item/<id>/``                           *      *        *
+``item/<id>/update-form/``               *
+``item/<id>/delete-form/``               *
+``tag/``                        *        *
+``tag/<id>/                              *      *        *
+``tag/<id>/update-form/``                *
+``tag/<id>/delete-form/``                *
+``item-note/``                  *
+``item-note/<id>``                              *        *
+``item-note/<id>/update-form/``          *
+``item-note/<id>/delete-form/``          *
+=============================== ======== ====== ======== ========
 
 The URLs in this application are organized in a typical RESTful manner. This
 means that a URL consists soley of nouns. For example, if trying to delete tag
@@ -48,17 +51,20 @@ from django.conf.urls import patterns, url
 # "Invalid name "urlpatterns" for type constant (should match
 # (([A-Z_][A-Z0-9_]*)|(__.*__))$)"
 urlpatterns = patterns('elts.views',
-    url(r'^$',                         'index'),
-    url(r'^calendar/$',                'calendar'),
-    url(r'^item/$',                    'item'),
-    url(r'^item/create-form/$',        'item_create_form'),
-    url(r'^item/(\d+)/$',              'item_id'),
-    url(r'^item/(\d+)/update-form/$',  'item_id_update_form'),
-    url(r'^item/(\d+)/delete-form/$',  'item_id_delete_form'),
-    url(r'^tag/$',                     'tag'),
-    url(r'^tag/create-form/$',         'tag_create_form'),
-    url(r'^tag/(\d+)/$',               'tag_id'),
-    url(r'^tag/(\d+)/update-form/$',   'tag_id_update_form'),
-    url(r'^tag/(\d+)/delete-form/$',   'tag_id_delete_form'),
-    url(r'^item-note/$',               'item_note'),
+    url(r'^$',                             'index'),
+    url(r'^calendar/$',                    'calendar'),
+    url(r'^item/$',                        'item'),
+    url(r'^item/create-form/$',            'item_create_form'),
+    url(r'^item/(\d+)/$',                  'item_id'),
+    url(r'^item/(\d+)/update-form/$',      'item_id_update_form'),
+    url(r'^item/(\d+)/delete-form/$',      'item_id_delete_form'),
+    url(r'^tag/$',                         'tag'),
+    url(r'^tag/create-form/$',             'tag_create_form'),
+    url(r'^tag/(\d+)/$',                   'tag_id'),
+    url(r'^tag/(\d+)/update-form/$',       'tag_id_update_form'),
+    url(r'^tag/(\d+)/delete-form/$',       'tag_id_delete_form'),
+    url(r'^item-note/$',                   'item_note'),
+    url(r'^item-note/(\d+)/$',             'item_note_id'),
+    url(r'^item-note/(\d+)/update-form/$', 'item_note_id_update_form'),
+    url(r'^item-note/(\d+)/delete-form/$', 'item_note_id_delete_form'),
 )

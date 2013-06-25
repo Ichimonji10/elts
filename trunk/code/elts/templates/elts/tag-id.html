@@ -2,14 +2,11 @@
 
 {% load tag_tools %}
 
-{% block title %}Tag {{ tag.id }}{% endblock %}
+{% block title %}{{ tag.name }}{% endblock %}
 
 {% block body %}
-    <h1>Tag {{ tag.id }}</h1>
     {% if tag %}
-        <h2>Name</h2>
-        <p>{{ tag.name }}</p>
-        <h2>Description</h2>
+        <h1>{{ tag.name }}</h1>
         <p>{{ tag.description|default:"No description." }}</p>
         <h2>Items</h2>
         <ul>

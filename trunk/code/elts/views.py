@@ -154,7 +154,7 @@ def item_id(request, item_id_):
 def item_id_update_form(request, item_id_):
     """Returns a form for updating item ``item_id_``.
 
-    The form is pre-populated with existind data about item ``item_id_``.
+    The form is pre-populated with existing data about item ``item_id_``.
 
     """
     # pylint: disable=E1101
@@ -265,7 +265,7 @@ def tag_create_form(request):
 def tag_id_update_form(request, tag_id_):
     """Returns a form for updating tag ``tag_id_``.
 
-    The form is pre-populated with existind data about tag ``tag_id_``.
+    The form is pre-populated with existing data about tag ``tag_id_``.
 
     """
     # pylint: disable=E1101
@@ -289,7 +289,7 @@ def tag_id_delete_form(request, tag_id_):
     )
 
 def item_note(request):
-    """Creates a new ItemNote."""
+    """Creates a new item note."""
     if 'POST' == request.method:
         # For which item is this note being created?
         try:
@@ -319,3 +319,68 @@ def item_note(request):
 
     else:
         pass
+
+def item_note_id(request, item_note_id_):
+    """Updates or deletes item note ``item_note_id_``."""
+    if 'POST' == request.method \
+    and 'PUT'  == request.POST.get('method_override', False):
+        item_note_ = models.ItemNote.objects.get(id = item_note_id_)
+        form = forms.ItemNoteForm(request.POST, instance = item_note_)
+        if form.is_valid():
+            form.save()
+            return http.HttpResponseRedirect(
+                urlresolvers.reverse(
+                    'elts.views.item_note_id',
+                    args = [item_note_id_]
+                )
+            )
+        else:
+            request.session['form'] = form
+            return http.HttpResponseRedirect(
+                urlresolvers.reverse(
+                    'elts.views.item_note_id_update_form',
+                    args = [item_note_id_]
+                )
+            )
+
+    elif 'POST' == request.method \
+    and  'DELETE'  == request.POST.get('method_override', False):
+        try:
+            models.ItemNote.objects.get(id = item_note_id_).delete()
+        except AttributeError:
+            pass
+        # FIXME: return to specific item's page
+        return http.HttpResponseRedirect(
+            urlresolvers.reverse('elts.views.item')
+        )
+
+    else:
+        pass
+
+def item_note_id_update_form(request, item_note_id_):
+    """Returns a form for updating item note ``item_note_id_``.
+
+    The form is pre-populated with existing data about item note
+    ``item_note_id_``.
+
+    """
+    item_note_ = models.ItemNote.objects.get(id = item_note_id_)
+    return shortcuts.render(
+        request,
+        'elts/item-note-id-update-form.html',
+        {
+            'item_note': item_note_,
+            'form': request.session.pop(
+                'form',
+                forms.ItemNoteForm(instance = item_note_)
+            ),
+        }
+    )
+
+def item_note_id_delete_form(request, item_note_id_):
+    """Returns a form for deleting item note ``item_note_id_``."""
+    return shortcuts.render(
+        request,
+        'elts/item-note-id-delete-form.html',
+        {'item_note': models.ItemNote.objects.get(id = item_note_id_)}
+    )
