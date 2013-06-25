@@ -3,8 +3,8 @@
 {% block title %}{{ item.name }}{% endblock %}
 
 {% block body %}
-    <h1>{{ item.name }}</h1>
     {% if item %}
+        <h1>{{ item.name }}</h1>
         <p>Are you <strong>sure</strong> you want to delete this item?</p>
         <form method='post' action='{% url 'elts.views.item_id' item.id %}'>
             {% csrf_token %}
@@ -12,6 +12,6 @@
             <p><button>Submit</button></p>
         </form>
     {% else %}
-        <p>Item {{ item.id }} does not exist.</p>
+        <p>Item does not exist.</p>
     {% endif %}
 {% endblock %}

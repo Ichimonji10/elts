@@ -173,11 +173,15 @@ def item_id_update_form(request, item_id_):
 
 def item_id_delete_form(request, item_id_):
     """Returns a form for deleting item ``item_id_``."""
+    try:
+        item_ = models.Item.objects.get(id = item_id_)
+    except models.Item.DoesNotExist:
+        item_ = None
     return shortcuts.render(
         # pylint: disable=E1101
         request,
         'elts/item-id-delete-form.html',
-        {'item': models.Item.objects.get(id = item_id_)}
+        {'item': item_}
     )
 
 def tag(request):
@@ -379,8 +383,12 @@ def item_note_id_update_form(request, item_note_id_):
 
 def item_note_id_delete_form(request, item_note_id_):
     """Returns a form for deleting item note ``item_note_id_``."""
+    try:
+        item_note_ = models.ItemNote.objects.get(id = item_note_id_)
+    except models.ItemNote.DoesNotExist:
+        item_note_ = None
     return shortcuts.render(
         request,
         'elts/item-note-id-delete-form.html',
-        {'item_note': models.ItemNote.objects.get(id = item_note_id_)}
+        {'item_note': item_note_}
     )
