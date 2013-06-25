@@ -2,6 +2,30 @@ select option {
     min-width: 10em;
 }
 
+div#navbar {
+    float: left;
+    width: 12em;
+}
+
+div#navbar h1 {
+    margin-top: 0;
+}
+
+div#navbar ul {
+    list-style-type: none;
+    padding-left: 0.5em;
+    line-height: 150%;
+    font-weight: bolder;
+}
+
+div#navbar ul li a {
+    text-decoration: none;
+}
+
+div#body {
+    margin-left: 13em;
+}
+
 /*------------------------------------------------------------------------------
 Tables
 ------------------------------------------------------------------------------*/
@@ -20,17 +44,4 @@ td {
 
 tr:hover td {
     background-color: #E6F2F7;
-}
-
-div#navbar {
-    float: left;
-    width: 12em;
-}
-
-div#navbar h1 {
-    margin-top: 0;
-}
-
-div#body {
-    margin-left: 13em;
 }
