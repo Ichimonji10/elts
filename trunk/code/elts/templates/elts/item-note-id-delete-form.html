@@ -3,19 +3,15 @@
 {% block title %}Delete Item Note{% endblock %}
 
 {% block body %}
-    {% if item_note %}
-        <h1>Delete Item Note</h1>
-        <p>{{ item_note }}</p>
-        <p>Are you <strong>sure</strong> you want to delete this item note?</p>
-        <form
-            method='post'
-            action='{% url 'elts.views.item_note_id' item_note.id %}'
-        >
-            {% csrf_token %}
-            <input type='hidden' name='method_override' value='DELETE' />
-            <p><button>Submit</button></p>
-        </form>
-    {% else %}
-        <p>Item note does not exist.</p>
-    {% endif %}
+    <h1>Delete Item Note</h1>
+    <p>{{ item_note }}</p>
+    <p>Are you <strong>sure</strong> you want to delete this item note?</p>
+    <form
+        method='post'
+        action='{% url 'elts.views.item_note_id' item_note.id %}'
+    >
+        {% csrf_token %}
+        <input type='hidden' name='method_override' value='DELETE' />
+        <p><button>Submit</button></p>
+    </form>
 {% endblock %}

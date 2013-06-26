@@ -5,16 +5,12 @@
 {% block title %}{{ tag.name }}{% endblock %}
 
 {% block body %}
-    {% if tag %}
-        <h1>{{ tag.name }}</h1>
-        <p>{{ tag.description|default:"No description." }}</p>
-        <h2>Items</h2>
-        <ul>
-            {% for item in tag|tag_items %}
-                <li>{{ item|item_link|safe }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>Tag {{ tag.id }} does not exist.</p>
-    {% endif %}
+    <h1>{{ tag.name }}</h1>
+    <p>{{ tag.description|default:"No description." }}</p>
+    <h2>Items</h2>
+    <ul>
+        {% for item in tag|tag_items %}
+            <li>{{ item|item_link|safe }}</li>
+        {% endfor %}
+    </ul>
 {% endblock %}

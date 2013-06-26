@@ -5,56 +5,52 @@
 {% block title %}{{ item.name }}{% endblock %}
 
 {% block body %}
-    {% if item %}
-        <h1>{{ item.name }}</h1>
-        <p>{{ item.description|default:'No description.' }}</p>
-        <h2>Tags</h2>
-        {% if item|item_tags %}
-            <ul>
-                {% for tag in item|item_tags %}
-                    <li>{{ tag|tag_link|safe }}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>No tags.</p>
-        {% endif %}
-        <h2>Related Tags</h2>
-        {% if item|related_tags %}
-            <ul>
-                {% for tag in item|related_tags %}
-                    <li>{{ tag|tag_link|safe }}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>No related tags.</p>
-        {% endif %}
-        <h2>Notes</h2>
-        {% if item|item_notes %}
-            {% for note in item|item_notes %}
-                <article>
-                    <p>
-                        Comment by FIXME - {{ note.note_date }}<br />
-                        <a href='{% url 'elts.views.item_note_id_update_form' note.id %}'>
-                            Update
-                        </a>
-                        -
-                        <a href='{% url 'elts.views.item_note_id_delete_form' note.id %}'>
-                            Delete
-                        </a>
-                    </p>
-                    <p>{{ note.note_text }}</p>
-                </article>
+    <h1>{{ item.name }}</h1>
+    <p>{{ item.description|default:'No description.' }}</p>
+    <h2>Tags</h2>
+    {% if item|item_tags %}
+        <ul>
+            {% for tag in item|item_tags %}
+                <li>{{ tag|tag_link|safe }}</li>
             {% endfor %}
-        {% else %}
-            <p>No notes.</p>
-        {% endif %}
-        <form method='post' action='{% url 'elts.views.item_note' %}'>
-            {% csrf_token %}
-            <input type='hidden' name='item_id' value='{{item.id}}' />
-            {{ form.as_p }}
-            <p><button>Submit</button></p>
-        </form>
+        </ul>
     {% else %}
-        <p>Item {{ item.id }} does not exist.</p>
+        <p>No tags.</p>
     {% endif %}
+    <h2>Related Tags</h2>
+    {% if item|related_tags %}
+        <ul>
+            {% for tag in item|related_tags %}
+                <li>{{ tag|tag_link|safe }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No related tags.</p>
+    {% endif %}
+    <h2>Notes</h2>
+    {% if item|item_notes %}
+        {% for note in item|item_notes %}
+            <article>
+                <p>
+                    Comment by FIXME - {{ note.note_date }}<br />
+                    <a href='{% url 'elts.views.item_note_id_update_form' note.id %}'>
+                        Update
+                    </a>
+                    -
+                    <a href='{% url 'elts.views.item_note_id_delete_form' note.id %}'>
+                        Delete
+                    </a>
+                </p>
+                <p>{{ note.note_text }}</p>
+            </article>
+        {% endfor %}
+    {% else %}
+        <p>No notes.</p>
+    {% endif %}
+    <form method='post' action='{% url 'elts.views.item_note' %}'>
+        {% csrf_token %}
+        <input type='hidden' name='item_id' value='{{item.id}}' />
+        {{ form.as_p }}
+        <p><button>Submit</button></p>
+    </form>
 {% endblock %}

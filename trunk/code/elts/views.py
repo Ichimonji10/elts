@@ -55,11 +55,19 @@ from elts import models
 
 def index(request):
     """Returns a summary of information about ELTS."""
-    return shortcuts.render(request, 'elts/index.html', {})
+    if 'GET' == request.method:
+        return shortcuts.render(request, 'elts/index.html', {})
+
+    else:
+        return http.HttpResponse(status = 405)
 
 def calendar(request):
     """Returns an HTML calendar displaying reservations and lends."""
-    return shortcuts.render(request, 'elts/calendar.html', {})
+    if 'GET' == request.method:
+        return shortcuts.render(request, 'elts/calendar.html', {})
+
+    else:
+        return http.HttpResponse(status = 405)
 
 def item(request):
     """Returns information about all items or creates a new item."""
@@ -91,26 +99,32 @@ def item(request):
                 urlresolvers.reverse('elts.views.item_create_form')
             )
 
-    # The HTTP request ain't a GET or POST, so ignore the request.
     else:
-        pass
+        return http.HttpResponse(status = 405)
 
 def item_create_form(request):
     """Returns a form for creating a new item."""
-    return shortcuts.render(
-        request,
-        'elts/item-create-form.html',
-        {
-            # If user submits a form containing errors, method ``item`` will put
-            # that form into session storage. Use it if available.
-            'form': request.session.pop('form', forms.ItemForm())
-        }
-    )
+    if 'GET' == request.method:
+        return shortcuts.render(
+            request,
+            'elts/item-create-form.html',
+            {
+                # If user submits a form containing errors, method ``item`` will put
+                # that form into session storage. Use it if available.
+                'form': request.session.pop('form', forms.ItemForm())
+            }
+        )
+
+    else:
+        return http.HttpResponse(status = 405)
 
 def item_id(request, item_id_):
     """Read, update, or delete item ``item_id_``."""
-    # pylint: disable=E1101
-    item_ = models.Item.objects.get(id = item_id_)
+    try:
+        item_ = models.Item.objects.get(id = item_id_)
+    except models.Item.DoesNotExist:
+        raise http.Http404
+
     if 'GET' == request.method:
         return shortcuts.render(
             request,
@@ -140,16 +154,13 @@ def item_id(request, item_id_):
 
     elif 'POST'   == request.method \
     and  'DELETE' == request.POST.get('method_override', False):
-        try:
-            models.Item.objects.get(id = item_id_).delete()
-        except AttributeError:
-            pass
+        item_.delete()
         return http.HttpResponseRedirect(
             urlresolvers.reverse('elts.views.item')
         )
 
     else:
-        pass
+        return http.HttpResponse(status = 405)
 
 def item_id_update_form(request, item_id_):
     """Returns a form for updating item ``item_id_``.
@@ -157,32 +168,43 @@ def item_id_update_form(request, item_id_):
     The form is pre-populated with existing data about item ``item_id_``.
 
     """
-    # pylint: disable=E1101
-    item_ = models.Item.objects.get(id = item_id_)
-    return shortcuts.render(
-        request,
-        'elts/item-id-update-form.html',
-        {
-            'item': item_,
-            'form': request.session.pop(
-                'form',
-                forms.ItemForm(instance = item_)
-            ),
-        }
-    )
+    try:
+        item_ = models.Item.objects.get(id = item_id_)
+    except models.Item.DoesNotExist:
+        raise http.Http404
+
+    if 'GET' == request.method:
+        return shortcuts.render(
+            request,
+            'elts/item-id-update-form.html',
+            {
+                'item': item_,
+                'form': request.session.pop(
+                    'form',
+                    forms.ItemForm(instance = item_)
+                ),
+            }
+        )
+
+    else:
+        return http.HttpResponse(status = 405)
 
 def item_id_delete_form(request, item_id_):
     """Returns a form for deleting item ``item_id_``."""
     try:
         item_ = models.Item.objects.get(id = item_id_)
     except models.Item.DoesNotExist:
-        item_ = None
-    return shortcuts.render(
-        # pylint: disable=E1101
-        request,
-        'elts/item-id-delete-form.html',
-        {'item': item_}
-    )
+        raise http.Http404
+
+    if 'GET' == request.method:
+        return shortcuts.render(
+            request,
+            'elts/item-id-delete-form.html',
+            {'item': item_}
+        )
+
+    else:
+        return http.HttpResponse(status = 405)
 
 def tag(request):
     """Returns information about all tags or creates a new tag."""
@@ -214,14 +236,17 @@ def tag(request):
                 urlresolvers.reverse('elts.views.tag_create_form')
             )
 
-    # The HTTP request ain't a GET or POST, so ignore the request.
     else:
-        pass
+        return http.HttpResponse(status = 405)
 
 def tag_id(request, tag_id_):
     """Read, update, or delete tag ``tag_id_``."""
     # pylint: disable=E1101
-    tag_ = models.Tag.objects.get(id = tag_id_)
+    try:
+        tag_ = models.Tag.objects.get(id = tag_id_)
+    except models.Tag.DoesNotExist:
+        raise http.Http404
+
     if 'GET' == request.method:
         return shortcuts.render(request, 'elts/tag-id.html', {'tag': tag_})
 
@@ -244,27 +269,28 @@ def tag_id(request, tag_id_):
 
     elif 'POST'   == request.method \
     and  'DELETE' == request.POST.get('method_override', False):
-        try:
-            models.Tag.objects.get(id = tag_id_).delete()
-        except AttributeError:
-            pass
+        tag_.delete()
         return http.HttpResponseRedirect(
             urlresolvers.reverse('elts.views.tag')
         )
 
     else:
-        pass
+        return http.HttpResponse(status = 405)
 
 def tag_create_form(request):
     """Returns a form for creating a new tag."""
-    return shortcuts.render(
-        request,
-        'elts/tag-create-form.html',
-        {
-            # Put ``form`` into session for retreival by ``tag_create_form``.
-            'form': request.session.pop('form', forms.TagForm())
-        }
-    )
+    if 'GET' == request.method:
+        return shortcuts.render(
+            request,
+            'elts/tag-create-form.html',
+            {
+                # Put ``form`` into session for retreival by ``tag_create_form``.
+                'form': request.session.pop('form', forms.TagForm())
+            }
+        )
+
+    else:
+        return http.HttpResponse(status = 405)
 
 def tag_id_update_form(request, tag_id_):
     """Returns a form for updating tag ``tag_id_``.
@@ -272,25 +298,41 @@ def tag_id_update_form(request, tag_id_):
     The form is pre-populated with existing data about tag ``tag_id_``.
 
     """
-    # pylint: disable=E1101
-    tag_ = models.Tag.objects.get(id = tag_id_)
-    return shortcuts.render(
-        request,
-        'elts/tag-id-update-form.html',
-        {
-            'tag': tag_,
-            'form': request.session.pop('form', forms.TagForm(instance = tag_)),
-        }
-    )
+    try:
+        tag_ = models.Tag.objects.get(id = tag_id_)
+    except models.Tag.DoesNotExist:
+        raise http.Http404
+
+    if 'GET' == request.method:
+        return shortcuts.render(
+            request,
+            'elts/tag-id-update-form.html',
+            {
+                'tag': tag_,
+                'form': request.session.pop('form', forms.TagForm(instance = tag_)),
+            }
+        )
+
+    else:
+        return http.HttpResponse(status = 405)
 
 def tag_id_delete_form(request, tag_id_):
     """Returns a form for updating tag ``tag_id_``."""
-    return shortcuts.render(
-        # pylint: disable=E1101
-        request,
-        'elts/tag-id-delete-form.html',
-        {'tag': models.Tag.objects.get(id = tag_id_)}
-    )
+    try:
+        tag_ = models.Tag.objects.get(id = tag_id_)
+    except models.Tag.DoesNotExist:
+        raise http.Http404
+
+    if 'GET' == request.method:
+        return shortcuts.render(
+            # pylint: disable=E1101
+            request,
+            'elts/tag-id-delete-form.html',
+            {'tag': tag_}
+        )
+
+    else:
+        return http.HttpResponse(status = 405)
 
 def item_note(request):
     """Creates a new item note."""
@@ -301,9 +343,7 @@ def item_note(request):
                 id = request.POST.get('item_id', None)
             )
         except models.Item.DoesNotExist:
-            return http.HttpResponseRedirect(
-                urlresolvers.reverse('elts.views.item')
-            )
+            raise http.Http404
 
         # Get note text and, if valid, save the note.
         form = forms.ItemNoteForm(request.POST)
@@ -322,20 +362,25 @@ def item_note(request):
         )
 
     else:
-        pass
+        return http.HttpResponse(status = 405)
 
 def item_note_id(request, item_note_id_):
     """Updates or deletes item note ``item_note_id_``."""
+    try:
+        item_note_ = models.ItemNote.objects.get(id = item_note_id_)
+    except models.ItemNote.DoesNotExist:
+        return http.Http404
+    item_id_ = item_note_.item_id.id
+
     if 'POST' == request.method \
     and 'PUT'  == request.POST.get('method_override', False):
-        item_note_ = models.ItemNote.objects.get(id = item_note_id_)
         form = forms.ItemNoteForm(request.POST, instance = item_note_)
         if form.is_valid():
             form.save()
             return http.HttpResponseRedirect(
                 urlresolvers.reverse(
-                    'elts.views.item_note_id',
-                    args = [item_note_id_]
+                    'elts.views.item_id',
+                    args = [item_id_]
                 )
             )
         else:
@@ -349,17 +394,13 @@ def item_note_id(request, item_note_id_):
 
     elif 'POST' == request.method \
     and  'DELETE'  == request.POST.get('method_override', False):
-        try:
-            models.ItemNote.objects.get(id = item_note_id_).delete()
-        except AttributeError:
-            pass
-        # FIXME: return to specific item's page
+        item_note_.delete()
         return http.HttpResponseRedirect(
-            urlresolvers.reverse('elts.views.item')
+            urlresolvers.reverse('elts.views.item_id', args = [item_id_])
         )
 
     else:
-        pass
+        return http.HttpResponse(status = 405)
 
 def item_note_id_update_form(request, item_note_id_):
     """Returns a form for updating item note ``item_note_id_``.
@@ -368,27 +409,40 @@ def item_note_id_update_form(request, item_note_id_):
     ``item_note_id_``.
 
     """
-    item_note_ = models.ItemNote.objects.get(id = item_note_id_)
-    return shortcuts.render(
-        request,
-        'elts/item-note-id-update-form.html',
-        {
-            'item_note': item_note_,
-            'form': request.session.pop(
-                'form',
-                forms.ItemNoteForm(instance = item_note_)
-            ),
-        }
-    )
+    try:
+        item_note_ = models.ItemNote.objects.get(id = item_note_id_)
+    except models.ItemNote.DoesNotExist:
+        raise http.Http404
+
+    if 'GET' == request.method:
+        return shortcuts.render(
+            request,
+            'elts/item-note-id-update-form.html',
+            {
+                'item_note': item_note_,
+                'form': request.session.pop(
+                    'form',
+                    forms.ItemNoteForm(instance = item_note_)
+                ),
+            }
+        )
+
+    else:
+        return http.HttpResponse(status = 405)
 
 def item_note_id_delete_form(request, item_note_id_):
     """Returns a form for deleting item note ``item_note_id_``."""
     try:
         item_note_ = models.ItemNote.objects.get(id = item_note_id_)
     except models.ItemNote.DoesNotExist:
-        item_note_ = None
-    return shortcuts.render(
-        request,
-        'elts/item-note-id-delete-form.html',
-        {'item_note': item_note_}
-    )
+        raise http.Http404
+
+    if 'GET' == request.method:
+        return shortcuts.render(
+            request,
+            'elts/item-note-id-delete-form.html',
+            {'item_note': item_note_}
+        )
+
+    else:
+        return http.HttpResponse(status = 405)
