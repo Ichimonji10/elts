@@ -6,6 +6,9 @@
 
 {% block body %}
     <h1>{{ item.name }}</h1>
+    {% if not item.is_lendable %}
+        <p>Item is <strong>not</strong> available for lending.</p>
+    {% endif %}
     <p>{{ item.description|default:'No description.' }}</p>
     <h2>Tags</h2>
     {% if item|item_tags %}

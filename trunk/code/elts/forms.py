@@ -19,7 +19,7 @@ class ItemForm(forms.ModelForm):
     """A form for an Item."""
     class Meta:
         model = models.Item
-        fields = ['name', 'description', 'tags']
+        fields = ['name', 'description', 'tags', 'is_lendable']
 
 class TagForm(forms.ModelForm):
     """A form for a Tag."""
@@ -41,16 +41,10 @@ class PersonNoteForm(forms.ModelForm):
         model = models.PersonNote
         fields = ['note_text']
 
-class ReservationNoteForm(forms.ModelForm):
-    """A form for a ReservationNote."""
-    class Meta:
-        model = models.ReservationNote
-        fields = ['note_text']
-
 class LendNoteForm(forms.ModelForm):
     """A form for a LendNote."""
     class Meta:
         model = models.LendNote
-        fields = ['note_text']
+        fields = ['is_complaint', 'note_text']
 
 # End `NoteForm` definitions.

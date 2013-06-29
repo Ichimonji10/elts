@@ -19,32 +19,40 @@ from django.db import models
 # It is both common and OK for a model to have no __init__ method.
 
 class Item(models.Model):
-    """An item which can be lent out to a person."""
+    """An item which can be lent out to a person.
+
+    If an item is unavailable for normal use (e.g. a laptop's screen is broken),
+    ``is_lendable`` should be marked as false.
+
+    """
     name = models.CharField(max_length = 50, db_index = True)
     description = models.TextField(max_length = 2000, blank = True)
-    due_back_date = models.DateField(blank = True, null = True)
     tags = models.ManyToManyField('Tag', blank = True)
+    is_lendable = models.BooleanField(default = True)
 
     def __unicode__(self):
         """Used by Python and Django when coercing a model instance to a str."""
         return self.name
 
 class Lend(models.Model):
-    """Tracks the lending of an item to a person."""
-    datetime_out = models.DateTimeField(verbose_name = 'date and time out')
-    datetime_in = models.DateTimeField(
-        verbose_name = 'date and time in',
-        blank = True,
-    )
-    item_id = models.ForeignKey('Item')
-    person_id = models.ForeignKey('Person')
+    """Tracks the lending of an item to a person.
 
-class Reservation(models.Model):
-    """Reserves the lending of an item to a person in the future."""
-    date_in = models.DateField()
-    date_out = models.DateField()
+    This model tracks the following pieces of information:
+    
+    * To whom should an item be lent out?
+    * Which item is being lent out?
+    * When does the item go out?
+    * When does the item come back?
+    * When is an item scheduled to go out? (optional)
+    * When is an item scheduled to come back? (optional)
+
+    """
     item_id = models.ForeignKey('Item')
     person_id = models.ForeignKey('Person')
+    out_reservation = models.DateField(blank = True)
+    out_actual = models.DateTimeField(blank = True)
+    back_reservation = models.DateField(blank = True)
+    back_actual = models.DateTimeField(blank = True)
 
 class Tag(models.Model):
     """A one-word description of an item. For example: "laptop"
@@ -131,10 +139,7 @@ class PersonNote(Note):
     """A note about an ``Person``."""
     person_id = models.ForeignKey('Person')
 
-class ReservationNote(Note):
-    """A note about an ``Reservation``."""
-    reservation_id = models.ForeignKey('Reservation')
-
 class LendNote(Note):
     """A note about an ``Lend``."""
     lend_id = models.ForeignKey('Lend')
+    is_complaint = models.BooleanField(default = False)
