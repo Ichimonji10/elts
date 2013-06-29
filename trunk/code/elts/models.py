@@ -1,11 +1,11 @@
 """Data models at the core of ELTS.
 
-`manage.py` can be used to generate a diagram of the tables defined herein. See
-the readme for details.
+``manage.py`` can be used to generate a diagram of the tables defined herein.
+See the readme for details.
 
 If a model does not specify a primary key, django automatically generates a
-column named `id`. Django will not generate `id` if you pass `primary_key =
-True` to some other column.
+column named ``id``. Django will not generate ``id`` if you pass ``primary_key =
+True`` to some other column.
 
 """
 from django.db import models
@@ -19,10 +19,10 @@ from django.db import models
 # It is both common and OK for a model to have no __init__ method.
 
 class Item(models.Model):
-    """An item which can be lent out to a person.
+    """An item.
 
-    If an item is unavailable for normal use (e.g. a laptop's screen is broken),
-    ``is_lendable`` should be marked as false.
+    If an item is unavailable for lending (e.g. a laptop's screen is broken),
+    ``is_lendable`` should be set to false.
 
     """
     name = models.CharField(max_length = 50, db_index = True)
@@ -35,7 +35,7 @@ class Item(models.Model):
         return self.name
 
 class Lend(models.Model):
-    """Tracks the lending of an item to a person.
+    """Tracks the lending of an ``Item`` to a ``User``.
 
     This model tracks the following pieces of information:
     
@@ -48,14 +48,14 @@ class Lend(models.Model):
 
     """
     item_id = models.ForeignKey('Item')
-    person_id = models.ForeignKey('Person')
+    user_id = models.ForeignKey('User')
     out_reservation = models.DateField(blank = True)
     out_actual = models.DateTimeField(blank = True)
     back_reservation = models.DateField(blank = True)
     back_actual = models.DateTimeField(blank = True)
 
 class Tag(models.Model):
-    """A one-word description of an item. For example: "laptop"
+    """A descriptive label for an ``Item``.
 
     Tags are related to Items via a many-to-many relationship. Here, the
     ``Item`` class contains the relevant declaration. See:
@@ -69,40 +69,48 @@ class Tag(models.Model):
         """Used by Python and Django when coercing a model instance to a str."""
         return self.name
 
-class Person(models.Model):
-    """A person.
+# Begin ``User`` model definitions =============================================
 
-    Items can be lent to or reserved for a person.
+class User(models.Model):
+    """An ELTS user.
 
-    The canonical source of information about people is an active directory
-    server. However, for performance reasons, some information should be
-    cached. That information is cached here.
+    No data (besides an ``id`` column) is stored in this model, and that is
+    intentional. This model exists simply to implement inheritance. This makes
+    it possible to, for example, lend an item to a ``User``, regardless of
+    exactly which type of ``User`` it is.
 
     """
-    ad_guid = models.CharField(
-        verbose_name = 'active directory guid',
-        max_length = 16,
-    )
-    full_name = models.CharField(max_length = 50, blank = True)
-    email = models.CharField(max_length = 50, blank = True)
-    # Can a CharField properly handle an AD GUID? GUIDs can have *any* value,
-    # and the UTF-8 characterset may not be able to represent every possible
-    # value. Some 16-byte (128-bit) long binary representation would be better.
+    pass
 
-    def __unicode__(self):
-        """Used by Python and Django when coercing a model instance to a str."""
-        return self.full_name
+class LocalUser(User):
+    """An ELTS user whose info is stored locally."""
+    username = models.CharField(max_length = 50, unique = True)
+    password = models.CharField(max_length = 50) # FIXME
+    fname = models.CharField(max_length = 50, blank = True)
+    lname = models.CharField(max_length = 50, blank = True)
+    email = models.CharField(max_length = 50, blank = True)
+    telephone = models.CharField(max_length = 50, blank = True) # FIXME
+
+class ActiveDirectoryUser(User):
+    """An ELTS user whose info is stored in an Active Directory server."""
+    ad_guid = models.CharField(max_length = 128) # FIXME
+
+# Begin ``Note`` model definitions =============================================
 
 class Note(models.Model):
-    """A note about _something_.
+    """An arbitrary note about something.
 
-    This model is abstract. A child class (say, ``ItemNote``) should include a
-    foreign key (say, ``item_id``) pointing to some other table (say, ``Item``).
+    This model is abstract, and ``Note`` objects cannot be instantiated
+    directly. Instead, more specific child classes should be created. For
+    example:
+
+        class ItemNote(Note):
+            item_id = ForeignKey('Item')
 
     The funny looking value for ``related_name`` allows reverse queries to be
-    performed on ``Person`` objects. For example:
+    performed on ``User`` objects. For example:
 
-        Person.elts_<child_class_name>_set.all()
+        User.elts_<child_class_name>_set.all()
 
     See also:
     https://docs.djangoproject.com/en/dev/topics/db/models/#meta-inheritance
@@ -114,11 +122,10 @@ class Note(models.Model):
     """
     note_text = models.TextField(max_length = 5000)
     note_date = models.DateTimeField(auto_now_add = True)
-    # FIXME
-    #author_id = models.ForeignKey(
-    #    'Person',
-    #    related_name = '%(app_label)s_%(class)s_set',
-    #)
+    author_id = models.ForeignKey(
+        'User',
+        related_name = '%(app_label)s_%(class)s_set',
+    )
 
     def __unicode__(self):
         """Used by Python and Django when coercing a model instance to a str."""
@@ -135,9 +142,9 @@ class ItemNote(Note):
     """A note about an ``Item``."""
     item_id = models.ForeignKey('Item')
 
-class PersonNote(Note):
-    """A note about an ``Person``."""
-    person_id = models.ForeignKey('Person')
+class UserNote(Note):
+    """A note about an ``User``."""
+    user_id = models.ForeignKey('User')
 
 class LendNote(Note):
     """A note about an ``Lend``."""
