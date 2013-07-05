@@ -1,8 +1,8 @@
 """URLs and HTTP operations provided by the ``elts`` app.
 
 This table summarizes what URLs are available for use and what types of HTTP
-requests can be accepted by each. Details about each URL, including arguments,
-are given after the table.
+requests can be accepted by each. See ``views.py`` for details about the
+functions that handle these URLs.
 
 =============================== ======== ====== ======== ========
 URL                             POST     GET    PUT      DELETE
@@ -19,6 +19,8 @@ URL                             POST     GET    PUT      DELETE
 ``item-note/<id>``                              *        *
 ``item-note/<id>/delete-form/``          *
 ``item-note/<id>/update-form/``          *
+``session``                     *
+``session/create-form/``                 *
 ``tag/``                        *        *
 ``tag/<id>/                              *      *        *
 ``tag/<id>/delete-form/``                *

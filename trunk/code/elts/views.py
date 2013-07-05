@@ -1,8 +1,6 @@
 """Business logic for all URLs in the ``elts`` application.
 
-For details on what each function is responsible for, see ``elts/urls.py``.
-That module documents both URL-to-function mappings and the exact
-responsiblities of each function.
+To see what HTTP operations each URL accepts, see ``elts/urls.py``.
 
 Naming Conventions
 ==================
@@ -11,12 +9,13 @@ Functions
 ---------
 
 Each function in this module is responsible for all requests to a single URL,
-including any arguments. For example, ``item()`` is responsible for requests to
-the URLs ``item/`` and ``item/?tag=laptop``, but not ``item/15/``. Each function
-is typically named after the URL it handles. So, ``item/create-form/`` is
-handled by ``item_create_form()``.
+including any arguments. For example, ``item()`` is responsible for the requests
+``GET item/`` and ``GET item/?tag=laptop/``, but not ``GET item/15/``. Each
+function is typically named after the URL it handles. So, ``item/create-form/``
+is handled by ``item_create_form()``, and ``item/15/update-form/`` is handled by
+``item_id_update_form()``.
 
-Several function arguments are named with a trailing underscore. For example,
+Several function arguments use a trailing underscore in their name. For example,
 ``item_id()`` takes an argument called ``item_id_``. This is done to avoid name
 clashes, and is in accordance with PEP 8. See details `here
 <http://www.python.org/dev/peps/pep-0008/#function-and-method-arguments>`_.
