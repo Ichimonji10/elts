@@ -13,16 +13,16 @@ URL                             POST     GET    PUT      DELETE
 ``item/``                       *        *
 ``item/create-form/``                    *
 ``item/<id>/``                           *      *        *
-``item/<id>/update-form/``               *
 ``item/<id>/delete-form/``               *
-``tag/``                        *        *
-``tag/<id>/                              *      *        *
-``tag/<id>/update-form/``                *
-``tag/<id>/delete-form/``                *
+``item/<id>/update-form/``               *
 ``item-note/``                  *
 ``item-note/<id>``                              *        *
-``item-note/<id>/update-form/``          *
 ``item-note/<id>/delete-form/``          *
+``item-note/<id>/update-form/``          *
+``tag/``                        *        *
+``tag/<id>/                              *      *        *
+``tag/<id>/delete-form/``                *
+``tag/<id>/update-form/``                *
 =============================== ======== ====== ======== ========
 
 The URLs in this application are organized in a typical RESTful manner. This
