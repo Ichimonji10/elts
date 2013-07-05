@@ -8,6 +8,7 @@ column named ``id``. Django will not generate ``id`` if you pass ``primary_key =
 True`` to some other column.
 
 """
+from django.contrib.auth.models import User
 from django.db import models
 
 # pylint: disable=R0903
@@ -48,7 +49,7 @@ class Lend(models.Model):
 
     """
     item_id = models.ForeignKey('Item')
-    user_id = models.ForeignKey('User')
+    user_id = models.ForeignKey(User)
     out_reservation = models.DateField(blank = True)
     out_actual = models.DateTimeField(blank = True)
     back_reservation = models.DateField(blank = True)
@@ -68,32 +69,6 @@ class Tag(models.Model):
     def __unicode__(self):
         """Used by Python and Django when coercing a model instance to a str."""
         return self.name
-
-# Begin ``User`` model definitions =============================================
-
-class User(models.Model):
-    """An ELTS user.
-
-    No data (besides an ``id`` column) is stored in this model, and that is
-    intentional. This model exists simply to implement inheritance. This makes
-    it possible to, for example, lend an item to a ``User``, regardless of
-    exactly which type of ``User`` it is.
-
-    """
-    pass
-
-class LocalUser(User):
-    """An ELTS user whose info is stored locally."""
-    username = models.CharField(max_length = 50, unique = True)
-    password = models.CharField(max_length = 50) # FIXME
-    fname = models.CharField(max_length = 50, blank = True)
-    lname = models.CharField(max_length = 50, blank = True)
-    email = models.CharField(max_length = 50, blank = True)
-    telephone = models.CharField(max_length = 50, blank = True) # FIXME
-
-class ActiveDirectoryUser(User):
-    """An ELTS user whose info is stored in an Active Directory server."""
-    ad_guid = models.CharField(max_length = 128) # FIXME
 
 # Begin ``Note`` model definitions =============================================
 
@@ -123,7 +98,7 @@ class Note(models.Model):
     note_text = models.TextField(max_length = 5000)
     note_date = models.DateTimeField(auto_now_add = True)
     author_id = models.ForeignKey(
-        'User',
+        User,
         related_name = '%(app_label)s_%(class)s_set',
     )
 
@@ -144,7 +119,7 @@ class ItemNote(Note):
 
 class UserNote(Note):
     """A note about an ``User``."""
-    user_id = models.ForeignKey('User')
+    user_id = models.ForeignKey(User)
 
 class LendNote(Note):
     """A note about an ``Lend``."""
