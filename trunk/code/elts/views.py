@@ -457,16 +457,14 @@ def session(request):
             password = form.cleaned_data['password'],
         )
         if user is None:
-            # FIXME: Inform user that credentials are invalid
-            form.add_form_error('wigglenog')
-            request.session['form'] = form
+            request.session['errors'] = [u'Credentials are invalid.']
             return http.HttpResponseRedirect(
                 urlresolvers.reverse('elts.views.session_create_form')
             )
 
         # Check for inactive user
         if not user.is_active:
-            # FIXME: Inform user that they are inactive
+            request.session['errors'] = [u'Account is inactive.']
             return http.HttpResponseRedirect(
                 urlresolvers.reverse('elts.views.session_create_form')
             )
@@ -492,7 +490,10 @@ def session_create_form(request):
         return shortcuts.render(
             request,
             'elts/session-create-form.html',
-            {'form': session.get('form', forms.SessionForm())}
+            {
+                'form': forms.SessionForm(),
+                'errors': request.session.pop('errors', [])
+            }
         )
 
     else:

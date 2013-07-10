@@ -5,7 +5,6 @@
 {% block body %}
     <h1>Log In</h1>
     {% include 'elts/_show-errors.html' %}
-    <p>{{ form.errors }}</p>
     <form method='post' action='{% url 'elts.views.session' %}'>
         {% csrf_token %}
         {{ form.as_p }}
