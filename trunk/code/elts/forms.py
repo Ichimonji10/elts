@@ -4,7 +4,11 @@ Unless otherwise noted, all forms defined herein can be used to either create or
 update an object.
 
 """
-from django import forms
+from django.contrib.auth.models import User
+from django.forms.forms import NON_FIELD_ERRORS
+from django.forms import ModelForm
+from django.forms.util import ErrorList
+from django.forms.widgets import PasswordInput
 from elts import models
 
 # pylint: disable=R0903
@@ -15,13 +19,13 @@ from elts import models
 # "Class has no __init__ method" 
 # It is both common and OK for a model to have no __init__ method.
 
-class ItemForm(forms.ModelForm):
+class ItemForm(ModelForm):
     """A form for an Item."""
     class Meta:
         model = models.Item
         fields = ['name', 'description', 'tags', 'is_lendable']
 
-class TagForm(forms.ModelForm):
+class TagForm(ModelForm):
     """A form for a Tag."""
     class Meta:
         model = models.Tag
@@ -29,22 +33,33 @@ class TagForm(forms.ModelForm):
 
 # Start `NoteForm` definitions.
 
-class ItemNoteForm(forms.ModelForm):
+class ItemNoteForm(ModelForm):
     """A form for a ItemNote."""
     class Meta:
         model = models.ItemNote
         fields = ['note_text']
 
-class PersonNoteForm(forms.ModelForm):
-    """A form for a PersonNote."""
+class UserNoteForm(ModelForm):
+    """A form for a UserNote."""
     class Meta:
-        model = models.PersonNote
+        model = models.UserNote
         fields = ['note_text']
 
-class LendNoteForm(forms.ModelForm):
+class LendNoteForm(ModelForm):
     """A form for a LendNote."""
     class Meta:
         model = models.LendNote
         fields = ['is_complaint', 'note_text']
 
 # End `NoteForm` definitions.
+
+class SessionForm(ModelForm):
+    """A form for logging in a ``User``."""
+    class Meta:
+        model = User
+        fields = ['username', 'password']
+        widgets = {'password': PasswordInput()}
+
+    def add_form_error(self, message):
+        self.errors.setdefault(NON_FIELD_ERRORS, ErrorList())
+        self.errors[NON_FIELD_ERRORS].append(message)

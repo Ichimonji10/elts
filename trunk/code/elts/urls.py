@@ -27,6 +27,13 @@ URL                             POST     GET    PUT      DELETE
 ``tag/<id>/update-form/``                *
 =============================== ======== ====== ======== ========
 
+Note: ``session`` should be thought of as singleton resource. It does not make
+sense for a user to interact with session N, as each user has access to only one
+sesion: their own.
+
+REST
+====
+
 The URLs in this application are organized in a typical RESTful manner. This
 means that a URL consists soley of nouns. For example, if trying to delete tag
 15, the URL ``/item/15/delete/`` would be incorrect. Instead, a client should
@@ -36,9 +43,15 @@ URLs are decomposable. If ``/tag/15/lend/`` is available, then ``/tag/15/``,
 design philosophy beyond these few points, and the curious are encouraged to do
 some research.
 
+Client Compatibility
+====================
+
 Currently, web browsers are the *only* type of supported client. It is desirable
 to extend ELTS so that it can support other types of clients, but no concrete
 plans are in place to do so.
+
+Web Browser Hacks
+=================
 
 Web browsers only support ``POST`` and ``GET`` operations; ``PUT`` and
 ``DELETE`` operations cannot be performed. To accomodate this limitation, a
@@ -69,4 +82,6 @@ urlpatterns = patterns('elts.views',
     url(r'^item-note/(\d+)/$',             'item_note_id'),
     url(r'^item-note/(\d+)/update-form/$', 'item_note_id_update_form'),
     url(r'^item-note/(\d+)/delete-form/$', 'item_note_id_delete_form'),
+    url(r'^session/$',                     'session'),
+    url(r'^session/create-form/$',          'session_create_form'),
 )

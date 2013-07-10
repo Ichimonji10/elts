@@ -47,6 +47,7 @@ error include:
     Instance of 'TagForm' has no 'cleaned_data' member
 
 """
+from django.contrib import auth
 from django.core import urlresolvers
 from django import http, shortcuts
 from elts import forms
@@ -80,7 +81,7 @@ def item(request):
         )
 
     # Create a new item.
-    elif 'POST' == request.method:
+    elif _post_request_is_post(request):
         # pylint: disable=E1101
         form = forms.ItemForm(request.POST)
         if form.is_valid():
@@ -134,8 +135,7 @@ def item_id(request, item_id_):
             }
         )
 
-    elif 'POST' == request.method \
-    and  'PUT'  == request.POST.get('method_override', False):
+    elif _post_request_is_put(request):
         form = forms.ItemForm(request.POST, instance = item_)
         if form.is_valid():
             form.save()
@@ -151,8 +151,7 @@ def item_id(request, item_id_):
                 )
             )
 
-    elif 'POST'   == request.method \
-    and  'DELETE' == request.POST.get('method_override', False):
+    elif _post_request_is_delete(request):
         item_.delete()
         return http.HttpResponseRedirect(
             urlresolvers.reverse('elts.views.item')
@@ -217,7 +216,7 @@ def tag(request):
         )
 
     # Create a new tag.
-    elif 'POST' == request.method:
+    elif _post_request_is_post(request):
         # pylint: disable=E1101
         form = forms.TagForm(request.POST)
         if form.is_valid():
@@ -249,8 +248,7 @@ def tag_id(request, tag_id_):
     if 'GET' == request.method:
         return shortcuts.render(request, 'elts/tag-id.html', {'tag': tag_})
 
-    elif 'POST' == request.method \
-    and  'PUT'  == request.POST.get('method_override', False):
+    elif _post_request_is_put(request):
         form = forms.TagForm(request.POST, instance = tag_)
         if form.is_valid():
             form.save()
@@ -266,8 +264,7 @@ def tag_id(request, tag_id_):
                 )
             )
 
-    elif 'POST'   == request.method \
-    and  'DELETE' == request.POST.get('method_override', False):
+    elif _post_request_is_delete(request):
         tag_.delete()
         return http.HttpResponseRedirect(
             urlresolvers.reverse('elts.views.tag')
@@ -335,7 +332,7 @@ def tag_id_delete_form(request, tag_id_):
 
 def item_note(request):
     """Creates a new item note."""
-    if 'POST' == request.method:
+    if _post_request_is_post(request):
         # For which item is this note being created?
         try:
             item_ = models.Item.objects.get(
@@ -371,8 +368,7 @@ def item_note_id(request, item_note_id_):
         return http.Http404
     item_id_ = item_note_.item_id.id
 
-    if 'POST' == request.method \
-    and 'PUT'  == request.POST.get('method_override', False):
+    if _post_request_is_put(request):
         form = forms.ItemNoteForm(request.POST, instance = item_note_)
         if form.is_valid():
             form.save()
@@ -391,8 +387,7 @@ def item_note_id(request, item_note_id_):
                 )
             )
 
-    elif 'POST' == request.method \
-    and  'DELETE'  == request.POST.get('method_override', False):
+    elif _post_request_is_delete(request):
         item_note_.delete()
         return http.HttpResponseRedirect(
             urlresolvers.reverse('elts.views.item_id', args = [item_id_])
@@ -445,3 +440,84 @@ def item_note_id_delete_form(request, item_note_id_):
 
     else:
         return http.HttpResponse(status = 405)
+
+def session(request):
+    """Either create or destroy a session (i.e. log in or log out)."""
+    if _post_request_is_post(request):
+        # Check validity of submitted data
+        form = forms.SessionForm(request.POST)
+        if not form.is_valid():
+            return http.HttpResponseRedirect(
+                urlresolvers.reverse('elts.views.session_create_form')
+            )
+
+        # Check for invalid credentials.
+        user = auth.authenticate(
+            username = form.cleaned_data['username'],
+            password = form.cleaned_data['password'],
+        )
+        if user is None:
+            # FIXME: Inform user that credentials are invalid
+            form.add_form_error('wigglenog')
+            request.session['form'] = form
+            return http.HttpResponseRedirect(
+                urlresolvers.reverse('elts.views.session_create_form')
+            )
+
+        # Check for inactive user
+        if not user.is_active:
+            # FIXME: Inform user that they are inactive
+            return http.HttpResponseRedirect(
+                urlresolvers.reverse('elts.views.session_create_form')
+            )
+
+        # Everything checks out. Let 'em in.
+        auth.login(request, user)
+        return http.HttpResponseRedirect(
+            urlresolvers.reverse('elts.views.index')
+        )
+
+    elif _post_request_is_delete(request):
+        auth.logout(request)
+        return http.HttpResponseRedirect(
+            urlresolvers.reverse('elts.views.session_create_form')
+        )
+
+    else:
+        return http.HttpResponse(status = 405)
+
+def session_create_form(request):
+    """Return a form for creating a session (i.e. form for logging in)."""
+    if 'GET' == request.method:
+        return shortcuts.render(
+            request,
+            'elts/session-create-form.html',
+            {'form': session.get('form', forms.SessionForm())}
+        )
+
+    else:
+        return http.HttpResponse(status = 405)
+
+def _post_request_is_post(request):
+    """Returns True if POST request should be treated as a POST request."""
+    if 'POST' == request.method \
+    and 'method_override' not in request.POST:
+        return True
+    else:
+        return False
+
+def _post_request_is_put(request):
+    """Returns True if POST request should be treated as PUT request."""
+    if 'POST' == request.method \
+    and 'PUT' == request.POST.get('method_override', False):
+        return True
+    else:
+        return False
+
+def _post_request_is_delete(request):
+    """Returns True if POST request should be treated as DELETE request."""
+    if 'POST' == request.method \
+    and 'DELETE' == request.POST.get('method_override', False):
+        return True
+    else:
+        return False
