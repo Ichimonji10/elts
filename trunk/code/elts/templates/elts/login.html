@@ -1,0 +1,21 @@
+{# Allows {% static 'path/to/resource.ext' %} tag to be used. #}
+{% load staticfiles %}
+
+<!DOCTYPE HTML>
+<html lang='en'>
+    <head>
+        <meta charset='utf-8'>
+        <title>ELTS Login</title>
+        <link rel='stylesheet' href='{% static 'elts/login.css' %}' />
+        {{ head }}
+    </head>
+    <body>
+        <h1>ELTS Login</h1>
+        <form method='post' action='{% url 'elts.views.login' %}'>
+            {% include 'elts/_show-errors.html' %}
+            {% csrf_token %}
+            {{ form.as_p }}
+            <p><button>Submit</button></p>
+        </form>
+    </body>
+</html>

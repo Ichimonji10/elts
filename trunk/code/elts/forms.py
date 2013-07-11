@@ -53,13 +53,9 @@ class LendNoteForm(ModelForm):
 
 # End `NoteForm` definitions.
 
-class SessionForm(ModelForm):
+class LoginForm(ModelForm):
     """A form for logging in a ``User``."""
     class Meta:
         model = User
         fields = ['username', 'password']
         widgets = {'password': PasswordInput()}
-
-    def add_form_error(self, message):
-        self.errors.setdefault(NON_FIELD_ERRORS, ErrorList())
-        self.errors[NON_FIELD_ERRORS].append(message)

@@ -18,6 +18,12 @@
                 <li><a href='{% url 'elts.views.item'     %}'>Items</a></li>
                 <li><a href='{% url 'elts.views.tag'      %}'>Tags</a></li>
             </ul>
+            <!-- FIXME: display user info -->
+            <form method='post' action='{% url 'elts.views.login' %}'>
+                {% csrf_token %}
+                <input type='hidden' name='method_override' value='DELETE' />
+                <p><button>Log Out</button></p>
+            </form>
         </div>
         <div id='body'>
             {% block body %}

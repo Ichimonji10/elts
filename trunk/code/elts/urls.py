@@ -19,17 +19,12 @@ URL                             POST     GET    PUT      DELETE
 ``item-note/<id>``                              *        *
 ``item-note/<id>/delete-form/``          *
 ``item-note/<id>/update-form/``          *
-``session``                     *
-``session/create-form/``                 *
+``login/``                      *        *               *
 ``tag/``                        *        *
 ``tag/<id>/                              *      *        *
 ``tag/<id>/delete-form/``                *
 ``tag/<id>/update-form/``                *
 =============================== ======== ====== ======== ========
-
-Note: ``session`` should be thought of as singleton resource. It does not make
-sense for a user to interact with session N, as each user has access to only one
-sesion: their own.
 
 REST
 ====
@@ -82,6 +77,5 @@ urlpatterns = patterns('elts.views',
     url(r'^item-note/(\d+)/$',             'item_note_id'),
     url(r'^item-note/(\d+)/update-form/$', 'item_note_id_update_form'),
     url(r'^item-note/(\d+)/delete-form/$', 'item_note_id_delete_form'),
-    url(r'^session/$',                     'session'),
-    url(r'^session/create-form/$',          'session_create_form'),
+    url(r'^login/$',                       'login'),
 )

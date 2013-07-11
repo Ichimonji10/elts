@@ -48,7 +48,7 @@ error include:
 
 """
 from django.contrib import auth
-from django.core import urlresolvers
+from django.core.urlresolvers import reverse
 from django import http, shortcuts
 from elts import forms
 from elts import models
@@ -87,7 +87,7 @@ def item(request):
         if form.is_valid():
             new_item = form.save()
             return http.HttpResponseRedirect(
-                urlresolvers.reverse(
+                reverse(
                     'elts.views.item_id',
                     args = [new_item.id]
                 )
@@ -96,7 +96,7 @@ def item(request):
             # Put ``form`` into session for retreival by ``item_create_form``.
             request.session['form'] = form
             return http.HttpResponseRedirect(
-                urlresolvers.reverse('elts.views.item_create_form')
+                reverse('elts.views.item_create_form')
             )
 
     else:
@@ -140,12 +140,12 @@ def item_id(request, item_id_):
         if form.is_valid():
             form.save()
             return http.HttpResponseRedirect(
-                urlresolvers.reverse('elts.views.item_id', args = [item_id_])
+                reverse('elts.views.item_id', args = [item_id_])
             )
         else:
             request.session['form'] = form
             return http.HttpResponseRedirect(
-                urlresolvers.reverse(
+                reverse(
                     'elts.views.item_id_update_form',
                     args = [item_id_]
                 )
@@ -153,9 +153,7 @@ def item_id(request, item_id_):
 
     elif _post_request_is_delete(request):
         item_.delete()
-        return http.HttpResponseRedirect(
-            urlresolvers.reverse('elts.views.item')
-        )
+        return http.HttpResponseRedirect(reverse('elts.views.item'))
 
     else:
         return http.HttpResponse(status = 405)
@@ -222,7 +220,7 @@ def tag(request):
         if form.is_valid():
             new_tag = form.save()
             return http.HttpResponseRedirect(
-                urlresolvers.reverse(
+                reverse(
                     'elts.views.tag_id',
                     args = [new_tag.id],
                 )
@@ -231,7 +229,7 @@ def tag(request):
             # Put ``form`` into session for retreival by ``tag_create_form``.
             request.session['form'] = form
             return http.HttpResponseRedirect(
-                urlresolvers.reverse('elts.views.tag_create_form')
+                reverse('elts.views.tag_create_form')
             )
 
     else:
@@ -253,12 +251,12 @@ def tag_id(request, tag_id_):
         if form.is_valid():
             form.save()
             return http.HttpResponseRedirect(
-                urlresolvers.reverse('elts.views.tag_id', args = [tag_id_])
+                reverse('elts.views.tag_id', args = [tag_id_])
             )
         else:
             request.session['form'] = form
             return http.HttpResponseRedirect(
-                urlresolvers.reverse(
+                reverse(
                     'elts.views.tag_id_update_form',
                     args = [tag_id_]
                 )
@@ -266,9 +264,7 @@ def tag_id(request, tag_id_):
 
     elif _post_request_is_delete(request):
         tag_.delete()
-        return http.HttpResponseRedirect(
-            urlresolvers.reverse('elts.views.tag')
-        )
+        return http.HttpResponseRedirect(reverse('elts.views.tag'))
 
     else:
         return http.HttpResponse(status = 405)
@@ -354,7 +350,7 @@ def item_note(request):
 
         # Return the user to this page whether or not the note was saved.
         return http.HttpResponseRedirect(
-            urlresolvers.reverse('elts.views.item_id', args = [item_.id])
+            reverse('elts.views.item_id', args = [item_.id])
         )
 
     else:
@@ -373,7 +369,7 @@ def item_note_id(request, item_note_id_):
         if form.is_valid():
             form.save()
             return http.HttpResponseRedirect(
-                urlresolvers.reverse(
+                reverse(
                     'elts.views.item_id',
                     args = [item_id_]
                 )
@@ -381,7 +377,7 @@ def item_note_id(request, item_note_id_):
         else:
             request.session['form'] = form
             return http.HttpResponseRedirect(
-                urlresolvers.reverse(
+                reverse(
                     'elts.views.item_note_id_update_form',
                     args = [item_note_id_]
                 )
@@ -390,7 +386,7 @@ def item_note_id(request, item_note_id_):
     elif _post_request_is_delete(request):
         item_note_.delete()
         return http.HttpResponseRedirect(
-            urlresolvers.reverse('elts.views.item_id', args = [item_id_])
+            reverse('elts.views.item_id', args = [item_id_])
         )
 
     else:
@@ -441,15 +437,28 @@ def item_note_id_delete_form(request, item_note_id_):
     else:
         return http.HttpResponse(status = 405)
 
-def session(request):
-    """Either create or destroy a session (i.e. log in or log out)."""
-    if _post_request_is_post(request):
+def login(request):
+    """Present a form for logging in, log in, or log out."""
+    # FIXME: allow display of form.errors
+
+    # Present form for logging in
+    if 'GET' == request.method:
+        return shortcuts.render(
+            request,
+            'elts/login.html',
+            {
+                'form': forms.LoginForm(),
+                'errors': request.session.pop('errors', [])
+            }
+        )
+
+    # Log in user
+    elif _post_request_is_post(request):
         # Check validity of submitted data
-        form = forms.SessionForm(request.POST)
+        form = forms.LoginForm(request.POST)
         if not form.is_valid():
-            return http.HttpResponseRedirect(
-                urlresolvers.reverse('elts.views.session_create_form')
-            )
+            request.session['errors'] = [u'POST request contains errors.']
+            return http.HttpResponseRedirect(reverse('elts.views.login'))
 
         # Check for invalid credentials.
         user = auth.authenticate(
@@ -458,43 +467,21 @@ def session(request):
         )
         if user is None:
             request.session['errors'] = [u'Credentials are invalid.']
-            return http.HttpResponseRedirect(
-                urlresolvers.reverse('elts.views.session_create_form')
-            )
+            return http.HttpResponseRedirect(reverse('elts.views.login'))
 
         # Check for inactive user
         if not user.is_active:
             request.session['errors'] = [u'Account is inactive.']
-            return http.HttpResponseRedirect(
-                urlresolvers.reverse('elts.views.session_create_form')
-            )
+            return http.HttpResponseRedirect(reverse('elts.views.login'))
 
         # Everything checks out. Let 'em in.
         auth.login(request, user)
-        return http.HttpResponseRedirect(
-            urlresolvers.reverse('elts.views.index')
-        )
+        return http.HttpResponseRedirect(reverse('elts.views.index'))
 
+    # Log out user
     elif _post_request_is_delete(request):
         auth.logout(request)
-        return http.HttpResponseRedirect(
-            urlresolvers.reverse('elts.views.session_create_form')
-        )
-
-    else:
-        return http.HttpResponse(status = 405)
-
-def session_create_form(request):
-    """Return a form for creating a session (i.e. form for logging in)."""
-    if 'GET' == request.method:
-        return shortcuts.render(
-            request,
-            'elts/session-create-form.html',
-            {
-                'form': forms.SessionForm(),
-                'errors': request.session.pop('errors', [])
-            }
-        )
+        return http.HttpResponseRedirect(reverse('elts.views.login'))
 
     else:
         return http.HttpResponse(status = 405)

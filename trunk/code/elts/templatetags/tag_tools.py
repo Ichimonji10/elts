@@ -1,9 +1,9 @@
 """Tools for displaying tag information in templates."""
-from django.core import urlresolvers
-from django import template
+from django.core.urlresolvers import reverse
+from django.template import Library
 from elts import models
 
-register = template.Library()
+register = Library()
 
 @register.filter
 def item_tags(item):
@@ -25,7 +25,7 @@ def tag_link(tag):
 
     """
     return '<a href="{}">{}</a>'.format(
-        urlresolvers.reverse(
+        reverse(
             'elts.views.tag_id',
             args = [tag.id],
         ),
@@ -47,7 +47,7 @@ def item_link(item):
 
     """
     return '<a href="{}">{}</a>'.format(
-        urlresolvers.reverse(
+        reverse(
             'elts.views.item_id',
             args = [item.id],
         ),
