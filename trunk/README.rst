@@ -205,7 +205,7 @@ like this::
     |-- urls.py
     `-- views.py
 
-At first glance, this is super awkward. Why not do the following instead? ::
+At first glance, this appears redundant. Why not do the following instead? ::
 
     $ tree code/elts/
     code/elts/
