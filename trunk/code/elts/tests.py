@@ -10,20 +10,33 @@ For details, see:
 https://docs.djangoproject.com/en/1.5/topics/testing/overview/#writing-tests
 
 """
+from django.core.urlresolvers import reverse
 from django.test import TestCase
-from django.utils.unittest import TestLoader, TestSuite
+from django.utils import unittest
+from elts import factories
+import doctest
 
 class LoginTestCase(TestCase):
     def test_get_login_page(self):
-        self.assertTrue(True)
-        # fetch login page with self.user, assert 200 return code, etc
+        """GET the login view."""
+        response = self.client.get(reverse('elts.views.login'))
+        self.assertEqual(response.status_code, 200)
 
-class SampleTestCase(TestCase):
-    def test_addition(self):
-        self.assertEqual(2 + 2, 4)
+    # idea: get UserFactory.attributes(), then create user, then log in w/attrs
+    #def test_post_login(self): # FIXME
+    #    """POST and DELETE the login view."""
+    #    self.assertRedirects(response, reverse('elts.views.index'))
+
+    def test_post_login_failure(self):
+        """POST the login view, incorrectly."""
+        response = self.client.post(
+            reverse('elts.views.login'),
+            {'username': '', 'password': ''}
+        )
+        self.assertRedirects(response, reverse('elts.views.login'))
 
 def suite():
-    return TestSuite([
-        TestLoader().loadTestsFromTestCase(LoginTestCase),
-        TestLoader().loadTestsFromTestCase(SampleTestCase),
-    ])
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(LoginTestCase))
+    suite.addTest(doctest.DocTestSuite(factories))
+    return suite
