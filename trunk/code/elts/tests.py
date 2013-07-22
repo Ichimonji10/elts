@@ -25,11 +25,11 @@ class LoginTestCase(TestCase):
 
     def test_post_login(self): # FIXME: add DELETE test
         """POST and DELETE the login view."""
-        user = factories.UserFactory.create(password = make_password('hackme'))
-        user.save() # FIXME: shouldn't need to save
+        password = factories.random_utf8_str(20)
+        user = factories.UserFactory.create(password = make_password(password))
         response = self.client.post(
             reverse('elts.views.login'),
-            {'username': user.username, 'password': 'hackme'} # FIXME: magic str
+            {'username': user.username, 'password': password}
         )
         self.assertRedirects(response, reverse('elts.views.index'))
 

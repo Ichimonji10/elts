@@ -1,15 +1,16 @@
 """Factory Boy factory definitions.
 
 These factory definitions are used as an alternative to plain old Django
-fixtures. Read about Factory Boy here:
-http://factoryboy.readthedocs.org/en/latest/
+fixtures. Note especially that "All factories for a Django Model should use the
+DjangoModelFactory base class." Otherwise, weird failures occur. Read more about
+Factory Boy here: http://factoryboy.readthedocs.org/en/latest/
 
 """
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from elts import models
-import factory
-import random
+from factory.django import DjangoModelFactory
+from factory import Sequence
 import random
 
 # See ``_random_username`` for details on why this charset was chosen.
@@ -54,7 +55,7 @@ def _random_integer(lower, upper):
         return lower
     return random.randint(0, upper - lower) + lower
 
-def _random_utf8_str(min_len = 0, max_len = 0):
+def random_utf8_str(min_len = 0, max_len = 0):
     """Returns a string consisting of random UTF-8 characters.
 
     If ``min_len >= max_len``, returns a string exactly ``min_len`` characters
@@ -69,7 +70,7 @@ def _random_utf8_str(min_len = 0, max_len = 0):
         string += unichr(random.randrange(0, 65535))
     return string
 
-class UserFactory(factory.Factory):
+class UserFactory(DjangoModelFactory):
     """Creates a ``django.contrib.auth.models.User`` object.
 
     The created object has a random username and password. Neither is usable by
@@ -77,16 +78,16 @@ class UserFactory(factory.Factory):
 
     >>> UserFactory.build().full_clean()
     >>> user = UserFactory.build(
-    ...     username = '1234567890',
+    ...     username = 'user0',
     ...     password = make_password('hackme')
     ... )
     >>> user.full_clean()
     >>> user.username
-    '1234567890'
+    'user0'
     >>> user.check_password('hackme')
     True
 
     """
     FACTORY_FOR = User
-    username = factory.Sequence(lambda n: _random_username(n))
-    password = make_password(_random_utf8_str(20))
+    username = Sequence(lambda n: _random_username(n))
+    password = make_password(random_utf8_str(20))
