@@ -10,6 +10,7 @@ For details, see:
 https://docs.djangoproject.com/en/1.5/topics/testing/overview/#writing-tests
 
 """
+from django.contrib.auth.hashers import make_password
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils import unittest
@@ -22,12 +23,13 @@ class LoginTestCase(TestCase):
         response = self.client.get(reverse('elts.views.login'))
         self.assertEqual(response.status_code, 200)
 
-    def test_post_login(self): # FIXME
+    def test_post_login(self): # FIXME: add DELETE test
         """POST and DELETE the login view."""
-        user = factories.UserFactory.create()
+        user = factories.UserFactory.create(password = make_password('hackme'))
+        user.save() # FIXME: shouldn't need to save
         response = self.client.post(
             reverse('elts.views.login'),
-            {'username': user.username, 'password': user.password}
+            {'username': user.username, 'password': 'hackme'} # FIXME: magic str
         )
         self.assertRedirects(response, reverse('elts.views.index'))
 

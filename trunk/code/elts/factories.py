@@ -15,20 +15,23 @@ import random
 # See ``_random_username`` for details on why this charset was chosen.
 USERNAME_CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_@+.-'
 
-def _random_username():
+def _random_username(prefix = ''):
     """Generates a random username for a User.
 
     For details on why usernames are composed from USERNAME_CHARSET, see:
     https://docs.djangoproject.com/en/dev/ref/contrib/auth/#django.contrib.auth.models.User.username
 
-    >>> len(_random_username()) in range(1, 31)
+    >>> username = _random_username()
+    >>> len(username) in range(1, 31)
     True
-    >>> _random_username()[0] in USERNAME_CHARSET
+    >>> username[0] in USERNAME_CHARSET
+    True
+    >>> username[-1] in USERNAME_CHARSET
     True
 
     """
-    username = ''
-    for i in range(random.randint(1, 30)):
+    username = str(prefix)
+    for i in range(random.randint(1, 30 - len(username))):
         username += random.choice(USERNAME_CHARSET)
     return username
 
@@ -73,12 +76,17 @@ class UserFactory(factory.Factory):
     a normal human.
 
     >>> UserFactory.build().full_clean()
-    >>> user = UserFactory.build(username = '1234567890')
+    >>> user = UserFactory.build(
+    ...     username = '1234567890',
+    ...     password = make_password('hackme')
+    ... )
     >>> user.full_clean()
     >>> user.username
     '1234567890'
+    >>> user.check_password('hackme')
+    True
 
     """
     FACTORY_FOR = User
-    username = _random_username()
+    username = factory.Sequence(lambda n: _random_username(n))
     password = make_password(_random_utf8_str(20))
