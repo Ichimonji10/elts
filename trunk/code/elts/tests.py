@@ -22,10 +22,14 @@ class LoginTestCase(TestCase):
         response = self.client.get(reverse('elts.views.login'))
         self.assertEqual(response.status_code, 200)
 
-    # idea: get UserFactory.attributes(), then create user, then log in w/attrs
-    #def test_post_login(self): # FIXME
-    #    """POST and DELETE the login view."""
-    #    self.assertRedirects(response, reverse('elts.views.index'))
+    def test_post_login(self): # FIXME
+        """POST and DELETE the login view."""
+        user = factories.UserFactory.create()
+        response = self.client.post(
+            reverse('elts.views.login'),
+            {'username': user.username, 'password': user.password}
+        )
+        self.assertRedirects(response, reverse('elts.views.index'))
 
     def test_post_login_failure(self):
         """POST the login view, incorrectly."""

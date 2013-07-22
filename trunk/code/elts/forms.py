@@ -6,7 +6,7 @@ update an object.
 """
 from django.contrib.auth.models import User
 from django.forms.forms import NON_FIELD_ERRORS
-from django.forms import ModelForm
+from django.forms import CharField, Form, ModelForm
 from django.forms.util import ErrorList
 from django.forms.widgets import PasswordInput
 from elts import models
@@ -53,9 +53,10 @@ class LendNoteForm(ModelForm):
 
 # End `NoteForm` definitions.
 
-class LoginForm(ModelForm):
+class LoginForm(Form):
     """A form for logging in a ``User``."""
+    username = CharField()
+    password = CharField(widget = PasswordInput)
+
     class Meta:
-        model = User
         fields = ['username', 'password']
-        widgets = {'password': PasswordInput()}

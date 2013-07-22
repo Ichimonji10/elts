@@ -48,15 +48,17 @@ error include:
 
 """
 from django.contrib import auth
+from django.core.exceptions import NON_FIELD_ERRORS
 from django.core.urlresolvers import reverse
-from django import http, shortcuts
+from django import http
+from django.shortcuts import render
 from elts import forms
 from elts import models
 
 def index(request):
     """Returns a summary of information about ELTS."""
     if 'GET' == request.method:
-        return shortcuts.render(request, 'elts/index.html', {})
+        return render(request, 'elts/index.html', {})
 
     else:
         return http.HttpResponse(status = 405)
@@ -64,7 +66,7 @@ def index(request):
 def calendar(request):
     """Returns an HTML calendar displaying reservations and lends."""
     if 'GET' == request.method:
-        return shortcuts.render(request, 'elts/calendar.html', {})
+        return render(request, 'elts/calendar.html', {})
 
     else:
         return http.HttpResponse(status = 405)
@@ -73,7 +75,7 @@ def item(request):
     """Returns information about all items or creates a new item."""
     # Return a list of all items.
     if 'GET' == request.method:
-        return shortcuts.render(
+        return render(
             # pylint: disable=E1101
             request,
             'elts/item.html',
@@ -105,12 +107,12 @@ def item(request):
 def item_create_form(request):
     """Returns a form for creating a new item."""
     if 'GET' == request.method:
-        return shortcuts.render(
+        return render(
             request,
             'elts/item-create-form.html',
             {
-                # If user submits a form containing errors, method ``item`` will put
-                # that form into session storage. Use it if available.
+                # If user submits a form containing errors, method ``item`` will
+                # put that form into session storage. Use it if available.
                 'form': request.session.pop('form', forms.ItemForm())
             }
         )
@@ -126,7 +128,7 @@ def item_id(request, item_id_):
         raise http.Http404
 
     if 'GET' == request.method:
-        return shortcuts.render(
+        return render(
             request,
             'elts/item-id.html',
             {
@@ -170,7 +172,7 @@ def item_id_update_form(request, item_id_):
         raise http.Http404
 
     if 'GET' == request.method:
-        return shortcuts.render(
+        return render(
             request,
             'elts/item-id-update-form.html',
             {
@@ -193,11 +195,7 @@ def item_id_delete_form(request, item_id_):
         raise http.Http404
 
     if 'GET' == request.method:
-        return shortcuts.render(
-            request,
-            'elts/item-id-delete-form.html',
-            {'item': item_}
-        )
+        return render(request, 'elts/item-id-delete-form.html', {'item': item_})
 
     else:
         return http.HttpResponse(status = 405)
@@ -206,8 +204,7 @@ def tag(request):
     """Returns information about all tags or creates a new tag."""
     # Return a list of all tags.
     if 'GET' == request.method:
-        return shortcuts.render(
-            # pylint: disable=E1101
+        return render(
             request,
             'elts/tag.html',
             {'tags': models.Tag.objects.all()}
@@ -244,7 +241,7 @@ def tag_id(request, tag_id_):
         raise http.Http404
 
     if 'GET' == request.method:
-        return shortcuts.render(request, 'elts/tag-id.html', {'tag': tag_})
+        return render(request, 'elts/tag-id.html', {'tag': tag_})
 
     elif _post_request_is_put(request):
         form = forms.TagForm(request.POST, instance = tag_)
@@ -272,7 +269,7 @@ def tag_id(request, tag_id_):
 def tag_create_form(request):
     """Returns a form for creating a new tag."""
     if 'GET' == request.method:
-        return shortcuts.render(
+        return render(
             request,
             'elts/tag-create-form.html',
             {
@@ -296,7 +293,7 @@ def tag_id_update_form(request, tag_id_):
         raise http.Http404
 
     if 'GET' == request.method:
-        return shortcuts.render(
+        return render(
             request,
             'elts/tag-id-update-form.html',
             {
@@ -316,12 +313,7 @@ def tag_id_delete_form(request, tag_id_):
         raise http.Http404
 
     if 'GET' == request.method:
-        return shortcuts.render(
-            # pylint: disable=E1101
-            request,
-            'elts/tag-id-delete-form.html',
-            {'tag': tag_}
-        )
+        return render(request, 'elts/tag-id-delete-form.html', {'tag': tag_})
 
     else:
         return http.HttpResponse(status = 405)
@@ -405,7 +397,7 @@ def item_note_id_update_form(request, item_note_id_):
         raise http.Http404
 
     if 'GET' == request.method:
-        return shortcuts.render(
+        return render(
             request,
             'elts/item-note-id-update-form.html',
             {
@@ -428,7 +420,7 @@ def item_note_id_delete_form(request, item_note_id_):
         raise http.Http404
 
     if 'GET' == request.method:
-        return shortcuts.render(
+        return render(
             request,
             'elts/item-note-id-delete-form.html',
             {'item_note': item_note_}
@@ -439,17 +431,12 @@ def item_note_id_delete_form(request, item_note_id_):
 
 def login(request):
     """Present a form for logging in, log in, or log out."""
-    # FIXME: allow display of form.errors
-
     # Present form for logging in
     if 'GET' == request.method:
-        return shortcuts.render(
+        return render(
             request,
             'elts/login.html',
-            {
-                'form': forms.LoginForm(),
-                'errors': request.session.pop('errors', [])
-            }
+            {'form': request.session.pop('form', forms.LoginForm())}
         )
 
     # Log in user
@@ -457,7 +444,7 @@ def login(request):
         # Check validity of submitted data
         form = forms.LoginForm(request.POST)
         if not form.is_valid():
-            request.session['errors'] = [u'POST request contains errors.']
+            request.session['form'] = form
             return http.HttpResponseRedirect(reverse('elts.views.login'))
 
         # Check for invalid credentials.
@@ -466,12 +453,18 @@ def login(request):
             password = form.cleaned_data['password'],
         )
         if user is None:
-            request.session['errors'] = [u'Credentials are invalid.']
+            form._errors[NON_FIELD_ERRORS] = form.error_class([
+                'Credentials are invalid.'
+            ])
+            request.session['form'] = form
             return http.HttpResponseRedirect(reverse('elts.views.login'))
 
         # Check for inactive user
         if not user.is_active:
-            request.session['errors'] = [u'Account is inactive.']
+            form._errors[NON_FIELD_ERRORS] = form.error_class([
+                'Account is inactive.'
+            ])
+            request.session['form'] = form
             return http.HttpResponseRedirect(reverse('elts.views.login'))
 
         # Everything checks out. Let 'em in.
