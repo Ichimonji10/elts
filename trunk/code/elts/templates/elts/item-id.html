@@ -20,7 +20,7 @@
     {% else %}
         <p>No tags.</p>
     {% endif %}
-    <h2>Related Tags</h2>
+    <h3>Related Tags</h3>
     {% if item|related_tags %}
         <ul>
             {% for tag in item|related_tags %}
@@ -35,7 +35,7 @@
         {% for note in item|item_notes %}
             <article>
                 <p>
-                    Comment by FIXME - {{ note.note_date }}<br />
+                    Comment by {{user.username}} - {{ note.note_date }}<br />
                     <a href='{% url 'elts.views.item_note_id_update_form' note.id %}'>
                         Update
                     </a>
@@ -50,6 +50,7 @@
     {% else %}
         <p>No notes.</p>
     {% endif %}
+    <h3>Create Note</h3>
     <form method='post' action='{% url 'elts.views.item_note' %}'>
         {% csrf_token %}
         <input type='hidden' name='item_id' value='{{item.id}}' />

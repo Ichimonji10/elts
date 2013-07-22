@@ -334,7 +334,7 @@ def item_note(request):
         if form.is_valid():
             models.ItemNote(
                 note_text = form.cleaned_data['note_text'],
-                #author_id = None, # FIXME
+                author_id = request.user,
                 item_id = item_,
             ).save()
         else:
