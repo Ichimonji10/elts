@@ -17,6 +17,11 @@ from django.utils import unittest
 from elts import factories
 import doctest
 
+def _login(client):
+    """Create a user and use it to log in ``client``."""
+    user, password = factories.create_user()
+    return client.login(username = user.username, password = password)
+
 class LoginTestCase(TestCase):
     def test_get_login(self):
         """GET the login view."""
@@ -25,21 +30,44 @@ class LoginTestCase(TestCase):
 
     def test_post_login(self):
         """POST the login view."""
-        password = factories.random_utf8_str(20)
-        user = factories.UserFactory.create(password = make_password(password))
+        user, password = factories.create_user()
         response = self.client.post(
             reverse('elts.views.login'),
             {'username': user.username, 'password': password}
         )
         self.assertRedirects(response, reverse('elts.views.index'))
-        # FIXME: check for presence of user ID
-        # FIXME: add DELETE test
 
     def test_post_login_failure(self):
         """POST the login view, incorrectly."""
         response = self.client.post(
             reverse('elts.views.login'),
             {'username': '', 'password': ''}
+        )
+        self.assertRedirects(response, reverse('elts.views.login'))
+
+    def test_login(self):
+        """Test ``self.client.login()``."""
+        user, password = factories.create_user()
+        self.assertTrue(
+            self.client.login(username = user.username, password = password)
+        )
+
+    def test__login(self):
+        """Test ``_login()``."""
+        self.assertTrue(_login(self.client))
+
+    def test_delete_login(self):
+        """DELETE the login view."""
+        _login(self.client)
+        response = self.client.delete(reverse('elts.views.login'))
+        self.assertRedirects(response, reverse('elts.views.login'))
+
+    def test_delete_login_via_post(self):
+        """DELETE the login view via a POST request."""
+        _login(self.client)
+        response = self.client.post(
+            reverse('elts.views.login'),
+            {'method_override': 'DELETE'}
         )
         self.assertRedirects(response, reverse('elts.views.login'))
 

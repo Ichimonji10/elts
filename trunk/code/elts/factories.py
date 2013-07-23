@@ -91,3 +91,19 @@ class UserFactory(DjangoModelFactory):
     FACTORY_FOR = User
     username = Sequence(lambda n: _random_username(n))
     password = make_password(random_utf8_str(20))
+
+def create_user():
+    """Build and save a User.
+    
+    Returns an array of two objects: a User and a it's unencrypted password.
+    
+    >>> user, password = create_user()
+    >>> user.check_password(password)
+    True
+    >>> user.id is None
+    False
+
+    """
+    password = random_utf8_str(20)
+    user = UserFactory.create(password = make_password(password))
+    return [user, password]
