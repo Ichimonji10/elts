@@ -83,7 +83,7 @@ def item(request):
         )
 
     # Create a new item.
-    elif _post_request_is_post(request):
+    elif _request_is_post(request):
         # pylint: disable=E1101
         form = forms.ItemForm(request.POST)
         if form.is_valid():
@@ -110,11 +110,9 @@ def item_create_form(request):
         return render(
             request,
             'elts/item-create-form.html',
-            {
-                # If user submits a form containing errors, method ``item`` will
-                # put that form into session storage. Use it if available.
-                'form': request.session.pop('form', forms.ItemForm())
-            }
+            # If user submits a form containing errors, method ``item`` will
+            # put that form into session storage. Use it if available.
+            {'form': request.session.pop('form', forms.ItemForm())}
         )
 
     else:
@@ -137,7 +135,7 @@ def item_id(request, item_id_):
             }
         )
 
-    elif _post_request_is_put(request):
+    elif _request_is_put(request):
         form = forms.ItemForm(request.POST, instance = item_)
         if form.is_valid():
             form.save()
@@ -153,7 +151,7 @@ def item_id(request, item_id_):
                 )
             )
 
-    elif _post_request_is_delete(request):
+    elif _request_is_delete(request):
         item_.delete()
         return http.HttpResponseRedirect(reverse('elts.views.item'))
 
@@ -211,7 +209,7 @@ def tag(request):
         )
 
     # Create a new tag.
-    elif _post_request_is_post(request):
+    elif _request_is_post(request):
         # pylint: disable=E1101
         form = forms.TagForm(request.POST)
         if form.is_valid():
@@ -243,7 +241,7 @@ def tag_id(request, tag_id_):
     if 'GET' == request.method:
         return render(request, 'elts/tag-id.html', {'tag': tag_})
 
-    elif _post_request_is_put(request):
+    elif _request_is_put(request):
         form = forms.TagForm(request.POST, instance = tag_)
         if form.is_valid():
             form.save()
@@ -259,7 +257,7 @@ def tag_id(request, tag_id_):
                 )
             )
 
-    elif _post_request_is_delete(request):
+    elif _request_is_delete(request):
         tag_.delete()
         return http.HttpResponseRedirect(reverse('elts.views.tag'))
 
@@ -320,7 +318,7 @@ def tag_id_delete_form(request, tag_id_):
 
 def item_note(request):
     """Creates a new item note."""
-    if _post_request_is_post(request):
+    if _request_is_post(request):
         # For which item is this note being created?
         try:
             item_ = models.Item.objects.get(
@@ -356,7 +354,7 @@ def item_note_id(request, item_note_id_):
         return http.Http404
     item_id_ = item_note_.item_id.id
 
-    if _post_request_is_put(request):
+    if _request_is_put(request):
         form = forms.ItemNoteForm(request.POST, instance = item_note_)
         if form.is_valid():
             form.save()
@@ -375,7 +373,7 @@ def item_note_id(request, item_note_id_):
                 )
             )
 
-    elif _post_request_is_delete(request):
+    elif _request_is_delete(request):
         item_note_.delete()
         return http.HttpResponseRedirect(
             reverse('elts.views.item_id', args = [item_id_])
@@ -440,7 +438,7 @@ def login(request):
         )
 
     # Log in user
-    elif _post_request_is_post(request):
+    elif _request_is_post(request):
         # Check validity of submitted data
         form = forms.LoginForm(request.POST)
         if not form.is_valid():
@@ -472,33 +470,53 @@ def login(request):
         return http.HttpResponseRedirect(reverse('elts.views.index'))
 
     # Log out user
-    elif _post_request_is_delete(request):
+    elif _request_is_delete(request):
         auth.logout(request)
         return http.HttpResponseRedirect(reverse('elts.views.login'))
 
     else:
         return http.HttpResponse(status = 405)
 
-def _post_request_is_post(request):
-    """Returns True if POST request should be treated as a POST request."""
+def _request_is_post(request):
+    """Returns True if request is a vanilla POST request.
+
+    A request is a vanilla POST request if it lacks a ``method_override``
+    parameter.
+
+    """
     if 'POST' == request.method \
     and 'method_override' not in request.POST:
         return True
-    else:
-        return False
+    return False
 
-def _post_request_is_put(request):
-    """Returns True if POST request should be treated as PUT request."""
-    if 'POST' == request.method \
-    and 'PUT' == request.POST.get('method_override', False):
-        return True
-    else:
-        return False
+def _request_is_put(request):
+    """Returns True if the request method is PUT or PUT via POST.
 
-def _post_request_is_delete(request):
-    """Returns True if POST request should be treated as DELETE request."""
-    if 'POST' == request.method \
-    and 'DELETE' == request.POST.get('method_override', False):
+    Under certain circumstances, a POST request should be treated as a PUT
+    request. This method will return true if ``request.method`` is either a
+    normal PUT request or a special POST request.
+
+    """
+    method = request.method
+    if 'PUT' == method or (
+        'POST' == method and
+        'PUT' == request.POST.get('method_override', False)
+    ):
         return True
-    else:
-        return False
+    return False
+
+def _request_is_delete(request):
+    """Returns True if the request method is DELETE or DELETE via POST.
+
+    Under certain circumstances, a POST request should be treated as a DELETE
+    request. This method will return true if ``request.method`` is either a
+    normal DELETE request or a special POST request.
+
+    """
+    method = request.method
+    if 'DELETE' == method or (
+        'POST' == method and
+        'DELETE' == request.POST.get('method_override', False)
+    ):
+        return True
+    return False
