@@ -21,6 +21,7 @@ URL                             POST     GET    PUT      DELETE
 ``item-note/<id>/update-form/``          *
 ``login/``                      *        *               *
 ``tag/``                        *        *
+``tag/create-form/``                     *
 ``tag/<id>/                              *      *        *
 ``tag/<id>/delete-form/``                *
 ``tag/<id>/update-form/``                *

@@ -94,9 +94,9 @@ class UserFactory(DjangoModelFactory):
 
 def create_user():
     """Build and save a User.
-    
+
     Returns an array of two objects: a User and a it's unencrypted password.
-    
+
     >>> user, password = create_user()
     >>> user.check_password(password)
     True
