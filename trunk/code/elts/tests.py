@@ -22,31 +22,220 @@ def _login(client):
     user, password = factories.create_user()
     return client.login(username = user.username, password = password)
 
-class LoginTestCase(TestCase):
-    def test_get_login(self):
-        """GET the login view."""
-        response = self.client.get(reverse('elts.views.login'))
+class IndexTestCase(TestCase):
+    """Tests for the ``/`` URI.
+
+    The ``/`` URI is reachable through the 'elts.views.index' function.
+
+    """
+    FUNCTION = 'elts.views.index'
+
+    def setUp(self):
+        """Authenticates the client before each test."""
+        _login(self.client)
+
+    def test_post(self):
+        """POSTs ``self.FUNCTION``."""
+        response = self.client.post(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 405)
+
+    def test_get(self):
+        """GETs ``self.FUNCTION``."""
+        response = self.client.get(reverse(self.FUNCTION))
         self.assertEqual(response.status_code, 200)
 
-    def test_post_login(self):
-        """POST the login view."""
+    def test_put(self):
+        """PUTs ``self.FUNCTION``."""
+        response = self.client.put(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete(self):
+        """DELETEs ``self.FUNCTION``."""
+        response = self.client.delete(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 405)
+
+class CalendarTestCase(TestCase):
+    """Tests for the ``calendar/`` URI.
+
+    The ``calendar/`` URI is reachable through the 'elts.views.calendar'
+    function.
+
+    """
+    FUNCTION = 'elts.views.calendar'
+
+    def setUp(self):
+        """Authenticates the client before each test."""
+        _login(self.client)
+
+    def test_post(self):
+        """POSTs ``self.FUNCTION``."""
+        response = self.client.post(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 405)
+
+    def test_get(self):
+        """GETs ``self.FUNCTION``."""
+        response = self.client.get(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 200)
+
+    def test_put(self):
+        """PUTs ``self.FUNCTION``."""
+        response = self.client.put(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete(self):
+        """DELETEs ``self.FUNCTION``."""
+        response = self.client.delete(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 405)
+
+class ItemTestCase(TestCase):
+    """Tests for the ``item/`` URI.
+
+    The ``item/`` URI is available through elts.views.item.
+
+    """
+    FUNCTION = 'elts.views.item'
+
+    def setUp(self):
+        """Authenticates the client before each test."""
+        _login(self.client)
+
+    def test_post_failure(self):
+        """POSTs ``self.FUNCTION``, incorrectly."""
+        response = self.client.post(reverse(self.FUNCTION), {})
+        self.assertRedirects(
+            response,
+            reverse('{}_create_form'.format(self.FUNCTION))
+        )
+
+    def test_get(self):
+        """GETs ``self.FUNCTION``."""
+        response = self.client.get(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 200)
+
+    def test_put(self):
+        """PUTs ``self.FUNCTION``."""
+        response = self.client.put(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete(self):
+        """DELETEs ``self.FUNCTION``."""
+        response = self.client.delete(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 405)
+
+class ItemCreateFormTestCase(TestCase):
+    """Tests for the ``item/create-form/`` URI.
+
+    The ``item/create-form/`` URI is available through
+    elts.views.item_create_form.
+
+    """
+    FUNCTION = 'elts.views.item_create_form'
+
+    def setUp(self):
+        """Authenticates the client before each test."""
+        _login(self.client)
+
+    def test_post(self):
+        """POSTs ``self.FUNCTION``."""
+        response = self.client.post(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 405)
+
+    def test_get(self):
+        """GETs ``self.FUNCTION``."""
+        response = self.client.get(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 200)
+
+    def test_put(self):
+        """PUTs ``self.FUNCTION``."""
+        response = self.client.put(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete(self):
+        """DELETEs ``self.FUNCTION``."""
+        response = self.client.delete(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 405)
+
+class ItemNoteTestCase(TestCase):
+    """Tests for the ``item-note/`` URI.
+
+    The ``item-note/`` URI is available through 'elts.views.item_note'.
+
+    """
+    FUNCTION = 'elts.views.item_note'
+
+    def setUp(self):
+        """Authenticates the client before each test."""
+        _login(self.client)
+
+    def test_post_failure(self):
+        """POSTs ``self.FUNCTION``, incorrectly."""
+        response = self.client.post(reverse(self.FUNCTION), {})
+        self.assertEqual(response.status_code, 422)
+
+    def test_get(self):
+        """GETs ``self.FUNCTION``."""
+        response = self.client.get(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 405)
+
+    def test_put(self):
+        """PUTs ``self.FUNCTION``."""
+        response = self.client.put(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete(self):
+        """DELETEs ``self.FUNCTION``."""
+        response = self.client.delete(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 405)
+
+class LoginTestCase(TestCase):
+    """Tests for the the ``login/`` URI.
+
+    The ``login/`` URI is reachable through the 'elts.views.login' function.
+
+    """
+    FUNCTION = 'elts.views.login'
+
+    def test_post(self):
+        """POSTs ``self.FUNCTION``."""
         user, password = factories.create_user()
         response = self.client.post(
-            reverse('elts.views.login'),
+            reverse(self.FUNCTION),
             {'username': user.username, 'password': password}
         )
         self.assertRedirects(response, reverse('elts.views.index'))
 
-    def test_post_login_failure(self):
-        """POST the login view, incorrectly."""
+    def test_post_failure(self):
+        """POSTs ``self.FUNCTION``, incorrectly."""
+        response = self.client.post(reverse(self.FUNCTION), {})
+        self.assertRedirects(response, reverse(self.FUNCTION))
+
+    def test_get(self):
+        """GETs ``self.FUNCTION``."""
+        response = self.client.get(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 200)
+
+    def test_put(self):
+        """PUTs ``self.FUNCTION``."""
+        response = self.client.put(reverse(self.FUNCTION), {})
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete(self):
+        """DELETEs ``self.FUNCTION``."""
+        _login(self.client)
+        response = self.client.delete(reverse(self.FUNCTION))
+        self.assertRedirects(response, reverse(self.FUNCTION))
+
+    def test_delete_via_post(self):
+        """DELETEs ``self.FUNCTION`` via a POST request."""
+        _login(self.client)
         response = self.client.post(
-            reverse('elts.views.login'),
-            {'username': '', 'password': ''}
+            reverse(self.FUNCTION),
+            {'method_override': 'DELETE'}
         )
-        self.assertRedirects(response, reverse('elts.views.login'))
+        self.assertRedirects(response, reverse(self.FUNCTION))
 
     def test_login(self):
-        """Test ``self.client.login()``."""
+        """Tests ``self.client.login()``."""
         user, password = factories.create_user()
         self.assertTrue(
             self.client.login(username = user.username, password = password)
@@ -56,56 +245,83 @@ class LoginTestCase(TestCase):
         """Test ``_login()``."""
         self.assertTrue(_login(self.client))
 
-    def test_delete_login(self):
-        """DELETE the login view."""
-        _login(self.client)
-        response = self.client.delete(reverse('elts.views.login'))
-        self.assertRedirects(response, reverse('elts.views.login'))
-
-    def test_delete_login_via_post(self):
-        """DELETE the login view via a POST request."""
-        _login(self.client)
-        response = self.client.post(
-            reverse('elts.views.login'),
-            {'method_override': 'DELETE'}
-        )
-        self.assertRedirects(response, reverse('elts.views.login'))
-
-class IndexTestCase(TestCase):
-    def test_get_index(self):
-        """GET the index view."""
-        response = self.client.get(reverse('elts.views.index'))
-        self.assertEqual(response.status_code, 200)
-
-class CalendarTestCase(TestCase):
-    def test_get_calendar(self):
-        """GET the calendar view."""
-        response = self.client.get(reverse('elts.views.calendar'))
-        self.assertEqual(response.status_code, 200)
-
-class ItemTestCase(TestCase):
-    def test_get_item(self):
-        """GET the item view."""
-        response = self.client.get(reverse('elts.views.item'))
-        self.assertEqual(response.status_code, 200)
-
-    def test_get_item_create_form(self):
-        """GET the item_create_form view."""
-        response = self.client.get(reverse('elts.views.item_create_form'))
-        self.assertEqual(response.status_code, 200)
-
 class TagTestCase(TestCase):
-    def test_get_tag(self):
-        """GET the tag view."""
-        response = self.client.get(reverse('elts.views.tag'))
+    """Tests for the ``tag/`` URI.
+
+    The ``tag/`` URI can be reached through 'elts.views.tag'
+
+    """
+    FUNCTION = 'elts.views.tag'
+
+    def setUp(self):
+        """Authenticates the client before each test."""
+        _login(self.client)
+
+    def test_post_failure(self):
+        """POSTs ``self.FUNCTION``, incorrectly."""
+        response = self.client.post(reverse(self.FUNCTION), {})
+        self.assertRedirects(
+            response,
+            reverse('{}_create_form'.format(self.FUNCTION))
+        )
+
+    def test_get(self):
+        """GETs ``self.FUNCTION``."""
+        response = self.client.get(reverse(self.FUNCTION))
         self.assertEqual(response.status_code, 200)
+
+    def test_put(self):
+        """PUTs ``self.FUNCTION``."""
+        response = self.client.put(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete(self):
+        """DELETEs ``self.FUNCTION``."""
+        response = self.client.delete(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 405)
+
+class TagCreateFormTestCase(TestCase):
+    """Tests for the ``tag/create-form/`` URI.
+
+    The ``tag/create-form/`` URI can be reached through
+    'elts.views.tag_create_form'.
+
+    """
+    FUNCTION = 'elts.views.tag_create_form'
+
+    def setUp(self):
+        """Authenticates the client before each test."""
+        _login(self.client)
+
+    def test_post(self):
+        """POSTs ``self.FUNCTION``."""
+        response = self.client.post(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 405)
+
+    def test_get(self):
+        """GETs ``self.FUNCTION``."""
+        response = self.client.get(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 200)
+
+    def test_put(self):
+        """PUTs ``self.FUNCTION``."""
+        response = self.client.put(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete(self):
+        """DELETEs ``self.FUNCTION``."""
+        response = self.client.delete(reverse(self.FUNCTION))
+        self.assertEqual(response.status_code, 405)
 
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.TestLoader().loadTestsFromTestCase(IndexTestCase))
     suite.addTest(unittest.TestLoader().loadTestsFromTestCase(CalendarTestCase))
     suite.addTest(unittest.TestLoader().loadTestsFromTestCase(ItemTestCase))
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(ItemCreateFormTestCase))
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(ItemNoteTestCase))
     suite.addTest(unittest.TestLoader().loadTestsFromTestCase(LoginTestCase))
     suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TagTestCase))
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TagCreateFormTestCase))
     suite.addTest(doctest.DocTestSuite(factories))
     return suite
