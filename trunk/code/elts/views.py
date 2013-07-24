@@ -325,7 +325,7 @@ def item_note(request):
                 id = request.POST.get('item_id', None)
             )
         except models.Item.DoesNotExist:
-            raise http.Http404
+            return http.HttpResponse(status = 422)
 
         # Get note text and, if valid, save the note.
         form = forms.ItemNoteForm(request.POST)
