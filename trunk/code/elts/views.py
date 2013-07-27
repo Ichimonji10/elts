@@ -47,6 +47,7 @@ error include:
     Instance of 'TagForm' has no 'cleaned_data' member
 
 """
+from django.contrib.auth.decorators import login_required
 from django.contrib import auth
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.core.urlresolvers import reverse
@@ -55,6 +56,7 @@ from django.shortcuts import render
 from elts import forms
 from elts import models
 
+@login_required
 def index(request):
     """Returns a summary of information about ELTS."""
     if 'GET' == request.method:
@@ -63,6 +65,7 @@ def index(request):
     else:
         return http.HttpResponse(status = 405)
 
+@login_required
 def calendar(request):
     """Returns an HTML calendar displaying reservations and lends."""
     if 'GET' == request.method:
@@ -71,6 +74,7 @@ def calendar(request):
     else:
         return http.HttpResponse(status = 405)
 
+@login_required
 def item(request):
     """Returns information about all items or creates a new item."""
     # Return a list of all items.
@@ -104,6 +108,7 @@ def item(request):
     else:
         return http.HttpResponse(status = 405)
 
+@login_required
 def item_create_form(request):
     """Returns a form for creating a new item."""
     if 'GET' == request.method:
@@ -118,6 +123,7 @@ def item_create_form(request):
     else:
         return http.HttpResponse(status = 405)
 
+@login_required
 def item_id(request, item_id_):
     """Read, update, or delete item ``item_id_``."""
     try:
@@ -158,6 +164,7 @@ def item_id(request, item_id_):
     else:
         return http.HttpResponse(status = 405)
 
+@login_required
 def item_id_update_form(request, item_id_):
     """Returns a form for updating item ``item_id_``.
 
@@ -185,6 +192,7 @@ def item_id_update_form(request, item_id_):
     else:
         return http.HttpResponse(status = 405)
 
+@login_required
 def item_id_delete_form(request, item_id_):
     """Returns a form for deleting item ``item_id_``."""
     try:
@@ -198,6 +206,7 @@ def item_id_delete_form(request, item_id_):
     else:
         return http.HttpResponse(status = 405)
 
+@login_required
 def tag(request):
     """Returns information about all tags or creates a new tag."""
     # Return a list of all tags.
@@ -230,6 +239,7 @@ def tag(request):
     else:
         return http.HttpResponse(status = 405)
 
+@login_required
 def tag_id(request, tag_id_):
     """Read, update, or delete tag ``tag_id_``."""
     # pylint: disable=E1101
@@ -264,6 +274,7 @@ def tag_id(request, tag_id_):
     else:
         return http.HttpResponse(status = 405)
 
+@login_required
 def tag_create_form(request):
     """Returns a form for creating a new tag."""
     if 'GET' == request.method:
@@ -279,6 +290,7 @@ def tag_create_form(request):
     else:
         return http.HttpResponse(status = 405)
 
+@login_required
 def tag_id_update_form(request, tag_id_):
     """Returns a form for updating tag ``tag_id_``.
 
@@ -303,6 +315,7 @@ def tag_id_update_form(request, tag_id_):
     else:
         return http.HttpResponse(status = 405)
 
+@login_required
 def tag_id_delete_form(request, tag_id_):
     """Returns a form for updating tag ``tag_id_``."""
     try:
@@ -316,6 +329,7 @@ def tag_id_delete_form(request, tag_id_):
     else:
         return http.HttpResponse(status = 405)
 
+@login_required
 def item_note(request):
     """Creates a new item note."""
     if _request_is_post(request):
@@ -346,6 +360,7 @@ def item_note(request):
     else:
         return http.HttpResponse(status = 405)
 
+@login_required
 def item_note_id(request, item_note_id_):
     """Updates or deletes item note ``item_note_id_``."""
     try:
@@ -382,6 +397,7 @@ def item_note_id(request, item_note_id_):
     else:
         return http.HttpResponse(status = 405)
 
+@login_required
 def item_note_id_update_form(request, item_note_id_):
     """Returns a form for updating item note ``item_note_id_``.
 
@@ -410,6 +426,7 @@ def item_note_id_update_form(request, item_note_id_):
     else:
         return http.HttpResponse(status = 405)
 
+@login_required
 def item_note_id_delete_form(request, item_note_id_):
     """Returns a form for deleting item note ``item_note_id_``."""
     try:

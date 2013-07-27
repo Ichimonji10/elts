@@ -25,6 +25,8 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+LOGIN_URL = 'elts.views.login'
+
 DATABASES = {
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
     'default': {
