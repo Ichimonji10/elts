@@ -16,11 +16,23 @@ from django.test import TestCase
 from django.utils import unittest
 from elts import factories
 import doctest
+import string
 
 def _login(client):
     """Create a user and use it to log in ``client``."""
     user, password = factories.create_user()
     return client.login(username = user.username, password = password)
+
+def _test_logout(self):
+    """Logout, then GET ``self.URI``."""
+    self.client.logout()
+    response = self.client.get(self.URI)
+    target = string.join([
+        reverse('elts.views.login'),
+        '?'
+        'next={}'.format(self.URI),
+    ], '')
+    self.assertRedirects(response, target)
 
 class IndexTestCase(TestCase):
     """Tests for the ``/`` URI.
@@ -28,31 +40,35 @@ class IndexTestCase(TestCase):
     The ``/`` URI is reachable through the 'elts.views.index' function.
 
     """
-    FUNCTION = 'elts.views.index'
+    URI = reverse('elts.views.index')
 
     def setUp(self):
         """Authenticates the client before each test."""
         _login(self.client)
 
     def test_post(self):
-        """POSTs ``self.FUNCTION``."""
-        response = self.client.post(reverse(self.FUNCTION))
+        """POSTs ``self.URI``."""
+        response = self.client.post(self.URI)
         self.assertEqual(response.status_code, 405)
 
     def test_get(self):
-        """GETs ``self.FUNCTION``."""
-        response = self.client.get(reverse(self.FUNCTION))
+        """GETs ``self.URI``."""
+        response = self.client.get(self.URI)
         self.assertEqual(response.status_code, 200)
 
     def test_put(self):
-        """PUTs ``self.FUNCTION``."""
-        response = self.client.put(reverse(self.FUNCTION))
+        """PUTs ``self.URI``."""
+        response = self.client.put(self.URI)
         self.assertEqual(response.status_code, 405)
 
     def test_delete(self):
-        """DELETEs ``self.FUNCTION``."""
-        response = self.client.delete(reverse(self.FUNCTION))
+        """DELETEs ``self.URI``."""
+        response = self.client.delete(self.URI)
         self.assertEqual(response.status_code, 405)
+
+    def test_logout(self):
+        """Calls ``_test_logout()``."""
+        _test_logout(self)
 
 class CalendarTestCase(TestCase):
     """Tests for the ``calendar/`` URI.
@@ -61,31 +77,35 @@ class CalendarTestCase(TestCase):
     function.
 
     """
-    FUNCTION = 'elts.views.calendar'
+    URI = reverse('elts.views.calendar')
 
     def setUp(self):
         """Authenticates the client before each test."""
         _login(self.client)
 
     def test_post(self):
-        """POSTs ``self.FUNCTION``."""
-        response = self.client.post(reverse(self.FUNCTION))
+        """POSTs ``self.URI``."""
+        response = self.client.post(self.URI)
         self.assertEqual(response.status_code, 405)
 
     def test_get(self):
-        """GETs ``self.FUNCTION``."""
-        response = self.client.get(reverse(self.FUNCTION))
+        """GETs ``self.URI``."""
+        response = self.client.get(self.URI)
         self.assertEqual(response.status_code, 200)
 
     def test_put(self):
-        """PUTs ``self.FUNCTION``."""
-        response = self.client.put(reverse(self.FUNCTION))
+        """PUTs ``self.URI``."""
+        response = self.client.put(self.URI)
         self.assertEqual(response.status_code, 405)
 
     def test_delete(self):
-        """DELETEs ``self.FUNCTION``."""
-        response = self.client.delete(reverse(self.FUNCTION))
+        """DELETEs ``self.URI``."""
+        response = self.client.delete(self.URI)
         self.assertEqual(response.status_code, 405)
+
+    def test_logout(self):
+        """Calls ``_test_logout()``."""
+        _test_logout(self)
 
 class ItemTestCase(TestCase):
     """Tests for the ``item/`` URI.
@@ -93,34 +113,38 @@ class ItemTestCase(TestCase):
     The ``item/`` URI is available through elts.views.item.
 
     """
-    FUNCTION = 'elts.views.item'
+    URI = reverse('elts.views.item')
 
     def setUp(self):
         """Authenticates the client before each test."""
         _login(self.client)
 
     def test_post_failure(self):
-        """POSTs ``self.FUNCTION``, incorrectly."""
-        response = self.client.post(reverse(self.FUNCTION), {})
+        """POSTs ``self.URI``, incorrectly."""
+        response = self.client.post(self.URI, {})
         self.assertRedirects(
             response,
-            reverse('{}_create_form'.format(self.FUNCTION))
+            reverse('elts.views.item_create_form')
         )
 
     def test_get(self):
-        """GETs ``self.FUNCTION``."""
-        response = self.client.get(reverse(self.FUNCTION))
+        """GETs ``self.URI``."""
+        response = self.client.get(self.URI)
         self.assertEqual(response.status_code, 200)
 
     def test_put(self):
-        """PUTs ``self.FUNCTION``."""
-        response = self.client.put(reverse(self.FUNCTION))
+        """PUTs ``self.URI``."""
+        response = self.client.put(self.URI)
         self.assertEqual(response.status_code, 405)
 
     def test_delete(self):
-        """DELETEs ``self.FUNCTION``."""
-        response = self.client.delete(reverse(self.FUNCTION))
+        """DELETEs ``self.URI``."""
+        response = self.client.delete(self.URI)
         self.assertEqual(response.status_code, 405)
+
+    def test_logout(self):
+        """Calls ``_test_logout()``."""
+        _test_logout(self)
 
 class ItemCreateFormTestCase(TestCase):
     """Tests for the ``item/create-form/`` URI.
@@ -129,31 +153,35 @@ class ItemCreateFormTestCase(TestCase):
     elts.views.item_create_form.
 
     """
-    FUNCTION = 'elts.views.item_create_form'
+    URI = reverse('elts.views.item_create_form')
 
     def setUp(self):
         """Authenticates the client before each test."""
         _login(self.client)
 
     def test_post(self):
-        """POSTs ``self.FUNCTION``."""
-        response = self.client.post(reverse(self.FUNCTION))
+        """POSTs ``self.URI``."""
+        response = self.client.post(self.URI)
         self.assertEqual(response.status_code, 405)
 
     def test_get(self):
-        """GETs ``self.FUNCTION``."""
-        response = self.client.get(reverse(self.FUNCTION))
+        """GETs ``self.URI``."""
+        response = self.client.get(self.URI)
         self.assertEqual(response.status_code, 200)
 
     def test_put(self):
-        """PUTs ``self.FUNCTION``."""
-        response = self.client.put(reverse(self.FUNCTION))
+        """PUTs ``self.URI``."""
+        response = self.client.put(self.URI)
         self.assertEqual(response.status_code, 405)
 
     def test_delete(self):
-        """DELETEs ``self.FUNCTION``."""
-        response = self.client.delete(reverse(self.FUNCTION))
+        """DELETEs ``self.URI``."""
+        response = self.client.delete(self.URI)
         self.assertEqual(response.status_code, 405)
+
+    def test_logout(self):
+        """Calls ``_test_logout()``."""
+        _test_logout(self)
 
 class ItemNoteTestCase(TestCase):
     """Tests for the ``item-note/`` URI.
@@ -161,31 +189,35 @@ class ItemNoteTestCase(TestCase):
     The ``item-note/`` URI is available through 'elts.views.item_note'.
 
     """
-    FUNCTION = 'elts.views.item_note'
+    URI = reverse('elts.views.item_note')
 
     def setUp(self):
         """Authenticates the client before each test."""
         _login(self.client)
 
     def test_post_failure(self):
-        """POSTs ``self.FUNCTION``, incorrectly."""
-        response = self.client.post(reverse(self.FUNCTION), {})
+        """POSTs ``self.URI``, incorrectly."""
+        response = self.client.post(self.URI, {})
         self.assertEqual(response.status_code, 422)
 
     def test_get(self):
-        """GETs ``self.FUNCTION``."""
-        response = self.client.get(reverse(self.FUNCTION))
+        """GETs ``self.URI``."""
+        response = self.client.get(self.URI)
         self.assertEqual(response.status_code, 405)
 
     def test_put(self):
-        """PUTs ``self.FUNCTION``."""
-        response = self.client.put(reverse(self.FUNCTION))
+        """PUTs ``self.URI``."""
+        response = self.client.put(self.URI)
         self.assertEqual(response.status_code, 405)
 
     def test_delete(self):
-        """DELETEs ``self.FUNCTION``."""
-        response = self.client.delete(reverse(self.FUNCTION))
+        """DELETEs ``self.URI``."""
+        response = self.client.delete(self.URI)
         self.assertEqual(response.status_code, 405)
+
+    def test_logout(self):
+        """Calls ``_test_logout()``."""
+        _test_logout(self)
 
 class LoginTestCase(TestCase):
     """Tests for the the ``login/`` URI.
@@ -193,46 +225,46 @@ class LoginTestCase(TestCase):
     The ``login/`` URI is reachable through the 'elts.views.login' function.
 
     """
-    FUNCTION = 'elts.views.login'
+    URI = reverse('elts.views.login')
 
     def test_post(self):
-        """POSTs ``self.FUNCTION``."""
+        """POSTs ``self.URI``."""
         user, password = factories.create_user()
         response = self.client.post(
-            reverse(self.FUNCTION),
+            self.URI,
             {'username': user.username, 'password': password}
         )
         self.assertRedirects(response, reverse('elts.views.index'))
 
     def test_post_failure(self):
-        """POSTs ``self.FUNCTION``, incorrectly."""
-        response = self.client.post(reverse(self.FUNCTION), {})
-        self.assertRedirects(response, reverse(self.FUNCTION))
+        """POSTs ``self.URI``, incorrectly."""
+        response = self.client.post(self.URI, {})
+        self.assertRedirects(response, self.URI)
 
     def test_get(self):
-        """GETs ``self.FUNCTION``."""
-        response = self.client.get(reverse(self.FUNCTION))
+        """GETs ``self.URI``."""
+        response = self.client.get(self.URI)
         self.assertEqual(response.status_code, 200)
 
     def test_put(self):
-        """PUTs ``self.FUNCTION``."""
-        response = self.client.put(reverse(self.FUNCTION), {})
+        """PUTs ``self.URI``."""
+        response = self.client.put(self.URI, {})
         self.assertEqual(response.status_code, 405)
 
     def test_delete(self):
-        """DELETEs ``self.FUNCTION``."""
+        """DELETEs ``self.URI``."""
         _login(self.client)
-        response = self.client.delete(reverse(self.FUNCTION))
-        self.assertRedirects(response, reverse(self.FUNCTION))
+        response = self.client.delete(self.URI)
+        self.assertRedirects(response, self.URI)
 
     def test_delete_via_post(self):
-        """DELETEs ``self.FUNCTION`` via a POST request."""
+        """DELETEs ``self.URI`` via a POST request."""
         _login(self.client)
         response = self.client.post(
-            reverse(self.FUNCTION),
+            self.URI,
             {'method_override': 'DELETE'}
         )
-        self.assertRedirects(response, reverse(self.FUNCTION))
+        self.assertRedirects(response, self.URI)
 
     def test_login(self):
         """Tests ``self.client.login()``."""
@@ -251,34 +283,38 @@ class TagTestCase(TestCase):
     The ``tag/`` URI can be reached through 'elts.views.tag'
 
     """
-    FUNCTION = 'elts.views.tag'
+    URI = reverse('elts.views.tag')
 
     def setUp(self):
         """Authenticates the client before each test."""
         _login(self.client)
 
     def test_post_failure(self):
-        """POSTs ``self.FUNCTION``, incorrectly."""
-        response = self.client.post(reverse(self.FUNCTION), {})
+        """POSTs ``self.URI``, incorrectly."""
+        response = self.client.post(self.URI, {})
         self.assertRedirects(
             response,
-            reverse('{}_create_form'.format(self.FUNCTION))
+            reverse('elts.views.tag_create_form')
         )
 
     def test_get(self):
-        """GETs ``self.FUNCTION``."""
-        response = self.client.get(reverse(self.FUNCTION))
+        """GETs ``self.URI``."""
+        response = self.client.get(self.URI)
         self.assertEqual(response.status_code, 200)
 
     def test_put(self):
-        """PUTs ``self.FUNCTION``."""
-        response = self.client.put(reverse(self.FUNCTION))
+        """PUTs ``self.URI``."""
+        response = self.client.put(self.URI)
         self.assertEqual(response.status_code, 405)
 
     def test_delete(self):
-        """DELETEs ``self.FUNCTION``."""
-        response = self.client.delete(reverse(self.FUNCTION))
+        """DELETEs ``self.URI``."""
+        response = self.client.delete(self.URI)
         self.assertEqual(response.status_code, 405)
+
+    def test_logout(self):
+        """Calls ``_test_logout()``."""
+        _test_logout(self)
 
 class TagCreateFormTestCase(TestCase):
     """Tests for the ``tag/create-form/`` URI.
@@ -287,31 +323,35 @@ class TagCreateFormTestCase(TestCase):
     'elts.views.tag_create_form'.
 
     """
-    FUNCTION = 'elts.views.tag_create_form'
+    URI = reverse('elts.views.tag_create_form')
 
     def setUp(self):
         """Authenticates the client before each test."""
         _login(self.client)
 
     def test_post(self):
-        """POSTs ``self.FUNCTION``."""
-        response = self.client.post(reverse(self.FUNCTION))
+        """POSTs ``self.URI``."""
+        response = self.client.post(self.URI)
         self.assertEqual(response.status_code, 405)
 
     def test_get(self):
-        """GETs ``self.FUNCTION``."""
-        response = self.client.get(reverse(self.FUNCTION))
+        """GETs ``self.URI``."""
+        response = self.client.get(self.URI)
         self.assertEqual(response.status_code, 200)
 
     def test_put(self):
-        """PUTs ``self.FUNCTION``."""
-        response = self.client.put(reverse(self.FUNCTION))
+        """PUTs ``self.URI``."""
+        response = self.client.put(self.URI)
         self.assertEqual(response.status_code, 405)
 
     def test_delete(self):
-        """DELETEs ``self.FUNCTION``."""
-        response = self.client.delete(reverse(self.FUNCTION))
+        """DELETEs ``self.URI``."""
+        response = self.client.delete(self.URI)
         self.assertEqual(response.status_code, 405)
+
+    def test_logout(self):
+        """Calls ``_test_logout()``."""
+        _test_logout(self)
 
 def suite():
     suite = unittest.TestSuite()
