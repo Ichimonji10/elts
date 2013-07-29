@@ -23,16 +23,21 @@ def _login(client):
     user, password = factories.create_user()
     return client.login(username = user.username, password = password)
 
-def _test_logout(self):
-    """Logout, then GET ``self.URI``."""
-    self.client.logout()
-    response = self.client.get(self.URI)
+def _test_logout(instance):
+    """Logout, then GET ``instance.URI``.
+    
+    ``instance`` is an instance of a ``TestCase`` subclass. In other words, a
+    caller typically passes ``self`` to this method.
+
+    """
+    instance.client.logout()
+    response = instance.client.get(instance.URI)
     target = string.join([
         reverse('elts.views.login'),
         '?'
-        'next={}'.format(self.URI),
+        'next={}'.format(instance.URI),
     ], '')
-    self.assertRedirects(response, target)
+    instance.assertRedirects(response, target)
 
 class IndexTestCase(TestCase):
     """Tests for the ``/`` URI.
