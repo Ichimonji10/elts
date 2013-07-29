@@ -6,8 +6,11 @@ installed already, that will be used instead. Further, "``django.test.TestCase``
 [...] is a subclass of ``unittest.TestCase`` that runs each test inside a
 transaction to provide isolation".
 
-For details, see:
+For details on Django's testing tools, see:
 https://docs.djangoproject.com/en/1.5/topics/testing/overview/#writing-tests
+
+Each class in this module typically contains tests for only one URI. For
+example, a class might test just /index or /item/create-form.
 
 """
 from django.contrib.auth.hashers import make_password
@@ -15,8 +18,10 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils import unittest
 from elts import factories
+from elts import forms
 import doctest
 import string
+import random
 
 def _login(client):
     """Create a user and use it to log in ``client``."""
@@ -358,6 +363,93 @@ class TagCreateFormTestCase(TestCase):
         """Calls ``_test_logout()``."""
         _test_logout(self)
 
+class ItemFormTestCase(TestCase):
+    """Tests for ``ItemForm``."""
+    @classmethod
+    def _name(self):
+        """Returns a value for the ``name`` form field."""
+        return factories.random_utf8_str(1, 50)
+
+    @classmethod
+    def _description(self):
+        """Returns a value for the ``description`` form field."""
+        return factories.random_utf8_str(1, 2000)
+
+    @classmethod
+    def _is_lendable(self):
+        """Returns a value for the ``is_lendable`` form field."""
+        return random.choice([True, False])
+
+    @classmethod
+    def _tags(self):
+        """Returns a value for the ``tags`` form field."""
+        random.choice([1, 2, 3])
+
+    def test_valid(self):
+        """Creates a valid ItemForm."""
+        form = forms.ItemForm({'name': self._name()})
+        self.assertTrue(form.is_valid())
+
+    def test_missing_name(self):
+        """Creates an ItemForm without setting ``name``."""
+        form = forms.ItemForm({})
+        self.assertFalse(form.is_valid())
+
+    def test_has_description(self):
+        """Creates an ItemForm and sets ``description``."""
+        form = forms.ItemForm({
+            'name': self._name(),
+            'description': self._description()
+        })
+        self.assertTrue(form.is_valid())
+
+    def test_has_is_lendable(self):
+        """Creates an ItemForm and sets ``is_lendable``."""
+        form = forms.ItemForm({
+            'name': self._name(),
+            'is_lendable': self._is_lendable()
+        })
+        self.assertTrue(form.is_valid())
+
+    def test_has_tags(self):
+        """Creates an ItemForm and sets ``tags``."""
+        form = forms.ItemForm({
+            'name': self._name(),
+            'tags': self._tags()
+        })
+        self.assertTrue(form.is_valid())
+
+class TagFormTestCase(TestCase):
+    """Tests for ``TagForm``."""
+    @classmethod
+    def _name(self):
+        """Returns a value for the ``name`` form field."""
+        return factories.random_utf8_str(1, 30)
+
+    @classmethod
+    def _description(self):
+        """Returns a value for the ``description`` form field."""
+        return factories.random_utf8_str(1, 2000)
+
+    def test_valid(self):
+        """Creates a valid TagForm."""
+        form = forms.TagForm({'name': self._name()})
+        self.assertTrue(form.is_valid())
+
+    def test_missing_name(self):
+        """Creates a TagForm without setting ``name``."""
+        form = forms.TagForm({})
+        self.assertFalse(form.is_valid())
+
+    def test_has_description(self):
+        """Creates a TagForm and sets ``description``."""
+        form = forms.TagForm({
+            'name': self._name(),
+            'description': self._description()
+        })
+
+# FIXME: move test definitions to view_tests.py and form_tests.py as
+# appropriate.
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.TestLoader().loadTestsFromTestCase(IndexTestCase))
@@ -368,5 +460,7 @@ def suite():
     suite.addTest(unittest.TestLoader().loadTestsFromTestCase(LoginTestCase))
     suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TagTestCase))
     suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TagCreateFormTestCase))
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(ItemFormTestCase))
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TagFormTestCase))
     suite.addTest(doctest.DocTestSuite(factories))
     return suite
