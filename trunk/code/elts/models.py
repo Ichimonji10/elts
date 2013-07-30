@@ -26,8 +26,14 @@ class Item(models.Model):
     ``is_lendable`` should be set to false.
 
     """
-    name = models.CharField(max_length = 50, db_index = True)
-    description = models.TextField(max_length = 2000, blank = True)
+    MAX_LEN_NAME = 50
+    MAX_LEN_DESCRIPTION = 2000
+
+    name = models.CharField(max_length = MAX_LEN_NAME, db_index = True)
+    description = models.TextField(
+        max_length = MAX_LEN_DESCRIPTION,
+        blank = True
+    )
     tags = models.ManyToManyField('Tag', blank = True)
     is_lendable = models.BooleanField(default = True)
 
@@ -63,8 +69,15 @@ class Tag(models.Model):
     https://docs.djangoproject.com/en/dev/topics/db/models/#many-to-many-relationships
 
     """
-    name = models.CharField(max_length = 30, unique = True) # implies db_index
-    description = models.TextField(max_length = 2000, blank = True)
+    MAX_LEN_NAME = 30
+    MAX_LEN_DESCRIPTION = 2000
+
+    # ``unique = True`` implies ``db_index``
+    name = models.CharField(max_length = MAX_LEN_NAME, unique = True)
+    description = models.CharField(
+        max_length = MAX_LEN_DESCRIPTION,
+        blank = True
+    )
 
     def __unicode__(self):
         """Used by Python and Django when coercing a model instance to a str."""
@@ -95,7 +108,9 @@ class Note(models.Model):
     https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.DateTimeField
 
     """
-    note_text = models.TextField(max_length = 5000)
+    MAX_LEN_NOTE_TEXT = 2000
+
+    note_text = models.CharField(max_length = MAX_LEN_NOTE_TEXT)
     note_date = models.DateTimeField(auto_now_add = True)
     author_id = models.ForeignKey(
         User,
