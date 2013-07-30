@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.forms.forms import NON_FIELD_ERRORS
 from django.forms import CharField, Form, ModelForm
 from django.forms.util import ErrorList
-from django.forms.widgets import PasswordInput
+from django.forms.widgets import PasswordInput, Textarea
 from elts import models
 
 # pylint: disable=R0903
@@ -24,12 +24,14 @@ class ItemForm(ModelForm):
     class Meta:
         model = models.Item
         fields = ['name', 'description', 'tags', 'is_lendable']
+        widgets = {'description': Textarea()}
 
 class TagForm(ModelForm):
     """A form for a Tag."""
     class Meta:
         model = models.Tag
         fields = ['name', 'description']
+        widgets = {'description': Textarea()}
 
 # Start `NoteForm` definitions.
 
