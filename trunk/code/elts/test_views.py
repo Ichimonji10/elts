@@ -218,7 +218,7 @@ class ItemIdTestCase(TestCase):
     FUNCTION = 'elts.views.item_id'
 
     def setUp(self):
-        """Authenticate the test client, creates an item, and sets ``self.uri``.
+        """Authenticate the test client, create an item, and set ``self.uri``.
 
         The item created is accessible as ``self.item``.
 
@@ -300,7 +300,7 @@ class ItemIdUpdateFormTestCase(TestCase):
     FUNCTION = 'elts.views.item_id_update_form'
 
     def setUp(self):
-        """Authenticate the test client, creates an item, and sets ``self.uri``.
+        """Authenticate the test client, create an item, and set ``self.uri``.
 
         The item created is accessible as ``self.item``.
 
@@ -359,7 +359,7 @@ class ItemIdDeleteFormTestCase(TestCase):
     FUNCTION = 'elts.views.item_id_delete_form'
 
     def setUp(self):
-        """Authenticate the test client, creates an item, and sets ``self.uri``.
+        """Authenticate the test client, create an item, and set ``self.uri``.
 
         The item created is accessible as ``self.item``.
 
@@ -447,7 +447,40 @@ class TagTestCase(TestCase):
         """Call ``_test_logout()``."""
         _test_logout(self)
 
-# TODO: class TagIdTestCase(TestCase):
+# TODO: flesh out this test case
+class TagIdTestCase(TestCase):
+    """Tests for the ``tag/<id>/`` URI.
+
+    The ``tag/<id>/`` URI is available through the ``elts.views.tag_id``
+    function.
+
+    """
+    FUNCTION = 'elts.views.tag_id'
+
+    def setUp(self):
+        """Authenticate the test client, create a tag, and set ``self.uri``.
+
+        The tag created is accessible as ``self.tag``.
+
+        """
+        _login(self.client)
+        self.tag = factories.TagFactory.create()
+        self.uri = reverse(self.FUNCTION, args = [self.tag.id])
+
+    def test_get(self):
+        """GET ``self.uri``."""
+        response = self.client.get(self.uri)
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_bad_id(self):
+        """GET ``self.uri`` with a bad ID."""
+        self.tag.delete()
+        response = self.client.get(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_logout(self):
+        """Call ``_test_logout()``."""
+        _test_logout(self, self.uri)
 
 class TagCreateFormTestCase(TestCase):
     """Tests for the ``tag/create-form/`` URI.
