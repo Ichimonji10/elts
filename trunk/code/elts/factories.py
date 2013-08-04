@@ -71,10 +71,10 @@ def random_utf8_str(min_len = 0, max_len = 0):
     return string
 
 class UserFactory(DjangoModelFactory):
-    """Creates a ``django.contrib.auth.models.User`` object.
+    """Builds a ``django.contrib.auth.models.User`` object.
 
-    The created object has a random username and password. Neither is usable by
-    a normal human.
+    The user built has a random username and password. Both the username and
+    password consist of a set of UTF-8 characters.
 
     >>> UserFactory.build().full_clean()
     >>> user = UserFactory.build(
@@ -107,3 +107,16 @@ def create_user():
     password = random_utf8_str(20)
     user = UserFactory.create(password = make_password(password))
     return [user, password]
+
+class ItemFactory(DjangoModelFactory):
+    """Instantiates an ``elts.models.Item`` object.
+
+    >>> ItemFactory.build().full_clean()
+    >>> item = ItemFactory.build(name = 'foo')
+    >>> item.full_clean()
+    >>> item.name
+    'foo'
+
+    """
+    FACTORY_FOR = models.Item
+    name = random_utf8_str(models.Item.MAX_LEN_NAME)
