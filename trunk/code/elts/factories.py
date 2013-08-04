@@ -120,3 +120,16 @@ class ItemFactory(DjangoModelFactory):
     """
     FACTORY_FOR = models.Item
     name = random_utf8_str(models.Item.MAX_LEN_NAME)
+
+class TagFactory(DjangoModelFactory):
+    """Instantiates an ``elts.models.Tag`` object.
+
+    >>> TagFactory.build().full_clean()
+    >>> tag = TagFactory.build(name = 'foo')
+    >>> tag.full_clean()
+    >>> tag.name
+    'foo'
+
+    """
+    FACTORY_FOR = models.Tag
+    name = random_utf8_str(models.Tag.MAX_LEN_NAME)
