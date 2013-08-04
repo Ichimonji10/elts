@@ -177,16 +177,11 @@ def item_id_update_form(request, item_id_):
         raise http.Http404
 
     if 'GET' == request.method:
+        form = request.session.pop('form', forms.ItemForm(instance = item_))
         return render(
             request,
             'elts/item-id-update-form.html',
-            {
-                'item': item_,
-                'form': request.session.pop(
-                    'form',
-                    forms.ItemForm(instance = item_)
-                ),
-            }
+            {'item': item_, 'form': form}
         )
 
     else:
