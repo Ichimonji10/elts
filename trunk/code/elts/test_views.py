@@ -20,20 +20,27 @@ def _login(client):
     user, password = factories.create_user()
     return client.login(username = user.username, password = password)
 
-def _test_logout(instance):
-    """Logout, then GET ``instance.URI``.
-    
+def _test_logout(instance, uri = None):
+    """Logout ``instance.client``, then GET ``uri``.
+
     ``instance`` is an instance of a ``TestCase`` subclass. In other words, a
     caller typically passes ``self`` to this method.
 
+    ``uri`` is a string such as ``item/15/delete-form/``. If no value is
+    provided, ``uri`` defaults to ``instance.URI``.
+
+    This method asserts that ``instance.client`` is redirected to the
+    ``elts.views.login`` view with the ``next`` URL argument set to ``uri``.
+
     """
+    if uri is None:
+        uri = instance.URI
     instance.client.logout()
-    response = instance.client.get(instance.URI)
-    target = string.join([
-        reverse('elts.views.login'),
-        '?'
-        'next={}'.format(instance.URI),
-    ], '')
+    response = instance.client.get(uri)
+    target = string.join(
+        [reverse('elts.views.login'), '?' 'next={}'.format(uri)],
+        ''
+    )
     instance.assertRedirects(response, target)
 
 class IndexTestCase(TestCase):
@@ -279,6 +286,10 @@ class ItemIdTestCase(TestCase):
         response = self.client.delete(self.uri)
         self.assertEqual(response.status_code, 404)
 
+    def test_logout(self):
+        """Call ``_test_logout()``."""
+        _test_logout(self, self.uri)
+
 class ItemIdUpdateFormTestCase(TestCase):
     """Tests for the ``item/<id>/update-form/`` URI.
 
@@ -333,6 +344,10 @@ class ItemIdUpdateFormTestCase(TestCase):
         self.item.delete()
         response = self.client.delete(self.uri)
         self.assertEqual(response.status_code, 404)
+
+    def test_logout(self):
+        """Call ``_test_logout()``."""
+        _test_logout(self, self.uri)
 
 class ItemIdDeleteFormTestCase(TestCase):
     """Tests for the ``item/<id>/delete-form/`` URI.
@@ -389,6 +404,91 @@ class ItemIdDeleteFormTestCase(TestCase):
         response = self.client.delete(self.uri)
         self.assertEqual(response.status_code, 404)
 
+    def test_logout(self):
+        """Call ``_test_logout()``."""
+        _test_logout(self, self.uri)
+
+class TagTestCase(TestCase):
+    """Tests for the ``tag/`` URI.
+
+    The ``tag/`` URI is available through the ``elts.views.tag`` function.
+
+    """
+    URI = reverse('elts.views.tag')
+
+    def setUp(self):
+        """Authenticate the test client."""
+        _login(self.client)
+
+    def test_post_failure(self):
+        """POST ``self.URI``, incorrectly."""
+        response = self.client.post(self.URI, {})
+        self.assertRedirects(
+            response,
+            reverse('elts.views.tag_create_form')
+        )
+
+    def test_get(self):
+        """GET ``self.URI``."""
+        response = self.client.get(self.URI)
+        self.assertEqual(response.status_code, 200)
+
+    def test_put(self):
+        """PUT ``self.URI``."""
+        response = self.client.put(self.URI)
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete(self):
+        """DELETE ``self.URI``."""
+        response = self.client.delete(self.URI)
+        self.assertEqual(response.status_code, 405)
+
+    def test_logout(self):
+        """Call ``_test_logout()``."""
+        _test_logout(self)
+
+# TODO: class TagIdTestCase(TestCase):
+
+class TagCreateFormTestCase(TestCase):
+    """Tests for the ``tag/create-form/`` URI.
+
+    The ``tag/create-form/`` URI is available through the
+    ``elts.views.tag_create_form`` function.
+
+    """
+    URI = reverse('elts.views.tag_create_form')
+
+    def setUp(self):
+        """Authenticate the test client."""
+        _login(self.client)
+
+    def test_post(self):
+        """POST ``self.URI``."""
+        response = self.client.post(self.URI)
+        self.assertEqual(response.status_code, 405)
+
+    def test_get(self):
+        """GET ``self.URI``."""
+        response = self.client.get(self.URI)
+        self.assertEqual(response.status_code, 200)
+
+    def test_put(self):
+        """PUT ``self.URI``."""
+        response = self.client.put(self.URI)
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete(self):
+        """DELETE ``self.URI``."""
+        response = self.client.delete(self.URI)
+        self.assertEqual(response.status_code, 405)
+
+    def test_logout(self):
+        """Call ``_test_logout()``."""
+        _test_logout(self)
+
+# TODO: class TagIdUpdateFormTestCase(TestCase):
+# TODO: class TagIdDeleteFormTestCase(TestCase):
+
 class ItemNoteTestCase(TestCase):
     """Tests for the ``item-note/`` URI.
 
@@ -425,6 +525,10 @@ class ItemNoteTestCase(TestCase):
     def test_logout(self):
         """Call ``_test_logout()``."""
         _test_logout(self)
+
+# TODO: class ItemNoteIdTestCase(TestCase):
+# TODO: class ItemNoteIdUpdateFormTestCase(TestCase):
+# TODO: class ItemNoteIdDeleteFormTestCase(TestCase):
 
 class LoginTestCase(TestCase):
     """Tests for the the ``login/`` URI.
@@ -483,79 +587,3 @@ class LoginTestCase(TestCase):
     def test__login(self):
         """Test ``_login()``."""
         self.assertTrue(_login(self.client))
-
-class TagTestCase(TestCase):
-    """Tests for the ``tag/`` URI.
-
-    The ``tag/`` URI is available through the ``elts.views.tag`` function.
-
-    """
-    URI = reverse('elts.views.tag')
-
-    def setUp(self):
-        """Authenticate the test client."""
-        _login(self.client)
-
-    def test_post_failure(self):
-        """POST ``self.URI``, incorrectly."""
-        response = self.client.post(self.URI, {})
-        self.assertRedirects(
-            response,
-            reverse('elts.views.tag_create_form')
-        )
-
-    def test_get(self):
-        """GET ``self.URI``."""
-        response = self.client.get(self.URI)
-        self.assertEqual(response.status_code, 200)
-
-    def test_put(self):
-        """PUT ``self.URI``."""
-        response = self.client.put(self.URI)
-        self.assertEqual(response.status_code, 405)
-
-    def test_delete(self):
-        """DELETE ``self.URI``."""
-        response = self.client.delete(self.URI)
-        self.assertEqual(response.status_code, 405)
-
-    def test_logout(self):
-        """Call ``_test_logout()``."""
-        _test_logout(self)
-
-class TagCreateFormTestCase(TestCase):
-    """Tests for the ``tag/create-form/`` URI.
-
-    The ``tag/create-form/`` URI is available through the
-    ``elts.views.tag_create_form`` function.
-
-    """
-    URI = reverse('elts.views.tag_create_form')
-
-    def setUp(self):
-        """Authenticate the test client."""
-        _login(self.client)
-
-    def test_post(self):
-        """POST ``self.URI``."""
-        response = self.client.post(self.URI)
-        self.assertEqual(response.status_code, 405)
-
-    def test_get(self):
-        """GET ``self.URI``."""
-        response = self.client.get(self.URI)
-        self.assertEqual(response.status_code, 200)
-
-    def test_put(self):
-        """PUT ``self.URI``."""
-        response = self.client.put(self.URI)
-        self.assertEqual(response.status_code, 405)
-
-    def test_delete(self):
-        """DELETE ``self.URI``."""
-        response = self.client.delete(self.URI)
-        self.assertEqual(response.status_code, 405)
-
-    def test_logout(self):
-        """Call ``_test_logout()``."""
-        _test_logout(self)
