@@ -279,6 +279,116 @@ class ItemIdTestCase(TestCase):
         response = self.client.delete(self.uri)
         self.assertEqual(response.status_code, 404)
 
+class ItemIdUpdateFormTestCase(TestCase):
+    """Tests for the ``item/<id>/update-form/`` URI.
+
+    The ``item/<id>/update-form/`` URI is available through the
+    ``elts.views.item_id_update_form`` function.
+
+    """
+    FUNCTION = 'elts.views.item_id_update_form'
+
+    def setUp(self):
+        """Authenticates the client, creates an item, and sets ``self.uri``.
+
+        The item created is accessible as ``self.item``.
+
+        """
+        _login(self.client)
+        self.item = factories.ItemFactory.create()
+        self.uri = reverse(self.FUNCTION, args = [self.item.id])
+
+    def test_post(self):
+        response = self.client.post(self.uri, {})
+        self.assertEqual(response.status_code, 405)
+
+    def test_post_bad_id(self):
+        self.item.delete()
+        response = self.client.post(self.uri, {})
+        self.assertEqual(response.status_code, 404)
+
+    def test_get(self):
+        response = self.client.get(self.uri)
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_bad_id(self):
+        self.item.delete()
+        response = self.client.get(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_put(self):
+        response = self.client.put(self.uri)
+        self.assertEqual(response.status_code, 405)
+
+    def test_put_bad_id(self):
+        self.item.delete()
+        response = self.client.put(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_delete(self):
+        response = self.client.delete(self.uri)
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete_bad_id(self):
+        self.item.delete()
+        response = self.client.delete(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+class ItemIdDeleteFormTestCase(TestCase):
+    """Tests for the ``item/<id>/delete-form/`` URI.
+
+    The ``item/<id>/delete-form/`` URI is available through the
+    ``elts.views.item_id_delete_form`` function.
+
+    """
+    FUNCTION = 'elts.views.item_id_delete_form'
+
+    def setUp(self):
+        """Authenticates the client, creates an item, and sets ``self.uri``.
+
+        The item created is accessible as ``self.item``.
+
+        """
+        _login(self.client)
+        self.item = factories.ItemFactory.create()
+        self.uri = reverse(self.FUNCTION, args = [self.item.id])
+
+    def test_post(self):
+        response = self.client.post(self.uri, {})
+        self.assertEqual(response.status_code, 405)
+
+    def test_post_bad_id(self):
+        self.item.delete()
+        response = self.client.post(self.uri, {})
+        self.assertEqual(response.status_code, 404)
+
+    def test_get(self):
+        response = self.client.get(self.uri)
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_bad_id(self):
+        self.item.delete()
+        response = self.client.get(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_put(self):
+        response = self.client.put(self.uri)
+        self.assertEqual(response.status_code, 405)
+
+    def test_put_bad_id(self):
+        self.item.delete()
+        response = self.client.put(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_delete(self):
+        response = self.client.delete(self.uri)
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete_bad_id(self):
+        self.item.delete()
+        response = self.client.delete(self.uri)
+        self.assertEqual(response.status_code, 404)
+
 class ItemNoteTestCase(TestCase):
     """Tests for the ``item-note/`` URI.
 
