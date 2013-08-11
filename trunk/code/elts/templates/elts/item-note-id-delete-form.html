@@ -11,7 +11,7 @@
         action='{% url 'elts.views.item_note_id' item_note.id %}'
     >
         {% csrf_token %}
-        <input type='hidden' name='method_override' value='DELETE' />
+        <input type='hidden' name='_method' value='DELETE' />
         <p><button>Submit</button></p>
     </form>
 {% endblock %}

@@ -51,9 +51,9 @@ Web Browser Hacks
 
 Web browsers only support ``POST`` and ``GET`` operations; ``PUT`` and
 ``DELETE`` operations cannot be performed. To accomodate this limitation, a
-hidden form field named "method_override" is present in forms. For example:
+hidden form field named "_method" is present in forms. For example:
 
-    <input type="hidden" name="method_override" value="PUT" />
+    <input type="hidden" name="_method" value="PUT" />
 
 """
 from django.conf.urls import patterns, url
@@ -67,16 +67,16 @@ urlpatterns = patterns('elts.views',
     url(r'^item/$',                        'item'),
     url(r'^item/create-form/$',            'item_create_form'),
     url(r'^item/(\d+)/$',                  'item_id'),
-    url(r'^item/(\d+)/update-form/$',      'item_id_update_form'),
     url(r'^item/(\d+)/delete-form/$',      'item_id_delete_form'),
+    url(r'^item/(\d+)/update-form/$',      'item_id_update_form'),
+    url(r'^item-note/$',                   'item_note'),
+    url(r'^item-note/(\d+)/$',             'item_note_id'),
+    url(r'^item-note/(\d+)/delete-form/$', 'item_note_id_delete_form'),
+    url(r'^item-note/(\d+)/update-form/$', 'item_note_id_update_form'),
+    url(r'^login/$',                       'login'),
     url(r'^tag/$',                         'tag'),
     url(r'^tag/create-form/$',             'tag_create_form'),
     url(r'^tag/(\d+)/$',                   'tag_id'),
-    url(r'^tag/(\d+)/update-form/$',       'tag_id_update_form'),
     url(r'^tag/(\d+)/delete-form/$',       'tag_id_delete_form'),
-    url(r'^item-note/$',                   'item_note'),
-    url(r'^item-note/(\d+)/$',             'item_note_id'),
-    url(r'^item-note/(\d+)/update-form/$', 'item_note_id_update_form'),
-    url(r'^item-note/(\d+)/delete-form/$', 'item_note_id_delete_form'),
-    url(r'^login/$',                       'login'),
+    url(r'^tag/(\d+)/update-form/$',       'tag_id_update_form'),
 )

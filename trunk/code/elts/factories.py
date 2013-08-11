@@ -10,7 +10,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from elts import models
 from factory.django import DjangoModelFactory
-from factory import Sequence
+from factory import Sequence, SubFactory
 import random
 
 # See ``_random_username`` for details on why this charset was chosen.
@@ -77,14 +77,11 @@ class UserFactory(DjangoModelFactory):
     password consist of a set of UTF-8 characters.
 
     >>> UserFactory.build().full_clean()
-    >>> user = UserFactory.build(
-    ...     username = 'user0',
+    >>> UserFactory.create().id is None
+    False
+    >>> UserFactory.build(
     ...     password = make_password('hackme')
-    ... )
-    >>> user.full_clean()
-    >>> user.username
-    'user0'
-    >>> user.check_password('hackme')
+    ... ).check_password('hackme')
     True
 
     """
@@ -109,27 +106,37 @@ def create_user():
     return [user, password]
 
 class ItemFactory(DjangoModelFactory):
-    """Instantiates an ``elts.models.Item`` object.
+    """Instantiate an ``elts.models.Item`` object.
 
     >>> ItemFactory.build().full_clean()
-    >>> item = ItemFactory.build(name = 'foo')
-    >>> item.full_clean()
-    >>> item.name
-    'foo'
+    >>> ItemFactory.create().id is None
+    False
 
     """
     FACTORY_FOR = models.Item
     name = random_utf8_str(models.Item.MAX_LEN_NAME)
 
 class TagFactory(DjangoModelFactory):
-    """Instantiates an ``elts.models.Tag`` object.
+    """Instantiate an ``elts.models.Tag`` object.
 
     >>> TagFactory.build().full_clean()
-    >>> tag = TagFactory.build(name = 'foo')
-    >>> tag.full_clean()
-    >>> tag.name
-    'foo'
+    >>> TagFactory.create().id is None
+    False
 
     """
     FACTORY_FOR = models.Tag
     name = random_utf8_str(models.Tag.MAX_LEN_NAME)
+
+class ItemNoteFactory(DjangoModelFactory):
+    """Instantiate an ``elts.models.ItemNote`` object.
+
+    >>> item_note = ItemNoteFactory.create()
+    >>> item_note.full_clean()
+    >>> item_note.id is None
+    False
+
+    """
+    FACTORY_FOR = models.ItemNote
+    author_id = SubFactory(UserFactory)
+    item_id = SubFactory(ItemFactory)
+    note_text = random_utf8_str(models.Note.MAX_LEN_NOTE_TEXT)

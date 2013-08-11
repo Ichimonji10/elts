@@ -58,45 +58,47 @@ from elts import models
 
 @login_required
 def index(request):
-    """Returns a summary of information about ELTS."""
-    if 'GET' == request.method:
+    """Handle a request for ``/``."""
+    def get_handler():
+        """Return a summary of information about ELTS."""
         return render(request, 'elts/index.html', {})
 
-    else:
-        return http.HttpResponse(status = 405)
+    return {
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
 
 @login_required
 def calendar(request):
-    """Returns an HTML calendar displaying reservations and lends."""
-    if 'GET' == request.method:
+    """Handle a request for ``calendar/``."""
+    def get_handler():
+        # FIXME
         return render(request, 'elts/calendar.html', {})
 
-    else:
-        return http.HttpResponse(status = 405)
+    return {
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
 
 @login_required
 def item(request):
-    """Returns information about all items or creates a new item."""
-    # Return a list of all items.
-    if 'GET' == request.method:
-        return render(
-            # pylint: disable=E1101
-            request,
-            'elts/item.html',
-            {'items': models.Item.objects.all()}
-        )
+    """Handle a request for ``item/``."""
+    def post_handler():
+        """Create a new item.
 
-    # Create a new item.
-    elif _request_is_post(request):
-        # pylint: disable=E1101
+        If creation succeeds, redirect user to ``item_id`` view. Otherwise,
+        redirect user to ``item_create_form`` view.
+
+        """
         form = forms.ItemForm(request.POST)
         if form.is_valid():
             new_item = form.save()
             return http.HttpResponseRedirect(
-                reverse(
-                    'elts.views.item_id',
-                    args = [new_item.id]
-                )
+                reverse('elts.views.item_id', args = [new_item.id])
             )
         else:
             # Put ``form`` into session for retreival by ``item_create_form``.
@@ -105,13 +107,27 @@ def item(request):
                 reverse('elts.views.item_create_form')
             )
 
-    else:
-        return http.HttpResponse(status = 405)
+    def get_handler():
+        """Return a list of all items."""
+        return render(
+            request,
+            'elts/item.html',
+            {'items': models.Item.objects.all()}
+        )
+
+    return {
+        'POST': post_handler,
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
 
 @login_required
 def item_create_form(request):
-    """Returns a form for creating a new item."""
-    if 'GET' == request.method:
+    """Handle a request for ``item/create-form/``."""
+    def get_handler():
+        """Return a form for creating an item."""
         return render(
             request,
             'elts/item-create-form.html',
@@ -120,18 +136,23 @@ def item_create_form(request):
             {'form': request.session.pop('form', forms.ItemForm())}
         )
 
-    else:
-        return http.HttpResponse(status = 405)
+    return {
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
 
 @login_required
 def item_id(request, item_id_):
-    """Read, update, or delete item ``item_id_``."""
+    """Handle a request for ``item/<id>/``."""
     try:
         item_ = models.Item.objects.get(id = item_id_)
     except models.Item.DoesNotExist:
         raise http.Http404
 
-    if 'GET' == request.method:
+    def get_handler():
+        """Return information about item ``item_id_``."""
         return render(
             request,
             'elts/item-id.html',
@@ -141,7 +162,13 @@ def item_id(request, item_id_):
             }
         )
 
-    elif _request_is_put(request):
+    def put_handler():
+        """Update item ``item_id_``.
+
+        If update succeeds, redirect user to ``item_id`` view. Otherwise,
+        redirect user to ``item_id_update_form``.
+
+        """
         form = forms.ItemForm(request.POST, instance = item_)
         if form.is_valid():
             form.save()
@@ -157,26 +184,34 @@ def item_id(request, item_id_):
                 )
             )
 
-    elif _request_is_delete(request):
+    def delete_handler():
+        """Delete item ``item_id_``.
+
+        After delete, redirect user to ``item`` view.
+
+        """
         item_.delete()
         return http.HttpResponseRedirect(reverse('elts.views.item'))
 
-    else:
-        return http.HttpResponse(status = 405)
+    return {
+        'GET': get_handler,
+        'PUT': put_handler,
+        'DELETE': delete_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
 
 @login_required
 def item_id_update_form(request, item_id_):
-    """Returns a form for updating item ``item_id_``.
-
-    The form is pre-populated with existing data about item ``item_id_``.
-
-    """
+    """Handle a request for ``item/<id>/update-form/``."""
     try:
         item_ = models.Item.objects.get(id = item_id_)
     except models.Item.DoesNotExist:
         raise http.Http404
 
-    if 'GET' == request.method:
+    def get_handler():
+        """Return a form for updating item ``item_id_``."""
         form = request.session.pop('form', forms.ItemForm(instance = item_))
         return render(
             request,
@@ -184,36 +219,42 @@ def item_id_update_form(request, item_id_):
             {'item': item_, 'form': form}
         )
 
-    else:
-        return http.HttpResponse(status = 405)
+    return {
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
 
 @login_required
 def item_id_delete_form(request, item_id_):
-    """Returns a form for deleting item ``item_id_``."""
+    """Handle a request for ``item/<id>/delete-form/``."""
     try:
         item_ = models.Item.objects.get(id = item_id_)
     except models.Item.DoesNotExist:
         raise http.Http404
 
-    if 'GET' == request.method:
+    def get_handler():
+        """Return a form for deleting item ``item_id_``."""
         return render(request, 'elts/item-id-delete-form.html', {'item': item_})
 
-    else:
-        return http.HttpResponse(status = 405)
+    return {
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
 
 @login_required
 def tag(request):
-    """Returns information about all tags or creates a new tag."""
-    # Return a list of all tags.
-    if 'GET' == request.method:
-        return render(
-            request,
-            'elts/tag.html',
-            {'tags': models.Tag.objects.all()}
-        )
+    """Handle a request for ``tag/``."""
+    def post_handler():
+        """Create a tag.
 
-    # Create a new tag.
-    elif _request_is_post(request):
+        If creation succeeds, redirect user to ``tag_id`` view. Otherwise,
+        redirect user to ``tag_create_form`` view.
+
+        """
         # pylint: disable=E1101
         form = forms.TagForm(request.POST)
         if form.is_valid():
@@ -231,22 +272,41 @@ def tag(request):
                 reverse('elts.views.tag_create_form')
             )
 
-    else:
-        return http.HttpResponse(status = 405)
+    def get_handler():
+        """Return information about all tags."""
+        return render(
+            request,
+            'elts/tag.html',
+            {'tags': models.Tag.objects.all()}
+        )
+
+    return {
+        'POST': post_handler,
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
 
 @login_required
 def tag_id(request, tag_id_):
-    """Read, update, or delete tag ``tag_id_``."""
-    # pylint: disable=E1101
+    """Handle a request for ``tag/<id>/``."""
     try:
         tag_ = models.Tag.objects.get(id = tag_id_)
     except models.Tag.DoesNotExist:
         raise http.Http404
 
-    if 'GET' == request.method:
+    def get_handler():
+        """Return information about tag ``tag_id_``."""
         return render(request, 'elts/tag-id.html', {'tag': tag_})
 
-    elif _request_is_put(request):
+    def put_handler():
+        """Update tag ``tag_id_``.
+
+        If update succeeds, redirect user to ``tag_id`` view. Otherwise,
+        redirect user to ``update_form`` view.
+
+        """
         form = forms.TagForm(request.POST, instance = tag_)
         if form.is_valid():
             form.save()
@@ -262,17 +322,29 @@ def tag_id(request, tag_id_):
                 )
             )
 
-    elif _request_is_delete(request):
+    def delete_handler():
+        """Delete tag ``tag_id_``.
+
+        After deletion, redirect user to ``tag`` view.
+
+        """
         tag_.delete()
         return http.HttpResponseRedirect(reverse('elts.views.tag'))
 
-    else:
-        return http.HttpResponse(status = 405)
+    return {
+        'GET': get_handler,
+        'PUT': put_handler,
+        'DELETE': delete_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
 
 @login_required
 def tag_create_form(request):
-    """Returns a form for creating a new tag."""
-    if 'GET' == request.method:
+    """Handle a request for ``tag/create-form/``."""
+    def get_handler():
+        """Return a form for creating a new tag."""
         return render(
             request,
             'elts/tag-create-form.html',
@@ -282,22 +354,23 @@ def tag_create_form(request):
             }
         )
 
-    else:
-        return http.HttpResponse(status = 405)
+    return {
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
 
 @login_required
 def tag_id_update_form(request, tag_id_):
-    """Returns a form for updating tag ``tag_id_``.
-
-    The form is pre-populated with existing data about tag ``tag_id_``.
-
-    """
+    """Handle a request for ``tag/<id>/update-form/``."""
     try:
         tag_ = models.Tag.objects.get(id = tag_id_)
     except models.Tag.DoesNotExist:
         raise http.Http404
 
-    if 'GET' == request.method:
+    def get_handler():
+        """Return a form for updating tag ``tag_id_``."""
         return render(
             request,
             'elts/tag-id-update-form.html',
@@ -307,27 +380,41 @@ def tag_id_update_form(request, tag_id_):
             }
         )
 
-    else:
-        return http.HttpResponse(status = 405)
+    return {
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
 
 @login_required
 def tag_id_delete_form(request, tag_id_):
-    """Returns a form for updating tag ``tag_id_``."""
+    """Handle a request for ``tag/<id>/delete-form/``."""
     try:
         tag_ = models.Tag.objects.get(id = tag_id_)
     except models.Tag.DoesNotExist:
         raise http.Http404
 
-    if 'GET' == request.method:
+    def get_handler():
+        """Return a form for updating tag ``tag_id_``."""
         return render(request, 'elts/tag-id-delete-form.html', {'tag': tag_})
 
-    else:
-        return http.HttpResponse(status = 405)
+    return {
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
 
 @login_required
 def item_note(request):
-    """Creates a new item note."""
-    if _request_is_post(request):
+    """Handle a request for ``item-note/``."""
+    def post_handler():
+        """Create a new item note.
+
+        Redirect user to ``item_id`` view after handling request.
+
+        """
         # For which item is this note being created?
         try:
             item_ = models.Item.objects.get(
@@ -352,19 +439,29 @@ def item_note(request):
             reverse('elts.views.item_id', args = [item_.id])
         )
 
-    else:
-        return http.HttpResponse(status = 405)
+    return {
+        'POST': post_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
 
 @login_required
 def item_note_id(request, item_note_id_):
-    """Updates or deletes item note ``item_note_id_``."""
+    """Handle a request for ``item-note/<id>/``."""
     try:
         item_note_ = models.ItemNote.objects.get(id = item_note_id_)
     except models.ItemNote.DoesNotExist:
-        return http.Http404
+        raise http.Http404
     item_id_ = item_note_.item_id.id
 
-    if _request_is_put(request):
+    def put_handler():
+        """Update item note ``item_note_id_``.
+
+        If update succeeds, redirect user to ``item_id`` view. Otherwise,
+        redirect user to ``item_note_id_update_form`` view.
+
+        """
         form = forms.ItemNoteForm(request.POST, instance = item_note_)
         if form.is_valid():
             form.save()
@@ -383,66 +480,79 @@ def item_note_id(request, item_note_id_):
                 )
             )
 
-    elif _request_is_delete(request):
+    def delete_handler():
+        """Delete item note ``item_note_id_``.
+
+        After deletion, redirect user to ``item_id`` view.
+
+        """
         item_note_.delete()
         return http.HttpResponseRedirect(
             reverse('elts.views.item_id', args = [item_id_])
         )
 
-    else:
-        return http.HttpResponse(status = 405)
+    return {
+        'PUT': put_handler,
+        'DELETE': delete_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
 
 @login_required
 def item_note_id_update_form(request, item_note_id_):
-    """Returns a form for updating item note ``item_note_id_``.
-
-    The form is pre-populated with existing data about item note
-    ``item_note_id_``.
-
-    """
+    """Handle a request for ``item-note/<id>/update-form/``."""
     try:
         item_note_ = models.ItemNote.objects.get(id = item_note_id_)
     except models.ItemNote.DoesNotExist:
         raise http.Http404
 
-    if 'GET' == request.method:
+    def get_handler():
+        """Return a form for updating item note ``item_note_id_``."""
+        form = request.session.pop(
+            'form',
+            forms.ItemNoteForm(instance = item_note_)
+        )
         return render(
             request,
             'elts/item-note-id-update-form.html',
-            {
-                'item_note': item_note_,
-                'form': request.session.pop(
-                    'form',
-                    forms.ItemNoteForm(instance = item_note_)
-                ),
-            }
+            {'item_note': item_note_, 'form': form}
         )
 
-    else:
-        return http.HttpResponse(status = 405)
+    return {
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
 
 @login_required
 def item_note_id_delete_form(request, item_note_id_):
-    """Returns a form for deleting item note ``item_note_id_``."""
+    """Handle a request for ``item-note/<id>/delete-form/``."""
     try:
         item_note_ = models.ItemNote.objects.get(id = item_note_id_)
     except models.ItemNote.DoesNotExist:
         raise http.Http404
 
-    if 'GET' == request.method:
+    def get_handler():
+        """Return a form for deleting item note ``item_note_id_``."""
         return render(
             request,
             'elts/item-note-id-delete-form.html',
             {'item_note': item_note_}
         )
 
-    else:
-        return http.HttpResponse(status = 405)
+    return {
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
 
 def login(request):
-    """Present a form for logging in, log in, or log out."""
-    # Present form for logging in
-    if 'GET' == request.method:
+    """Handle a request for ``login/``."""
+    def get_handler():
+        """Return a form for logging in."""
         return render(
             request,
             'elts/login.html',
@@ -450,7 +560,13 @@ def login(request):
         )
 
     # Log in user
-    elif _request_is_post(request):
+    def post_handler():
+        """Log in user.
+
+        If login suceeds, redirect user to ``index`` view. Otherwise, redirect
+        user to ``login`` view.
+
+        """
         # Check validity of submitted data
         form = forms.LoginForm(request.POST)
         if not form.is_valid():
@@ -482,53 +598,39 @@ def login(request):
         return http.HttpResponseRedirect(reverse('elts.views.index'))
 
     # Log out user
-    elif _request_is_delete(request):
+    def delete_handler():
+        """Log out user.
+
+        Redirect user to ``login`` after logging out user.
+
+        """
         auth.logout(request)
         return http.HttpResponseRedirect(reverse('elts.views.login'))
 
-    else:
-        return http.HttpResponse(status = 405)
+    return {
+        'POST': post_handler,
+        'GET': get_handler,
+        'DELETE': delete_handler
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
 
-def _request_is_post(request):
-    """Returns True if request is a vanilla POST request.
+def _request_type(request):
+    """Determine what HTTP method ``request.method`` represents.
 
-    A request is a vanilla POST request if it lacks a ``method_override``
-    parameter.
+    ``request`` is a ``django.http.HttpRequest`` object.
 
-    """
-    if 'POST' == request.method \
-    and 'method_override' not in request.POST:
-        return True
-    return False
-
-def _request_is_put(request):
-    """Returns True if the request method is PUT or PUT via POST.
-
-    Under certain circumstances, a POST request should be treated as a PUT
-    request. This method will return true if ``request.method`` is either a
-    normal PUT request or a special POST request.
+    If ``request`` is a POST request containing the '_method' HTTP argument,
+    delete '_method' from ``request.POST`` and return the "real" HTTP method.
+    Otherwise, return ``request.method`` untouched.
 
     """
     method = request.method
-    if 'PUT' == method or (
-        'POST' == method and
-        'PUT' == request.POST.get('method_override', False)
-    ):
-        return True
-    return False
+    if 'POST' == method:
+        return request.POST.get('_method', 'POST')
+    return method
 
-def _request_is_delete(request):
-    """Returns True if the request method is DELETE or DELETE via POST.
-
-    Under certain circumstances, a POST request should be treated as a DELETE
-    request. This method will return true if ``request.method`` is either a
-    normal DELETE request or a special POST request.
-
-    """
-    method = request.method
-    if 'DELETE' == method or (
-        'POST' == method and
-        'DELETE' == request.POST.get('method_override', False)
-    ):
-        return True
-    return False
+def _http_405():
+    """Return an ``HttpResponse`` with a 405 status code."""
+    return http.HttpResponse(status = 405)

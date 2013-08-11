@@ -119,10 +119,11 @@ class Note(models.Model):
 
     def __unicode__(self):
         """Used by Python and Django when coercing a model instance to a str."""
-        if 80 >= len(str(self.note_text)):
+        if 80 >= len(self.note_text):
             return self.note_text
         else:
-            return u'{}...'.format(str(self.note_text)[0:77])
+            ellipsis = unichr(0x2026)
+            return u'{}{}'.format(self.note_text[0:79], ellipsis)
 
     class Meta:
         """Make this model abstract."""

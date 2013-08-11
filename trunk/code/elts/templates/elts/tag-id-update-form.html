@@ -7,7 +7,7 @@
     {% include 'elts/_show-errors.html' %}
     <form method='post' action='{% url 'elts.views.tag_id' tag.id %}'>
         {% csrf_token %}
-        <input type='hidden' name='method_override' value='PUT' />
+        <input type='hidden' name='_method' value='PUT' />
         {{ form.as_p }}
         <p><button>Submit</button></p>
     </form>

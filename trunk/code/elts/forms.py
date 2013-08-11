@@ -40,6 +40,7 @@ class ItemNoteForm(ModelForm):
     class Meta:
         model = models.ItemNote
         fields = ['note_text']
+        widgets = {'note_text': Textarea()}
 
 class UserNoteForm(ModelForm):
     """A form for a UserNote."""

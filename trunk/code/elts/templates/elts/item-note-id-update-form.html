@@ -10,7 +10,7 @@
         action='{% url 'elts.views.item_note_id' item_note.id %}'
     >
         {% csrf_token %}
-        <input type='hidden' name='method_override' value='PUT' />
+        <input type='hidden' name='_method' value='PUT' />
         {{ form.as_p }}
         <p><button>Submit</button></p>
     </form>

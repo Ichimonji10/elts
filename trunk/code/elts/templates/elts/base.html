@@ -21,7 +21,7 @@
             <p>Logged in as: {{ user.username }}</p>
             <form method='post' action='{% url 'elts.views.login' %}'>
                 {% csrf_token %}
-                <input type='hidden' name='method_override' value='DELETE' />
+                <input type='hidden' name='_method' value='DELETE' />
                 <p><button>Log Out</button></p>
             </form>
         </div>
