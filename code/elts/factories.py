@@ -85,6 +85,8 @@ class UserFactory(DjangoModelFactory):
     True
 
     """
+    # pylint: disable=R0903
+    # pylint: disable=W0232
     FACTORY_FOR = User
     username = Sequence(lambda n: _random_username(n))
     password = make_password(random_utf8_str(20))
@@ -102,7 +104,7 @@ def create_user():
 
     """
     password = random_utf8_str(20)
-    user = UserFactory.create(password = make_password(password))
+    user = UserFactory.create(password = make_password(password)) # pylint: disable=E1101
     return [user, password]
 
 class ItemFactory(DjangoModelFactory):
@@ -113,6 +115,8 @@ class ItemFactory(DjangoModelFactory):
     False
 
     """
+    # pylint: disable=R0903
+    # pylint: disable=W0232
     FACTORY_FOR = models.Item
     name = random_utf8_str(models.Item.MAX_LEN_NAME)
 
@@ -124,6 +128,8 @@ class TagFactory(DjangoModelFactory):
     False
 
     """
+    # pylint: disable=R0903
+    # pylint: disable=W0232
     FACTORY_FOR = models.Tag
     name = random_utf8_str(models.Tag.MAX_LEN_NAME)
 
@@ -136,6 +142,8 @@ class ItemNoteFactory(DjangoModelFactory):
     False
 
     """
+    # pylint: disable=R0903
+    # pylint: disable=W0232
     FACTORY_FOR = models.ItemNote
     author_id = SubFactory(UserFactory)
     item_id = SubFactory(ItemFactory)

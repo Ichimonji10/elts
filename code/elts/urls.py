@@ -58,10 +58,8 @@ hidden form field named "_method" is present in forms. For example:
 """
 from django.conf.urls import patterns, url
 
-# pylint: disable=C0103
-# "Invalid name "urlpatterns" for type constant (should match
-# (([A-Z_][A-Z0-9_]*)|(__.*__))$)"
-urlpatterns = patterns('elts.views',
+urlpatterns = patterns( # pylint: disable=C0103
+    'elts.views',
     url(r'^$',                             'index'),
     url(r'^calendar/$',                    'calendar'),
     url(r'^item/$',                        'item'),

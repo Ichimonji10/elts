@@ -26,10 +26,8 @@ from django.conf.urls import patterns, include, url
 # from django.contrib import admin
 # admin.autodiscover()
 
-# pylint: disable=C0103
-# "Invalid name "urlpatterns" for type constant (should match
-# (([A-Z_][A-Z0-9_]*)|(__.*__))$)"
-urlpatterns = patterns('',
+urlpatterns = patterns( # pylint: disable=C0103
+    '',
     url(r'^$', 'main.views.index'),
     url(r'^elts/', include('elts.urls')),
     # Examples:

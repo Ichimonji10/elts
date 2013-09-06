@@ -34,18 +34,6 @@ normal template that is intended to be included in other templates with an
 
     {% include 'elts/_item-edit-form.html' %}
 
-Other Notes
-===========
-
-Pylint error 1101 is ignored at several places in this file. Examples of this
-error include:
-
-    Class 'Item' has no 'objects' member
-    Instance of 'ItemForm' has no 'is_valid' member
-    Instance of 'ItemForm' has no 'cleaned_data' member
-    Instance of 'TagForm' has no 'is_valid' member
-    Instance of 'TagForm' has no 'cleaned_data' member
-
 """
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
@@ -55,6 +43,11 @@ from django import http
 from django.shortcuts import render
 from elts import forms
 from elts import models
+
+# pylint: disable=E1101
+# Instance of 'ItemForm' has no 'is_valid' member (no-member)
+# Instance of 'ItemForm' has no 'save' member (no-member)
+# Class 'Item' has no 'objects' member (no-member)
 
 @login_required
 def index(request):
@@ -255,7 +248,6 @@ def tag(request):
         redirect user to ``tag_create_form`` view.
 
         """
-        # pylint: disable=E1101
         form = forms.TagForm(request.POST)
         if form.is_valid():
             new_tag = form.save()
@@ -349,7 +341,7 @@ def tag_create_form(request):
             request,
             'elts/tag-create-form.html',
             {
-                # Put ``form`` into session for retreival by ``tag_create_form``.
+                # Put ``form`` into session for retreival by ``tag_create_form``
                 'form': request.session.pop('form', forms.TagForm())
             }
         )
@@ -376,7 +368,10 @@ def tag_id_update_form(request, tag_id_):
             'elts/tag-id-update-form.html',
             {
                 'tag': tag_,
-                'form': request.session.pop('form', forms.TagForm(instance = tag_)),
+                'form': request.session.pop(
+                    'form',
+                    forms.TagForm(instance = tag_)
+                ),
             }
         )
 

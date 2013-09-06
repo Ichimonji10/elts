@@ -12,11 +12,11 @@ from django.contrib.auth.models import User
 from django.db import models
 
 # pylint: disable=R0903
-# "Too few public methods (0/2)" 
+# "Too few public methods (0/2)"
 # It is both common and OK for a model to have no methods.
 #
 # pylint: disable=W0232
-# "Class has no __init__ method" 
+# "Class has no __init__ method"
 # It is both common and OK for a model to have no __init__ method.
 
 class Item(models.Model):
@@ -45,7 +45,7 @@ class Lend(models.Model):
     """Tracks the lending of an ``Item`` to a ``User``.
 
     This model tracks the following pieces of information:
-    
+
     * To whom should an item be lent out?
     * Which item is being lent out?
     * When does the item go out?
@@ -125,7 +125,7 @@ class Note(models.Model):
             ellipsis = unichr(0x2026)
             return u'{}{}'.format(self.note_text[0:79], ellipsis)
 
-    class Meta:
+    class Meta(object):
         """Make this model abstract."""
         abstract = True
 

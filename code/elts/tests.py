@@ -19,8 +19,8 @@ def suite():
     test cases in any file whose name begins with "test".
 
     """
-    suite = TestSuite()
-    suite.addTest(TestLoader().loadTestsFromModule(test_forms))
-    suite.addTest(TestLoader().loadTestsFromModule(test_views))
-    suite.addTest(DocTestSuite(factories))
-    return suite
+    test_suite = TestSuite()
+    test_suite.addTest(TestLoader().loadTestsFromModule(test_forms))
+    test_suite.addTest(TestLoader().loadTestsFromModule(test_views))
+    test_suite.addTest(DocTestSuite(factories))
+    return test_suite

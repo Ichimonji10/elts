@@ -16,10 +16,17 @@ requests which act like PUT or DELETE requests by virtue of passing the
 
 """
 from django.core.urlresolvers import reverse
-from django.http import QueryDict
 from django.test import TestCase
 from elts import factories, models
 import string
+
+# pylint: disable=E1103
+# Instance of 'WSGIRequest' has no 'status_code' member (but some types could
+# not be inferred) (maybe-no-member)
+#
+# pylint: disable=E1101
+# Class 'Item' has no 'objects' member (no-member)
+# Class 'ItemFactory' has no 'attributes' member (no-member)
 
 def _login(client):
     """Create a user and use it to log in ``client``."""
@@ -315,37 +322,45 @@ class ItemIdDeleteFormTestCase(TestCase):
         _test_logout(self, self.uri)
 
     def test_post(self):
+        """POST ``self.uri``."""
         response = self.client.post(self.uri, {})
         self.assertEqual(response.status_code, 405)
 
     def test_get(self):
+        """GET ``self.uri``."""
         response = self.client.get(self.uri)
         self.assertEqual(response.status_code, 200)
 
     def test_put(self):
+        """PUT ``self.uri``."""
         response = self.client.post(self.uri, {'_method': 'PUT'})
         self.assertEqual(response.status_code, 405)
 
     def test_delete(self):
+        """DELETE ``self.uri``."""
         response = self.client.post(self.uri, {'_method': 'DELETE'})
         self.assertEqual(response.status_code, 405)
 
     def test_post_bad_id(self):
+        """POST ``self.uri`` with a bad ID."""
         self.item.delete()
         response = self.client.post(self.uri, {})
         self.assertEqual(response.status_code, 404)
 
     def test_get_bad_id(self):
+        """GET ``self.uri`` with a bad ID."""
         self.item.delete()
         response = self.client.get(self.uri)
         self.assertEqual(response.status_code, 404)
 
     def test_put_bad_id(self):
+        """PUT ``self.uri`` with a bad ID."""
         self.item.delete()
         response = self.client.post(self.uri)
         self.assertEqual(response.status_code, 404)
 
     def test_delete_bad_id(self):
+        """DELETE ``self.uri`` with a bad ID."""
         self.item.delete()
         response = self.client.post(self.uri)
         self.assertEqual(response.status_code, 404)
@@ -374,37 +389,45 @@ class ItemIdUpdateFormTestCase(TestCase):
         _test_logout(self, self.uri)
 
     def test_post(self):
+        """POST ``self.uri``."""
         response = self.client.post(self.uri, {})
         self.assertEqual(response.status_code, 405)
 
     def test_get(self):
+        """GET ``self.uri``."""
         response = self.client.get(self.uri)
         self.assertEqual(response.status_code, 200)
 
     def test_put(self):
+        """PUT ``self.uri``."""
         response = self.client.post(self.uri, {'_method': 'PUT'})
         self.assertEqual(response.status_code, 405)
 
     def test_delete(self):
+        """DELETE ``self.uri``."""
         response = self.client.post(self.uri, {'_method': 'DELETE'})
         self.assertEqual(response.status_code, 405)
 
     def test_post_bad_id(self):
+        """POST ``self.uri`` with a bad ID."""
         self.item.delete()
         response = self.client.post(self.uri, {})
         self.assertEqual(response.status_code, 404)
 
     def test_get_bad_id(self):
+        """GET ``self.uri`` with a bad ID."""
         self.item.delete()
         response = self.client.get(self.uri)
         self.assertEqual(response.status_code, 404)
 
     def test_put_bad_id(self):
+        """PUT ``self.uri`` with a bad ID."""
         self.item.delete()
         response = self.client.post(self.uri)
         self.assertEqual(response.status_code, 404)
 
     def test_delete_bad_id(self):
+        """DELETE ``self.uri`` with a bad ID."""
         self.item.delete()
         response = self.client.post(self.uri)
         self.assertEqual(response.status_code, 404)
@@ -427,6 +450,7 @@ class ItemNoteTestCase(TestCase):
         _test_logout(self)
 
     def test_post(self):
+        """POST ``self.uri``."""
         num_item_notes = models.ItemNote.objects.count()
         response = self.client.post(
             self.URI,
@@ -576,37 +600,45 @@ class ItemNoteIdUpdateFormTestCase(TestCase):
         _test_logout(self, self.uri)
 
     def test_post(self):
+        """POST ``self.uri``."""
         response = self.client.post(self.uri)
         self.assertEqual(response.status_code, 405)
 
     def test_get(self):
+        """GET ``self.uri``."""
         response = self.client.get(self.uri)
         self.assertEqual(response.status_code, 200)
 
     def test_put(self):
+        """PUT ``self.uri``."""
         response = self.client.post(self.uri, {'_method': 'PUT'})
         self.assertEqual(response.status_code, 405)
 
     def test_delete(self):
+        """DELETE ``self.uri``."""
         response = self.client.post(self.uri, {'_method': 'DELETE'})
         self.assertEqual(response.status_code, 405)
 
     def test_post_bad_id(self):
+        """POST ``self.uri`` with a bad ID."""
         self.item_note.delete()
         response = self.client.post(self.uri)
         self.assertEqual(response.status_code, 404)
 
     def test_get_bad_id(self):
+        """GET ``self.uri`` with a bad ID."""
         self.item_note.delete()
         response = self.client.get(self.uri)
         self.assertEqual(response.status_code, 404)
 
     def test_put_bad_id(self):
+        """PUT ``self.uri`` with a bad ID."""
         self.item_note.delete()
         response = self.client.post(self.uri)
         self.assertEqual(response.status_code, 404)
 
     def test_delete_bad_id(self):
+        """DELETE ``self.uri`` with a bad ID."""
         self.item_note.delete()
         response = self.client.post(self.uri)
         self.assertEqual(response.status_code, 404)
@@ -635,37 +667,45 @@ class ItemNoteIdDeleteFormTestCase(TestCase):
         _test_logout(self, self.uri)
 
     def test_post(self):
+        """POST ``self.uri``."""
         response = self.client.post(self.uri)
         self.assertEqual(response.status_code, 405)
 
     def test_get(self):
+        """GET ``self.uri``."""
         response = self.client.get(self.uri)
         self.assertEqual(response.status_code, 200)
 
     def test_put(self):
+        """PUT ``self.uri``."""
         response = self.client.post(self.uri, {'_method': 'PUT'})
         self.assertEqual(response.status_code, 405)
 
     def test_delete(self):
+        """DELETE ``self.uri``."""
         response = self.client.post(self.uri, {'_method': 'DELETE'})
         self.assertEqual(response.status_code, 405)
 
     def test_post_bad_id(self):
+        """POST ``self.uri`` with a bad ID."""
         self.item_note.delete()
         response = self.client.post(self.uri)
         self.assertEqual(response.status_code, 404)
 
     def test_get_bad_id(self):
+        """GET ``self.uri`` with a bad ID."""
         self.item_note.delete()
         response = self.client.get(self.uri)
         self.assertEqual(response.status_code, 404)
 
     def test_put_bad_id(self):
+        """PUT ``self.uri`` with a bad ID."""
         self.item_note.delete()
         response = self.client.post(self.uri)
         self.assertEqual(response.status_code, 404)
 
     def test_delete_bad_id(self):
+        """DELETE ``self.uri`` with a bad ID."""
         self.item_note.delete()
         response = self.client.post(self.uri)
         self.assertEqual(response.status_code, 404)
@@ -909,37 +949,45 @@ class TagIdUpdateFormTestCase(TestCase):
         _test_logout(self, self.uri)
 
     def test_post(self):
+        """POST ``self.uri``."""
         response = self.client.post(self.uri, {})
         self.assertEqual(response.status_code, 405)
 
     def test_get(self):
+        """GET ``self.uri``."""
         response = self.client.get(self.uri)
         self.assertEqual(response.status_code, 200)
 
     def test_put(self):
+        """PUT ``self.uri``."""
         response = self.client.post(self.uri, {'_method': 'PUT'})
         self.assertEqual(response.status_code, 405)
 
     def test_delete(self):
+        """DELETE ``self.uri``."""
         response = self.client.post(self.uri, {'_method': 'DELETE'})
         self.assertEqual(response.status_code, 405)
 
     def test_post_bad_id(self):
+        """POST ``self.uri`` with a bad ID."""
         self.tag.delete()
         response = self.client.post(self.uri, {})
         self.assertEqual(response.status_code, 404)
 
     def test_get_bad_id(self):
+        """GET ``self.uri`` with a bad ID."""
         self.tag.delete()
         response = self.client.get(self.uri)
         self.assertEqual(response.status_code, 404)
 
     def test_put_bad_id(self):
+        """POST ``self.uri`` with a bad ID."""
         self.tag.delete()
         response = self.client.post(self.uri)
         self.assertEqual(response.status_code, 404)
 
     def test_delete_bad_id(self):
+        """DELETE ``self.uri`` with a bad ID."""
         self.tag.delete()
         response = self.client.post(self.uri)
         self.assertEqual(response.status_code, 404)
@@ -968,37 +1016,45 @@ class TagIdDeleteFormTestCase(TestCase):
         _test_logout(self, self.uri)
 
     def test_post(self):
+        """POST ``self.uri``."""
         response = self.client.post(self.uri, {})
         self.assertEqual(response.status_code, 405)
 
     def test_get(self):
+        """GET ``self.uri``."""
         response = self.client.get(self.uri)
         self.assertEqual(response.status_code, 200)
 
     def test_put(self):
+        """PUT ``self.uri``."""
         response = self.client.post(self.uri, {'_method': 'PUT'})
         self.assertEqual(response.status_code, 405)
 
     def test_delete(self):
+        """DELETE ``self.uri``."""
         response = self.client.post(self.uri, {'_method': 'DELETE'})
         self.assertEqual(response.status_code, 405)
 
     def test_post_bad_id(self):
+        """POST ``self.uri`` with a bad ID."""
         self.tag.delete()
         response = self.client.post(self.uri, {})
         self.assertEqual(response.status_code, 404)
 
     def test_get_bad_id(self):
+        """GET ``self.uri`` with a bad ID."""
         self.tag.delete()
         response = self.client.get(self.uri)
         self.assertEqual(response.status_code, 404)
 
     def test_put_bad_id(self):
+        """PUT ``self.uri`` with a bad ID."""
         self.tag.delete()
         response = self.client.post(self.uri)
         self.assertEqual(response.status_code, 404)
 
     def test_delete_bad_id(self):
+        """DELETE ``self.uri`` with a bad ID."""
         self.tag.delete()
         response = self.client.post(self.uri)
         self.assertEqual(response.status_code, 404)

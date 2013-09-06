@@ -3,17 +3,18 @@ from django.core.urlresolvers import reverse
 from django.template import Library
 from elts import models
 
-register = Library()
+# A function decorated with @register.filter can be used as a filter.
+register = Library() # pylint: disable=C0103
 
 @register.filter
 def item_tags(item):
     """Returns ``item``'s tags as a list."""
-    return models.Tag.objects.filter(item__id = item.id)
+    return models.Tag.objects.filter(item__id = item.id) # pylint: disable=E1101
 
 @register.filter
 def item_notes(item):
     """Returns ``item``'s notes as a list."""
-    return models.ItemNote.objects.filter(item_id = item.id)
+    return models.ItemNote.objects.filter(item_id = item.id) # pylint: disable=E1101
 
 @register.filter
 def tag_link(tag):
@@ -35,7 +36,7 @@ def tag_link(tag):
 @register.filter
 def tag_items(tag):
     """Returns ``tag``'s items as a list."""
-    return models.Item.objects.filter(tags__id = tag.id)
+    return models.Item.objects.filter(tags__id = tag.id) # pylint: disable=E1101
 
 @register.filter
 def item_link(item):
@@ -64,15 +65,18 @@ def related_tags(item):
     the tuple of tags is returned.
 
     """
-    # sets are an unordered collection of unique objects
+    # Find all tags used by this item.
     tags = set(item_tags(item))
 
+    # Find all items `tags` have been applied to.
     related_items = set()
     for tag in tags:
         related_items = related_items.union(tag_items(tag))
 
-    related_tags = set()
+    # Find all tags applied to `related_items`.
+    all_related_tags = set()
     for related_item in related_items:
-        related_tags = related_tags.union(item_tags(related_item))
+        all_related_tags = all_related_tags.union(item_tags(related_item))
 
-    return related_tags - tags
+    # Return only those related tags not already being used by `item`.
+    return all_related_tags - tags

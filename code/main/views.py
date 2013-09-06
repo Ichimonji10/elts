@@ -8,6 +8,6 @@ responsiblities of each function.
 from django.core import urlresolvers
 from django import http
 
-def index(request):
+def index(request): # pylint: disable=W0613
     """Redirect user to ELTS application."""
     return http.HttpResponseRedirect(urlresolvers.reverse('elts.views.index'))

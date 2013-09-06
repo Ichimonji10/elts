@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """A command-line utility for project-specific administrative tasks.
 
-From the `official documentation`_:
+From the `official docs`_:
 
     ``manage.py`` is automatically created in each Django project. ``manage.py``
     is a thin wrapper around ``django-admin.py`` that takes care of two things
@@ -13,7 +13,7 @@ From the `official documentation`_:
 
 See the README for examples of what ``manage.py`` can be used for.
 
-.. _official documentation: https://docs.djangoproject.com/en/dev/ref/django-admin/
+.. _official docs: https://docs.djangoproject.com/en/dev/ref/django-admin/
 
 """
 import os
