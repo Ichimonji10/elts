@@ -869,6 +869,73 @@ class LendIdDeleteFormTestCase(TestCase):
         response = self.client.post(self.uri)
         self.assertEqual(response.status_code, 404)
 
+class LendIdUpdateFormTestCase(TestCase):
+    """Tests for the ``lend/<id>/update-form/`` URI.
+
+    The ``lend/<id>/update-form/`` URI is available through the
+    ``elts.views.lend_id_update_form`` function.
+
+    """
+    FUNCTION = 'elts.views.lend_id_update_form'
+
+    def setUp(self):
+        """Authenticate the test client, create an lend, and set ``self.uri``.
+
+        The lend created is accessible as ``self.lend``.
+
+        """
+        _login(self.client)
+        self.lend = factories.LendFactory.create()
+        self.uri = reverse(self.FUNCTION, args = [self.lend.id])
+
+    def test_logout(self):
+        """Call ``_test_logout()``."""
+        _test_logout(self, self.uri)
+
+    def test_post(self):
+        """POST ``self.uri``."""
+        response = self.client.post(self.uri, {})
+        self.assertEqual(response.status_code, 405)
+
+    def test_get(self):
+        """GET ``self.uri``."""
+        response = self.client.get(self.uri)
+        self.assertEqual(response.status_code, 200)
+
+    def test_put(self):
+        """PUT ``self.uri``."""
+        response = self.client.post(self.uri, {'_method': 'PUT'})
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete(self):
+        """DELETE ``self.uri``."""
+        response = self.client.post(self.uri, {'_method': 'DELETE'})
+        self.assertEqual(response.status_code, 405)
+
+    def test_post_bad_id(self):
+        """POST ``self.uri`` with a bad ID."""
+        self.lend.delete()
+        response = self.client.post(self.uri, {})
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_bad_id(self):
+        """GET ``self.uri`` with a bad ID."""
+        self.lend.delete()
+        response = self.client.get(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_put_bad_id(self):
+        """PUT ``self.uri`` with a bad ID."""
+        self.lend.delete()
+        response = self.client.post(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_delete_bad_id(self):
+        """DELETE ``self.uri`` with a bad ID."""
+        self.lend.delete()
+        response = self.client.post(self.uri)
+        self.assertEqual(response.status_code, 404)
+
 class LoginTestCase(TestCase):
     """Tests for the the ``login/`` URI.
 
