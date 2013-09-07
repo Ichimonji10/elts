@@ -802,6 +802,86 @@ class LendCreateFormTestCase(TestCase):
         response = self.client.post(self.URI, {'_method': 'DELETE'})
         self.assertEqual(response.status_code, 405)
 
+class LendIdTestCase(TestCase):
+    """Tests for the ``lend/<id>/`` URI.
+
+    The ``lend/<id>/`` URI is available through the ``elts.views.lend_id``
+    function.
+
+    """
+    FUNCTION = 'elts.views.lend_id'
+
+    def setUp(self):
+        """Authenticate the test client, create an lend, and set ``self.uri``.
+
+        The lend created is accessible as ``self.lend``.
+
+        """
+        _login(self.client)
+        self.lend = factories.LendFactory.create()
+        self.uri = reverse(self.FUNCTION, args = [self.lend.id])
+
+    def test_logout(self):
+        """Call ``_test_logout()``."""
+        _test_logout(self, self.uri)
+
+    def test_post(self):
+        """POST ``self.uri``."""
+        response = self.client.post(self.uri, {})
+        self.assertEqual(response.status_code, 405)
+
+    def test_get(self):
+        """GET ``self.uri``."""
+        response = self.client.get(self.uri)
+        self.assertEqual(response.status_code, 200)
+
+    def test_put(self):
+        """PUT ``self.uri``."""
+        data = dict(
+            _method = 'PUT',
+            item_id = factories.ItemFactory.create().id,
+            user_id = factories.UserFactory.create().id,
+        )
+        response = self.client.post(self.uri, data)
+        self.assertRedirects(response, self.uri)
+
+    def test_delete(self):
+        """DELETE ``self.uri``."""
+        response = self.client.post(self.uri, {'_method': 'DELETE'})
+        self.assertRedirects(response, reverse('elts.views.lend'))
+
+    def test_post_bad_id(self):
+        """POST ``self.uri`` with a bad ID."""
+        self.lend.delete()
+        response = self.client.post(self.uri, {})
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_bad_id(self):
+        """GET ``self.uri`` with a bad ID."""
+        self.lend.delete()
+        response = self.client.get(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_put_bad_id(self):
+        """PUT ``self.uri`` with a bad ID."""
+        self.lend.delete()
+        response = self.client.post(self.uri, {'_method': 'PUT'})
+        self.assertEqual(response.status_code, 404)
+
+    def test_delete_bad_id(self):
+        """DELETE ``self.uri`` with a bad ID."""
+        self.lend.delete()
+        response = self.client.post(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_put_failure(self):
+        """PUT ``self.uri``, incorrectly."""
+        response = self.client.post(self.uri, {'_method': 'PUT'})
+        self.assertRedirects(
+            response,
+            reverse('elts.views.lend_id_update_form', args = [self.lend.id])
+        )
+
 class LendIdDeleteFormTestCase(TestCase):
     """Tests for the ``lend/<id>/delete-form/`` URI.
 
