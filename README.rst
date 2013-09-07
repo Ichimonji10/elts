@@ -2,8 +2,8 @@ About
 =====
 
 This repo contains the source code for the Electronic Lending Tracking System
-(ELTS). You can get the full source code for ELTS from the subversion repository
-at https://subversion.assembla.com/svn/elts.
+(ELTS). You can get the full source code for ELTS from
+https://github.com/Ichimonji10/elts.git.
 
 ELTS is written using the Django web app framework. The `The Django Book`_ and
 the official `Django documentation`_ are good references. The Django Book is old
@@ -37,9 +37,9 @@ Generate static files::
 
     $ code/manage.py collectstatic
 
-The lighttpd config file assumes that a project branch (such as ``trunk``) has
-been copied to ``/srv/http/``. Tweak the config file if needed, then install it
-and start lighttpd. ::
+The lighttpd config file assumes that the project has been cloned to to
+``/srv/http/``. Tweak the config file if needed, then install it and start
+lighttpd. ::
 
     $ vi configs/lighttpd.conf
     $ cp configs/lighttpd.conf /etc/lighttpd/lighttpd.conf
@@ -164,10 +164,6 @@ Repository Layout
 This section isn't requred reading, but if you really want to understand why the
 project is laid out as it is, read on.
 
-This project is currently housed in a subversion repository, and the branches,
-tags, and trunk folders are used in the usual way. If you don't understand how
-branching under subversion works, read `Version Control with Subversion`_.
-
 code
 ----
 
@@ -261,4 +257,3 @@ of the this folder should *not* be version controlled.
 .. _The Django Book: http://www.djangobook.com/en/2.0/index.html
 .. _Django documentation: https://docs.djangoproject.com/en/dev/
 .. _MySQL-Python: http://mysql-python.sourceforge.net/
-.. _Version Control with Subversion: http://svnbook.red-bean.com/
