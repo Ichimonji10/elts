@@ -544,6 +544,68 @@ def item_note_id_delete_form(request, item_note_id_):
         _http_405
     )()
 
+@login_required
+def lend(request):
+    """Handle a request for ``lend/``."""
+    def post_handler():
+        """Create a new item lend.
+
+        If creation suceeds, redirect user to ``user_id`` view. Otherwise,
+        redirect user to ``lend_create_form``.
+
+        """
+        form = forms.LendForm(request.POST)
+        if form.is_valid():
+            new_lend = form.save()
+            return http.HttpResponseRedirect(
+                reverse(
+                    'elts.views.user_id',
+                    args = [new_lend.user_id.id],
+                )
+            )
+        else:
+            # Put ``form`` into session for retrieval by ``lend_create_form``.
+            request.session['form'] = form
+            return http.HttpResponseRedirect(
+                reverse('elts.views.lend_create_form')
+            )
+
+    def get_handler():
+        """Return information about all lends."""
+        return render(
+            request,
+            'elts/lend.html',
+            {'lends': models.Lend.objects.all()}
+        )
+
+    return {
+        'POST': post_handler,
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
+
+@login_required
+def lend_create_form(request):
+    """Handle a request for ``lend/create_form/``."""
+    def get_handler():
+        """Return a form for creating an lend."""
+        return render(
+            request,
+            'elts/lend-create-form.html',
+            # If user submits a form containing errors, method ``lend`` will
+            # put that form into the session. Use it if available.
+            {'form': request.session.pop('form', forms.LendForm())}
+        )
+
+    return {
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
+
 def login(request):
     """Handle a request for ``login/``."""
     def get_handler():

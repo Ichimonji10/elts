@@ -1,0 +1,39 @@
+{% extends 'elts/base.html' %}
+
+{% load tag_tools %}
+
+{% block title %}Lends{% endblock %}
+
+{% block body %}
+    <h1>Lends</h1>
+    <p>You can create a new lend
+    <a href='{% url 'elts.views.lend_create_form' %}'>here</a>.</p>
+    {% if lends %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>User</th>
+                    <th>Out (reserved)</th>
+                    <th>Out (actual)</th>
+                    <th>Back (reserved)</th>
+                    <th>Back (actual)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lend in lends %}
+                    <tr>
+                        <td>{{ lend.item_id }}</td>
+                        <td>{{ lend.user_id }}</td>
+                        <td>{{ lend.out_reservation }}</td>
+                        <td>{{ lend.out_actual }}</td>
+                        <td>{{ lend.back_reservation }}</td>
+                        <td>{{ lend.back_actual }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No lends in database.</p>
+    {% endif %}
+{% endblock %}
