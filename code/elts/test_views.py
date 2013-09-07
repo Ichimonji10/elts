@@ -456,7 +456,7 @@ class ItemNoteTestCase(TestCase):
             self.URI,
             {
                 'note_text': \
-                factories.random_utf8_str(models.Note.MAX_LEN_NOTE_TEXT),
+                    factories.random_utf8_str(models.Note.MAX_LEN_NOTE_TEXT),
                 'item_id': factories.ItemFactory.create().id
             }
         )
@@ -728,7 +728,22 @@ class LendTestCase(TestCase):
 
     def test_post(self):
         """POST ``self.URI``."""
-        pass # FIXME
+        num_lends = models.Lend.objects.count()
+        response = self.client.post(
+            self.URI,
+            {
+                'item_id': factories.ItemFactory.create().id,
+                'user_id': factories.UserFactory.create().id,
+            }
+        )
+        self.assertEqual(models.Lend.objects.count(), num_lends + 1)
+        self.assertRedirects(
+            response,
+            reverse(
+                'elts.views.lend_id',
+                args = [models.Lend.objects.latest('id').id]
+            )
+        )
 
     def test_post_failure(self):
         """POST ``self.URI``, incorrectly."""
