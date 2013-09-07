@@ -616,9 +616,8 @@ def _request_type(request):
 
     ``request`` is a ``django.http.HttpRequest`` object.
 
-    If ``request`` is a POST request containing the '_method' HTTP argument,
-    delete '_method' from ``request.POST`` and return the "real" HTTP method.
-    Otherwise, return ``request.method`` untouched.
+    If ``request`` is an HTTP POST request and '_method' is a query string key,
+    return the corresponding value. Otherwise, return ``request.method``.
 
     """
     method = request.method
