@@ -710,6 +710,46 @@ class ItemNoteIdDeleteFormTestCase(TestCase):
         response = self.client.post(self.uri)
         self.assertEqual(response.status_code, 404)
 
+class LendTestCase(TestCase):
+    """Tests for the ``lend/`` URI.
+
+    The ``lend/`` URI is available through the ``elts.views.lend`` function.
+
+    """
+    URI = reverse('elts.views.lend')
+
+    def setUp(self):
+        """Authenticate the test client."""
+        _login(self.client)
+
+    def test_logout(self):
+        """Call ``_test_logout()``."""
+        _test_logout(self)
+
+    def test_post(self):
+        """POST ``self.URI``."""
+        pass # FIXME
+
+    def test_post_failure(self):
+        """POST ``self.URI``, incorrectly."""
+        response = self.client.post(self.URI, {})
+        self.assertRedirects(response, reverse('elts.views.lend_create_form'))
+
+    def test_get(self):
+        """GET ``self.URI``."""
+        response = self.client.get(self.URI)
+        self.assertEqual(response.status_code, 200)
+
+    def test_put(self):
+        """PUT ``self.URI``."""
+        response = self.client.post(self.URI, {'_method': 'PUT'})
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete(self):
+        """DELETE ``self.URI``."""
+        response = self.client.post(self.URI, {'_method': 'DELETE'})
+        self.assertEqual(response.status_code, 405)
+
 class LoginTestCase(TestCase):
     """Tests for the the ``login/`` URI.
 

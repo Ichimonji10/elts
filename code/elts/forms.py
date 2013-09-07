@@ -74,6 +74,7 @@ class LoginForm(Form):
 
 class LendForm(ModelForm):
     """A form for a Lend."""
+    # FIXME: validate out_reservation is before back_reservation
 
     class Meta(object):
         """Model attributes that are not fields."""
