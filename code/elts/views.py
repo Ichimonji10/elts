@@ -171,10 +171,7 @@ def item_id(request, item_id_):
         else:
             request.session['form'] = form
             return http.HttpResponseRedirect(
-                reverse(
-                    'elts.views.item_id_update_form',
-                    args = [item_id_]
-                )
+                reverse('elts.views.item_id_update_form', args = [item_id_])
             )
 
     def delete_handler():
@@ -559,8 +556,8 @@ def lend(request):
             new_lend = form.save()
             return http.HttpResponseRedirect(
                 reverse(
-                    'elts.views.user_id',
-                    args = [new_lend.user_id.id],
+                    'elts.views.lend_id',
+                    args = [new_lend.id],
                 )
             )
         else:
@@ -598,6 +595,106 @@ def lend_create_form(request):
             # put that form into the session. Use it if available.
             {'form': request.session.pop('form', forms.LendForm())}
         )
+
+    return {
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
+
+@login_required
+def lend_id(request, lend_id_):
+    """Handle a request for ``lend/<id>/``."""
+    try:
+        lend_ = models.Lend.objects.get(id = lend_id_)
+    except models.Lend.DoesNotExist:
+        raise http.Http404
+
+    def get_handler():
+        """Return information about lend ``lend_id_``."""
+        return render(
+            request,
+            'elts/lend-id.html',
+            {
+                # FIXME: implement LendNoteForm
+                'lend': lend_,
+                #'form': request.session.pop('form', forms.LendNoteForm()),
+            }
+        )
+
+    def put_handler():
+        """Update lend ``lend_id_``.
+
+        If update succeeds, redirect user to ``lend_id`` view. Otherwise,
+        redirect user to ``lend_id_update_form``.
+
+        """
+        form = forms.LendForm(request.POST, instance = lend_)
+        if form.is_valid():
+            form.save()
+            return http.HttpResponseRedirect(
+                reverse('elts.views.lend_id', args = [lend_id_])
+            )
+        else:
+            request.session['form'] = form
+            return http.HttpResponseRedirect(
+                reverse('elts.views.lend_id_update_form', args = [lend_id_])
+            )
+
+    def delete_handler():
+        """Delete lend ``lend_id_``.
+
+        After delete, redirect user to ``lend`` view.
+
+        """
+        lend_.delete()
+        return http.HttpResponseRedirect(reverse('elts.views.lend'))
+
+    return {
+        'GET': get_handler,
+        'PUT': put_handler,
+        'DELETE': delete_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
+
+@login_required
+def lend_id_update_form(request, lend_id_):
+    """Handle a request for ``lend/<id>/update-form/``."""
+    try:
+        lend_ = models.Lend.objects.get(id = lend_id_)
+    except models.Lend.DoesNotExist:
+        raise http.Http404
+
+    def get_handler():
+        """Return a form for updating lend ``lend_id_``."""
+        form = request.session.pop('form', forms.LendForm(instance = lend_))
+        return render(
+            request,
+            'elts/lend-id-update-form.html',
+            {'lend': lend_, 'form': form}
+        )
+
+    return {
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
+
+@login_required
+def lend_id_delete_form(request, lend_id_):
+    """Handle a request for ``lend/<id>/delete-form/``."""
+    try:
+        lend_ = models.Lend.objects.get(id = lend_id_)
+    except models.Lend.DoesNotExist:
+        raise http.Http404
+
+    def get_handler():
+        """Return a form for deleting lend ``lend_id_``."""
+        return render(request, 'elts/lend-id-delete-form.html', {'lend': lend_})
 
     return {
         'GET': get_handler,

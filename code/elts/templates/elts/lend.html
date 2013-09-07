@@ -18,6 +18,7 @@
                     <th>Out (actual)</th>
                     <th>Back (reserved)</th>
                     <th>Back (actual)</th>
+                    <th>Links</th>
                 </tr>
             </thead>
             <tbody>
@@ -29,6 +30,11 @@
                         <td>{{ lend.out_actual }}</td>
                         <td>{{ lend.back_reservation }}</td>
                         <td>{{ lend.back_actual }}</td>
+                        <td>
+                            <a href='{% url 'elts.views.lend_id' lend.id %}'>Details</a>
+                            <a href='{% url 'elts.views.lend_id_update_form' lend.id %}'>Edit</a>
+                            <a href='{% url 'elts.views.lend_id_delete_form' lend.id %}'>Delete</a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
