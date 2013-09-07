@@ -38,17 +38,17 @@ class ItemFormTestCase(TestCase):
         random.randint(1, 100) # FIXME: what's the max for an ID val?
 
     def test_valid(self):
-        """Creates a valid ItemForm."""
+        """Create a valid ItemForm."""
         form = forms.ItemForm({'name': self._name()})
         self.assertTrue(form.is_valid()) # pylint: disable=E1101
 
     def test_missing_name(self):
-        """Creates an ItemForm without setting ``name``."""
+        """Create an ItemForm without setting ``name``."""
         form = forms.ItemForm({})
         self.assertFalse(form.is_valid()) # pylint: disable=E1101
 
     def test_has_description(self):
-        """Creates an ItemForm and sets ``description``."""
+        """Create an ItemForm and set ``description``."""
         form = forms.ItemForm({
             'name': self._name(),
             'description': self._description()
@@ -56,7 +56,7 @@ class ItemFormTestCase(TestCase):
         self.assertTrue(form.is_valid()) # pylint: disable=E1101
 
     def test_has_is_lendable(self):
-        """Creates an ItemForm and sets ``is_lendable``."""
+        """Create an ItemForm and set ``is_lendable``."""
         form = forms.ItemForm({
             'name': self._name(),
             'is_lendable': self._is_lendable()
@@ -64,7 +64,7 @@ class ItemFormTestCase(TestCase):
         self.assertTrue(form.is_valid()) # pylint: disable=E1101
 
     def test_has_tags(self):
-        """Creates an ItemForm and sets ``tags``."""
+        """Create an ItemForm and set ``tags``."""
         form = forms.ItemForm({
             'name': self._name(),
             'tags': self._tags()
@@ -84,24 +84,24 @@ class TagFormTestCase(TestCase):
         return random_utf8_str(1, models.Tag.MAX_LEN_DESCRIPTION)
 
     def test_valid(self):
-        """Creates a valid TagForm."""
+        """Create a valid TagForm."""
         form = forms.TagForm({'name': self._name()})
         self.assertTrue(form.is_valid()) # pylint: disable=E1101
 
     def test_missing_name(self):
-        """Creates a TagForm without setting ``name``."""
+        """Create a TagForm without setting ``name``."""
         form = forms.TagForm({})
         self.assertFalse(form.is_valid()) # pylint: disable=E1101
 
     def test_invalid_name(self):
-        """Creates a TagForm and sets an invalid ``name``."""
+        """Create a TagForm and set an invalid ``name``."""
         form = forms.TagForm({
             'name': random_utf8_str(models.Tag.MAX_LEN_NAME + 1)
         })
         self.assertFalse(form.is_valid()) # pylint: disable=E1101
 
     def test_has_description(self):
-        """Creates a TagForm and sets ``description``."""
+        """Create a TagForm and set ``description``."""
         form = forms.TagForm({
             'name': self._name(),
             'description': self._description()
@@ -109,7 +109,7 @@ class TagFormTestCase(TestCase):
         self.assertTrue(form.is_valid()) # pylint: disable=E1101
 
     def test_invalid_description(self):
-        """Creates a TagForm and sets an invalid ``description``."""
+        """Create a TagForm and set an invalid ``description``."""
         form = forms.TagForm({
             'name': self._name(),
             'description': random_utf8_str(models.Tag.MAX_LEN_DESCRIPTION + 1)
@@ -124,17 +124,17 @@ class ItemNoteFormTestCase(TestCase):
         return random_utf8_str(1, models.ItemNote.MAX_LEN_NOTE_TEXT)
 
     def test_valid(self):
-        """Creates a valid ItemNoteForm."""
+        """Create a valid ItemNoteForm."""
         form = forms.ItemNoteForm({'note_text': self._note_text()})
         self.assertTrue(form.is_valid()) # pylint: disable=E1101
 
     def test_missing_note_text(self):
-        """Creates an ItemNoteForm without setting ``note_text``."""
+        """Create an ItemNoteForm without setting ``note_text``."""
         form = forms.ItemNoteForm({})
         self.assertFalse(form.is_valid()) # pylint: disable=E1101
 
     def test_invalid_note_text(self):
-        """Creates an ItemNoteForm and sets an invalid note_text.``"""
+        """Create an ItemNoteForm and set an invalid note_text.``"""
         form = forms.ItemNoteForm({
             'note_text': random_utf8_str(models.ItemNote.MAX_LEN_NOTE_TEXT + 1)
         })
@@ -148,17 +148,17 @@ class UserNoteFormTestCase(TestCase):
         return random_utf8_str(1, models.UserNote.MAX_LEN_NOTE_TEXT)
 
     def test_valid(self):
-        """Creates a valid UserNoteForm."""
+        """Create a valid UserNoteForm."""
         form = forms.UserNoteForm({'note_text': self._note_text()})
         self.assertTrue(form.is_valid()) # pylint: disable=E1101
 
     def test_missing_note_text(self):
-        """Creates an UserNoteForm without setting ``note_text``."""
+        """Create an UserNoteForm without setting ``note_text``."""
         form = forms.UserNoteForm({})
         self.assertFalse(form.is_valid()) # pylint: disable=E1101
 
     def test_invalid_note_text(self):
-        """Creates an UserNoteForm and sets an invalid note_text.``"""
+        """Create an UserNoteForm and set an invalid note_text.``"""
         form = forms.UserNoteForm({
             'note_text': random_utf8_str(models.UserNote.MAX_LEN_NOTE_TEXT + 1)
         })
@@ -177,24 +177,24 @@ class LendNoteFormTestCase(TestCase):
         return random.choice([True, False])
 
     def test_valid(self):
-        """Creates a valid LendNoteForm."""
+        """Create a valid LendNoteForm."""
         form = forms.LendNoteForm({'note_text': self._note_text()})
         self.assertTrue(form.is_valid()) # pylint: disable=E1101
 
     def test_missing_note_text(self):
-        """Creates an LendNoteForm without setting ``note_text``."""
+        """Create an LendNoteForm without setting ``note_text``."""
         form = forms.LendNoteForm({})
         self.assertFalse(form.is_valid()) # pylint: disable=E1101
 
     def test_invalid_note_text(self):
-        """Creates an LendNoteForm and sets an invalid note_text.``"""
+        """Create an LendNoteForm and set an invalid note_text.``"""
         form = forms.LendNoteForm({
             'note_text': random_utf8_str(models.LendNote.MAX_LEN_NOTE_TEXT + 1)
         })
         self.assertFalse(form.is_valid()) # pylint: disable=E1101
 
     def test_has_is_complaint(self):
-        """Creates a LendNoteForm and sets ``is_complaint``."""
+        """Create a LendNoteForm and set ``is_complaint``."""
         form = forms.LendNoteForm({
             'note_text': self._note_text(),
             'is_complaint': self._is_complaint()
@@ -214,7 +214,7 @@ class LoginFormTestCase(TestCase):
         return random_utf8_str(1, 1000)
 
     def test_valid(self):
-        """Creates a valid LoginForm."""
+        """Create a valid LoginForm."""
         form = forms.LoginForm({
             'username': self._username(),
             'password': self._password()
@@ -222,11 +222,11 @@ class LoginFormTestCase(TestCase):
         self.assertTrue(form.is_valid()) # pylint: disable=E1101
 
     def test_missing_username(self):
-        """Creates a LoginForm without setting ``username``."""
+        """Create a LoginForm without setting ``username``."""
         form = forms.LoginForm({'password': self._password()})
         self.assertFalse(form.is_valid()) # pylint: disable=E1101
 
     def test_missing_password(self):
-        """Creates a LoginForm without setting ``password``."""
+        """Create a LoginForm without setting ``password``."""
         form = forms.LoginForm({'username': self._username()})
         self.assertFalse(form.is_valid()) # pylint: disable=E1101
