@@ -750,6 +750,43 @@ class LendTestCase(TestCase):
         response = self.client.post(self.URI, {'_method': 'DELETE'})
         self.assertEqual(response.status_code, 405)
 
+class LendCreateFormTestCase(TestCase):
+    """Tests for the ``lend/create-form/`` URI.
+
+    The ``lend/create-form/`` URI is available through the
+    ``elts.views.lend_create_form`` function.
+
+    """
+    URI = reverse('elts.views.lend_create_form')
+
+    def setUp(self):
+        """Authenticate the test client."""
+        _login(self.client)
+
+    def test_logout(self):
+        """Call ``_test_logout()``."""
+        _test_logout(self)
+
+    def test_post(self):
+        """POST ``self.URI``."""
+        response = self.client.post(self.URI)
+        self.assertEqual(response.status_code, 405)
+
+    def test_get(self):
+        """GET ``self.URI``."""
+        response = self.client.get(self.URI)
+        self.assertEqual(response.status_code, 200)
+
+    def test_put(self):
+        """PUT ``self.URI``."""
+        response = self.client.post(self.URI, {'_method': 'PUT'})
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete(self):
+        """DELETE ``self.URI``."""
+        response = self.client.post(self.URI, {'_method': 'DELETE'})
+        self.assertEqual(response.status_code, 405)
+
 class LoginTestCase(TestCase):
     """Tests for the the ``login/`` URI.
 
