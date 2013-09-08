@@ -1,0 +1,17 @@
+{% extends 'elts/base.html' %}
+
+{% block title %}Update Lend Note{% endblock %}
+
+{% block body %}
+    <h1>Update Lend Note</h1>
+    {% include 'elts/_show-errors.html' %}
+    <form
+        method='post'
+        action='{% url 'elts.views.lend_note_id' lend_note.id %}'
+    >
+        {% csrf_token %}
+        <input type='hidden' name='_method' value='PUT' />
+        {{ form.as_p }}
+        <p><button>Submit</button></p>
+    </form>
+{% endblock %}

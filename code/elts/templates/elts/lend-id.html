@@ -20,4 +20,31 @@
         <dt>Back (actual)</dt>
         <dd>{{ lend.back_actual }}</dd>
     </dl>
+    <h2>Notes</h2>
+    {% if lend|lend_notes %}
+        {% for note in lend|lend_notes %}
+            <article>
+                <p>
+                    Comment by {{user.username}} - {{ note.note_date }}<br />
+                    <a href='{% url 'elts.views.lend_note_id_update_form' note.id %}'>
+                        Update
+                    </a>
+                    -
+                    <a href='{% url 'elts.views.lend_note_id_delete_form' note.id %}'>
+                        Delete
+                    </a>
+                </p>
+                <p>{{ note.note_text }}</p>
+            </article>
+        {% endfor %}
+    {% else %}
+        <p>No notes.</p>
+    {% endif %}
+    <h3>Create Note</h3>
+    <form method='post' action='{% url 'elts.views.lend_note' %}'>
+        {% csrf_token %}
+        <input type='hidden' name='lend_id' value='{{lend.id}}' />
+        {{ form.as_p }}
+        <p><button>Submit</button></p>
+    </form>
 {% endblock %}

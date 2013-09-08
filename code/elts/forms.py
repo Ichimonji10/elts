@@ -52,6 +52,7 @@ class UserNoteForm(ModelForm):
         """Model attributes that are not fields."""
         model = models.UserNote
         fields = ['note_text']
+        widgets = {'note_text': Textarea()}
 
 class LendNoteForm(ModelForm):
     """A form for a LendNote."""
@@ -60,6 +61,7 @@ class LendNoteForm(ModelForm):
         """Model attributes that are not fields."""
         model = models.LendNote
         fields = ['is_complaint', 'note_text']
+        widgets = {'note_text': Textarea()}
 
 # End `NoteForm` definitions.
 

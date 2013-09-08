@@ -21,6 +21,13 @@ URL                             POST     GET    PUT      DELETE
 ``item-note/<id>/update-form/``          *
 ``lend/``                       *        *
 ``lend/create-form/``                    *
+``lend/<id>/``                           *      *        *
+``lend/<id>/delete-form``                *
+``lend/<id>/update-form``                *
+``lend-note/``                  *
+``lend-note/<id>/``                             *        *
+``lend-note/<id>/delete-form/``          *
+``lend-note/<id>/update-form/``          *
 ``login/``                      *        *               *
 ``tag/``                        *        *
 ``tag/create-form/``                     *
@@ -78,6 +85,10 @@ urlpatterns = patterns( # pylint: disable=C0103
     url(r'^lend/(\d+)/$',                  'lend_id'),
     url(r'^lend/(\d+)/delete-form/$',      'lend_id_delete_form'),
     url(r'^lend/(\d+)/update-form/$',      'lend_id_update_form'),
+    url(r'^lend-note/$',                   'lend_note'),
+    url(r'^lend-note/(\d+)/$',             'lend_note_id'),
+    url(r'^lend-note/(\d+)/delete-form/$', 'lend_note_id_delete_form'),
+    url(r'^lend-note/(\d+)/update-form/$', 'lend_note_id_update_form'),
     url(r'^login/$',                       'login'),
     url(r'^tag/$',                         'tag'),
     url(r'^tag/create-form/$',             'tag_create_form'),

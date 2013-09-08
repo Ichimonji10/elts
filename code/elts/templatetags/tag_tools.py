@@ -17,6 +17,11 @@ def item_notes(item):
     return models.ItemNote.objects.filter(item_id = item.id) # pylint: disable=E1101
 
 @register.filter
+def lend_notes(lend):
+    """Returns ``lend``'s notes as a list."""
+    return models.LendNote.objects.filter(lend_id = lend.id) # pylint: disable=E1101
+
+@register.filter
 def tag_link(tag):
     """Returns URI for the given ``tag``.
 
