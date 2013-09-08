@@ -5,7 +5,7 @@ update an object.
 
 """
 from django.forms import CharField, Form, ModelForm
-from django.forms.widgets import PasswordInput, Textarea
+from django.forms.widgets import PasswordInput, Textarea, DateInput
 from elts import models
 
 # pylint: disable=R0903
@@ -18,6 +18,7 @@ from elts import models
 
 class ItemForm(ModelForm):
     """A form for an Item."""
+
     class Meta(object):
         """Model attributes that are not fields."""
         model = models.Item
@@ -26,6 +27,7 @@ class ItemForm(ModelForm):
 
 class TagForm(ModelForm):
     """A form for a Tag."""
+
     class Meta(object):
         """Model attributes that are not fields."""
         model = models.Tag
@@ -36,6 +38,7 @@ class TagForm(ModelForm):
 
 class ItemNoteForm(ModelForm):
     """A form for a ItemNote."""
+
     class Meta(object):
         """Model attributes that are not fields."""
         model = models.ItemNote
@@ -44,17 +47,21 @@ class ItemNoteForm(ModelForm):
 
 class UserNoteForm(ModelForm):
     """A form for a UserNote."""
+
     class Meta(object):
         """Model attributes that are not fields."""
         model = models.UserNote
         fields = ['note_text']
+        widgets = {'note_text': Textarea()}
 
 class LendNoteForm(ModelForm):
     """A form for a LendNote."""
+
     class Meta(object):
         """Model attributes that are not fields."""
         model = models.LendNote
         fields = ['is_complaint', 'note_text']
+        widgets = {'note_text': Textarea()}
 
 # End `NoteForm` definitions.
 
@@ -66,3 +73,16 @@ class LoginForm(Form):
     class Meta(object):
         """Model attributes that are not fields."""
         fields = ['username', 'password']
+
+class LendForm(ModelForm):
+    """A form for a Lend."""
+    # FIXME: validate out_reservation is before back_reservation
+
+    class Meta(object):
+        """Model attributes that are not fields."""
+        model = models.Lend
+        fields = ['item_id', 'user_id', 'out_reservation', 'back_reservation']
+        widgets = {
+            'out_reservation': DateInput(),
+            'back_reservation': DateInput()
+        }

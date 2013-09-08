@@ -46,20 +46,25 @@ class Lend(models.Model):
 
     This model tracks the following pieces of information:
 
-    * To whom should an item be lent out?
     * Which item is being lent out?
+    * To whom is the item being lent out?
+    * When is an item scheduled to go out?
+    * When is an item scheduled to come back?
     * When does the item go out?
     * When does the item come back?
-    * When is an item scheduled to go out? (optional)
-    * When is an item scheduled to come back? (optional)
+
+    Note that ``null = True`` is set for several fields. While this should not
+    be done for string-based columns, it is OK for other column types such as
+    dates and booleans. For more info, see:
+    https://docs.djangoproject.com/en/1.5/ref/models/fields/#field-options
 
     """
     item_id = models.ForeignKey('Item')
     user_id = models.ForeignKey(User)
-    out_reservation = models.DateField(blank = True)
-    out_actual = models.DateTimeField(blank = True)
-    back_reservation = models.DateField(blank = True)
-    back_actual = models.DateTimeField(blank = True)
+    out_reservation = models.DateField(blank = True, null = True)
+    back_reservation = models.DateField(blank = True, null = True)
+    out_actual = models.DateTimeField(blank = True, null = True)
+    back_actual = models.DateTimeField(blank = True, null = True)
 
 class Tag(models.Model):
     """A descriptive label for an ``Item``.

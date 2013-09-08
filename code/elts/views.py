@@ -171,10 +171,7 @@ def item_id(request, item_id_):
         else:
             request.session['form'] = form
             return http.HttpResponseRedirect(
-                reverse(
-                    'elts.views.item_id_update_form',
-                    args = [item_id_]
-                )
+                reverse('elts.views.item_id_update_form', args = [item_id_])
             )
 
     def delete_handler():
@@ -535,6 +532,310 @@ def item_note_id_delete_form(request, item_note_id_):
             request,
             'elts/item-note-id-delete-form.html',
             {'item_note': item_note_}
+        )
+
+    return {
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
+
+@login_required
+def lend(request):
+    """Handle a request for ``lend/``."""
+    def post_handler():
+        """Create a new item lend.
+
+        If creation suceeds, redirect user to ``user_id`` view. Otherwise,
+        redirect user to ``lend_create_form``.
+
+        """
+        form = forms.LendForm(request.POST)
+        if form.is_valid():
+            new_lend = form.save()
+            return http.HttpResponseRedirect(
+                reverse(
+                    'elts.views.lend_id',
+                    args = [new_lend.id],
+                )
+            )
+        else:
+            # Put ``form`` into session for retrieval by ``lend_create_form``.
+            request.session['form'] = form
+            return http.HttpResponseRedirect(
+                reverse('elts.views.lend_create_form')
+            )
+
+    def get_handler():
+        """Return information about all lends."""
+        return render(
+            request,
+            'elts/lend.html',
+            {'lends': models.Lend.objects.all()}
+        )
+
+    return {
+        'POST': post_handler,
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
+
+@login_required
+def lend_create_form(request):
+    """Handle a request for ``lend/create_form/``."""
+    def get_handler():
+        """Return a form for creating an lend."""
+        return render(
+            request,
+            'elts/lend-create-form.html',
+            # If user submits a form containing errors, method ``lend`` will
+            # put that form into the session. Use it if available.
+            {'form': request.session.pop('form', forms.LendForm())}
+        )
+
+    return {
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
+
+@login_required
+def lend_id(request, lend_id_):
+    """Handle a request for ``lend/<id>/``."""
+    try:
+        lend_ = models.Lend.objects.get(id = lend_id_)
+    except models.Lend.DoesNotExist:
+        raise http.Http404
+
+    def get_handler():
+        """Return information about lend ``lend_id_``."""
+        return render(
+            request,
+            'elts/lend-id.html',
+            {
+                'lend': lend_,
+                'form': request.session.pop('form', forms.LendNoteForm()),
+            }
+        )
+
+    def put_handler():
+        """Update lend ``lend_id_``.
+
+        If update succeeds, redirect user to ``lend_id`` view. Otherwise,
+        redirect user to ``lend_id_update_form``.
+
+        """
+        form = forms.LendForm(request.POST, instance = lend_)
+        if form.is_valid():
+            form.save()
+            return http.HttpResponseRedirect(
+                reverse('elts.views.lend_id', args = [lend_id_])
+            )
+        else:
+            request.session['form'] = form
+            return http.HttpResponseRedirect(
+                reverse('elts.views.lend_id_update_form', args = [lend_id_])
+            )
+
+    def delete_handler():
+        """Delete lend ``lend_id_``.
+
+        After delete, redirect user to ``lend`` view.
+
+        """
+        lend_.delete()
+        return http.HttpResponseRedirect(reverse('elts.views.lend'))
+
+    return {
+        'GET': get_handler,
+        'PUT': put_handler,
+        'DELETE': delete_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
+
+@login_required
+def lend_id_update_form(request, lend_id_):
+    """Handle a request for ``lend/<id>/update-form/``."""
+    try:
+        lend_ = models.Lend.objects.get(id = lend_id_)
+    except models.Lend.DoesNotExist:
+        raise http.Http404
+
+    def get_handler():
+        """Return a form for updating lend ``lend_id_``."""
+        form = request.session.pop('form', forms.LendForm(instance = lend_))
+        return render(
+            request,
+            'elts/lend-id-update-form.html',
+            {'lend': lend_, 'form': form}
+        )
+
+    return {
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
+
+@login_required
+def lend_id_delete_form(request, lend_id_):
+    """Handle a request for ``lend/<id>/delete-form/``."""
+    try:
+        lend_ = models.Lend.objects.get(id = lend_id_)
+    except models.Lend.DoesNotExist:
+        raise http.Http404
+
+    def get_handler():
+        """Return a form for deleting lend ``lend_id_``."""
+        return render(request, 'elts/lend-id-delete-form.html', {'lend': lend_})
+
+    return {
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
+
+@login_required
+def lend_note(request):
+    """Handle a request for ``lend-note/``."""
+    def post_handler():
+        """Create a new lend note.
+
+        Redirect user to ``lend_id`` view after handling request.
+
+        """
+        # For which lend is this note being created?
+        try:
+            lend_ = models.Lend.objects.get(
+                id = request.POST.get('lend_id', None)
+            )
+        except models.Lend.DoesNotExist:
+            return http.HttpResponse(status = 422)
+
+        # Get note text and, if valid, save the note.
+        form = forms.LendNoteForm(request.POST)
+        if form.is_valid():
+            models.LendNote(
+                note_text = form.cleaned_data['note_text'],
+                author_id = request.user,
+                lend_id = lend_,
+            ).save()
+        else:
+            request.session['form'] = form
+
+        # Return the user to this page whether or not the note was saved.
+        return http.HttpResponseRedirect(
+            reverse('elts.views.lend_id', args = [lend_.id])
+        )
+
+    return {
+        'POST': post_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
+
+@login_required
+def lend_note_id(request, lend_note_id_):
+    """Handle a request for ``lend-note/<id>/``."""
+    try:
+        lend_note_ = models.LendNote.objects.get(id = lend_note_id_)
+    except models.LendNote.DoesNotExist:
+        raise http.Http404
+    lend_id_ = lend_note_.lend_id.id
+
+    def put_handler():
+        """Update lend note ``lend_note_id_``.
+
+        If update succeeds, redirect user to ``lend_id`` view. Otherwise,
+        redirect user to ``lend_note_id_update_form`` view.
+
+        """
+        form = forms.LendNoteForm(request.POST, instance = lend_note_)
+        if form.is_valid():
+            form.save()
+            return http.HttpResponseRedirect(
+                reverse(
+                    'elts.views.lend_id',
+                    args = [lend_id_]
+                )
+            )
+        else:
+            request.session['form'] = form
+            return http.HttpResponseRedirect(
+                reverse(
+                    'elts.views.lend_note_id_update_form',
+                    args = [lend_note_id_]
+                )
+            )
+
+    def delete_handler():
+        """Delete lend note ``lend_note_id_``.
+
+        After deletion, redirect user to ``lend_id`` view.
+
+        """
+        lend_note_.delete()
+        return http.HttpResponseRedirect(
+            reverse('elts.views.lend_id', args = [lend_id_])
+        )
+
+    return {
+        'PUT': put_handler,
+        'DELETE': delete_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
+
+@login_required
+def lend_note_id_update_form(request, lend_note_id_):
+    """Handle a request for ``lend-note/<id>/update-form/``."""
+    try:
+        lend_note_ = models.LendNote.objects.get(id = lend_note_id_)
+    except models.LendNote.DoesNotExist:
+        raise http.Http404
+
+    def get_handler():
+        """Return a form for updating lend note ``lend_note_id_``."""
+        form = request.session.pop(
+            'form',
+            forms.LendNoteForm(instance = lend_note_)
+        )
+        return render(
+            request,
+            'elts/lend-note-id-update-form.html',
+            {'lend_note': lend_note_, 'form': form}
+        )
+
+    return {
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
+
+@login_required
+def lend_note_id_delete_form(request, lend_note_id_):
+    """Handle a request for ``lend-note/<id>/delete-form/``."""
+    try:
+        lend_note_ = models.LendNote.objects.get(id = lend_note_id_)
+    except models.LendNote.DoesNotExist:
+        raise http.Http404
+
+    def get_handler():
+        """Return a form for deleting lend note ``lend_note_id_``."""
+        return render(
+            request,
+            'elts/lend-note-id-delete-form.html',
+            {'lend_note': lend_note_}
         )
 
     return {

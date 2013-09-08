@@ -148,3 +148,16 @@ class ItemNoteFactory(DjangoModelFactory):
     author_id = SubFactory(UserFactory)
     item_id = SubFactory(ItemFactory)
     note_text = random_utf8_str(models.Note.MAX_LEN_NOTE_TEXT)
+
+class LendFactory(DjangoModelFactory):
+    """Instantiate an ``elts.models.Lend`` object.
+
+    >>> lend = LendFactory.create()
+    >>> lend.full_clean()
+    >>> lend.id is None
+    False
+
+    """
+    FACTORY_FOR = models.Lend
+    item_id = SubFactory(ItemFactory)
+    user_id = SubFactory(UserFactory)

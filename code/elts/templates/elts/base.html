@@ -17,6 +17,7 @@
                 <li><a href='{% url 'elts.views.calendar' %}'>Calendar</a></li>
                 <li><a href='{% url 'elts.views.item'     %}'>Items</a></li>
                 <li><a href='{% url 'elts.views.tag'      %}'>Tags</a></li>
+                <li><a href='{% url 'elts.views.lend'     %}'>Lends</a></li>
             </ul>
             <p>Logged in as: {{ user.username }}</p>
             <form method='post' action='{% url 'elts.views.login' %}'>
