@@ -1,0 +1,60 @@
+/* Styles for all calendars.
+ *
+ * Set `margin:0` so two calendars can be stacked on top of each other. The
+ * first calendar tells the days of the week, and the second gives information
+ * about each day of the month.
+ *
+ * Chrom(e/ium) will place a `li`'s number/bullet if that `li` is floated. Set
+ * `list-style-type:none` to compensate.
+ */
+ol.calendar {
+    margin: 0;
+    padding: 0.5em;
+    list-style-type: none;
+    background-color: steelblue;
+}
+
+/* Make a grid-based calendar.
+ *
+ * Each day of the month is displayed as a single cell. Each cell is exactly
+ * 14.25% wide, so seven cells consume 99.75% of available space. (7 * 14.25 ==
+ * 99.75) Use a box-shadow to outline each cell, because box-shadows don't
+ * contribute to the width of an element.
+ */
+ol.calendar li {
+    float: left;
+    width: 13.25%;
+    margin: 0;
+    padding: 0.5em 0.5%;
+    background-color: white;
+    box-shadow: 0 0 0 1px steelblue inset;
+}
+
+/* Give a height to cells in the second calendar. */
+ol.calendar + ol.calendar li {
+    height: 6em;
+    overflow: hidden;
+}
+
+/* Give a left margin to a calendar cell.
+ *
+ * All calendar cells are floats. If one cell is pushed over, all remaining
+ * cells are also pushed over. Here's the pseudo-code used to calculate margins:
+ *
+ *     li.margin-left = li.width * (li.index - 1)
+ *
+ * Only the first cell in a calendar should be given the class "monday",
+ * "tuesday", etc. If you apply these classes to multiple cells, multiple cells
+ * will be pushed over. This is probably not what you want. If following this
+ * rule becomes problematic, the :first-child pseudo-class may come in handy.
+ */
+ol.calendar li.monday    {margin-left: 0;}
+ol.calendar li.tuesday   {margin-left: 14.25%;}
+ol.calendar li.wednesday {margin-left: 28.5%;}
+ol.calendar li.thursday  {margin-left: 42.75%;}
+ol.calendar li.friday    {margin-left: 57%;}
+ol.calendar li.saturday  {margin-left: 71.25%;}
+ol.calendar li.sunday    {margin-left: 85.5%;}
+
+/* Make the calendar contain all calendar elements. (elements are floats) */
+ol.calendar div.clear {clear: both;}
