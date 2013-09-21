@@ -43,6 +43,7 @@ from django import http
 from django.shortcuts import render
 from elts import forms
 from elts import models
+from datetime import date
 
 # pylint: disable=E1101
 # Instance of 'ItemForm' has no 'is_valid' member (no-member)
@@ -67,8 +68,12 @@ def index(request):
 def calendar(request):
     """Handle a request for ``calendar/``."""
     def get_handler():
-        # FIXME
-        return render(request, 'elts/calendar.html', {})
+        """Show items going out and coming back this month."""
+        return render(
+            request,
+            'elts/calendar.html',
+            {'today': date.today()}
+        )
 
     return {
         'GET': get_handler,

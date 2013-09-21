@@ -1,7 +1,7 @@
 {% extends 'elts/base.html' %}
-
 {# Allows {% static 'path/to/resource.ext' %} tag to be used. #}
 {% load staticfiles %}
+{% load calendar_tools %}
 
 {% block title %}Calendar{% endblock %}
 
@@ -12,7 +12,7 @@
 {% block body %}
     <h1>Calendar</h1>
     <p>Items going out and coming back this month.</p>
-    <h2>September 2013</h2>
+    <h2>{{ today | calendar_title }}</h2>
     <ol class='calendar'>
         <li>Monday</li>
         <li>Tuesday</li>
