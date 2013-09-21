@@ -12,15 +12,11 @@
 {% block body %}
     <h1>Calendar</h1>
     <p>Items going out and coming back this month.</p>
-    <h2>{{ today | calendar_title }}</h2>
+    <h2>{{ today | month_and_year }}</h2>
     <ol class='calendar'>
-        <li>Monday</li>
-        <li>Tuesday</li>
-        <li>Wednesday</li>
-        <li>Thursday</li>
-        <li>Friday</li>
-        <li>Saturday</li>
-        <li>Sunday</li>
+        {% for day_name in calendar|day_names %}
+            <li>{{ day_name }}</li>
+        {% endfor %}
     </ol>
     <ol class='calendar'>
         <li class='sunday'>sunday</li>
