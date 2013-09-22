@@ -43,18 +43,24 @@ ol.calendar + ol.calendar li {
  *
  *     li.margin-left = li.width * (li.index - 1)
  *
- * Only the first cell in a calendar should be given the class "monday",
- * "tuesday", etc. If you apply these classes to multiple cells, multiple cells
- * will be pushed over. This is probably not what you want. If following this
- * rule becomes problematic, the :first-child pseudo-class may come in handy.
+ * Only the first cell in a calendar is pushed over, even if multiple cells are
+ * given a class of "mon", "tue", etc.
  */
-ol.calendar li.monday    {margin-left: 0;}
-ol.calendar li.tuesday   {margin-left: 14.25%;}
-ol.calendar li.wednesday {margin-left: 28.5%;}
-ol.calendar li.thursday  {margin-left: 42.75%;}
-ol.calendar li.friday    {margin-left: 57%;}
-ol.calendar li.saturday  {margin-left: 71.25%;}
-ol.calendar li.sunday    {margin-left: 85.5%;}
+ol.calendar li.mon:first-child {margin-left: 0;}
+ol.calendar li.tue:first-child {margin-left: 14.25%;}
+ol.calendar li.wed:first-child {margin-left: 28.5%;}
+ol.calendar li.thu:first-child {margin-left: 42.75%;}
+ol.calendar li.fri:first-child {margin-left: 57%;}
+ol.calendar li.sat:first-child {margin-left: 71.25%;}
+ol.calendar li.sun:first-child {margin-left: 85.5%;}
+
+/* Make the day number in each calendar cell stand out. */
+span.day_number {
+    font-weight: bold;
+    font-size: smaller;
+    vertical-align: top;
+    text-decoration: underline;
+}
 
 /* Make the calendar contain all calendar elements. (elements are floats) */
 ol.calendar div.clear {clear: both;}

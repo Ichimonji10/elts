@@ -43,7 +43,7 @@ from django import http
 from django.shortcuts import render
 from elts import forms
 from elts import models
-from calendar import Calendar
+from calendar import Calendar, day_name
 from datetime import date
 
 # pylint: disable=E1101
@@ -70,13 +70,18 @@ def calendar(request):
     """Handle a request for ``calendar/``."""
     def get_handler():
         """Show items going out and coming back this month."""
-        # TODO: allow users to set the starting day of the week. For an example
-        # of this, read the docstring of
-        # ``elts.templatetags.calendar_tools.day_names``.
+        # TODO: allow users to decide which day starts the week.
         return render(
             request,
             'elts/calendar.html',
-            {'today': date.today(), 'calendar': Calendar()}
+            {
+                'today': date.today(),
+                'day_names': [
+                    day_name[day_num]
+                    for day_num
+                    in Calendar().iterweekdays()
+                ]
+            }
         )
 
     return {

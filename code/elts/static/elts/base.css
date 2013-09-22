@@ -45,3 +45,18 @@ td {
 tr:hover td {
     background-color: #E6F2F7;
 }
+
+/* The famous and essential clearfix, used to make a block wrap floated content.
+ * See more here: http://csscreator.com/attributes/containedfloat.php
+ */
+.floatcontainer:after {
+    /* Create some "block" content, */
+    content: '.';
+    display: block;
+    /* make it invisible */
+    height: 0;
+    font-size: 0;
+    visibility: hidden;
+    /* and force `.floatcontainer` to expand and contain it. */
+    clear: both;
+}
