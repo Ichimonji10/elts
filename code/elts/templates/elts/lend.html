@@ -2,14 +2,20 @@
 
 {% load tag_tools %}
 
-{% block title %}Lends{% endblock %}
+{% block title %}Lends &amp; Reservations{% endblock %}
 
 {% block body %}
-    <h1>Lends</h1>
-    <p>You can create a new lend
-    <a href='{% url 'elts.views.lend_create_form' %}'>here</a>.</p>
+    <h1>Lends &amp; Reservations</h1>
+    <p>
+        If you are lending out an item which has been reserved, find that
+        reservation in the list below and click the "Edit" button. If you are
+        lending out out and item which has not been reserved, or if you are
+        creating a new item reservation, fill out
+        <a href='{% url 'elts.views.lend_create_form' %}'>this form</a>.
+    </p>
     {% if lends %}
         <table>
+            <caption>Existing Lends &amp; Reservations</caption>
             <thead>
                 <tr>
                     <th>Item</th>

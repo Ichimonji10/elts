@@ -13,11 +13,11 @@
         <div id='navbar'>
             <h1>Site Nav</h1>
             <ul>
-                <li><a href='{% url 'elts.views.index'    %}'>Home</a></li>
+                <li><a href='{% url 'elts.views.index' %}'>Home</a></li>
                 <li><a href='{% url 'elts.views.calendar' %}'>Calendar</a></li>
-                <li><a href='{% url 'elts.views.item'     %}'>Items</a></li>
-                <li><a href='{% url 'elts.views.tag'      %}'>Tags</a></li>
-                <li><a href='{% url 'elts.views.lend'     %}'>Lends</a></li>
+                <li><a href='{% url 'elts.views.item' %}'>Items</a></li>
+                <li><a href='{% url 'elts.views.tag' %}'>Tags</a></li>
+                <li><a href='{% url 'elts.views.lend' %}'>Lends &amp; Reservations</a></li>
             </ul>
             <p>Logged in as: {{ user.username }}</p>
             <form method='post' action='{% url 'elts.views.login' %}'>

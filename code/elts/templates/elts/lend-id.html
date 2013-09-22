@@ -11,23 +11,23 @@
         <dd>{{ lend.item_id }}</dd>
         <dt>User</dt>
         <dd>{{ lend.user_id }}</dd>
-        <dt>Out (reserved)</dt>
+        <dt>Due out</dt>
         <dd>{{ lend.out_reservation }}</dd>
-        <dt>Out (actual)</dt>
-        <dd>{{ lend.out_actual }}</dd>
-        <dt>Back (reserved)</dt>
+        <dt>Due back</dt>
         <dd>{{ lend.back_reservation }}</dd>
-        <dt>Back (actual)</dt>
+        <dt>Out</dt>
+        <dd>{{ lend.out_actual }}</dd>
+        <dt>Back</dt>
         <dd>{{ lend.back_actual }}</dd>
     </dl>
     <h2>Notes</h2>
     {% if lend|lend_notes %}
         {% for note in lend|lend_notes %}
-            <article>
+            <section>
                 <p>
-                    Comment by {{user.username}} - {{ note.note_date }}<br />
+                    Comment by {{user.username}} on {{ note.note_date }}<br />
                     <a href='{% url 'elts.views.lend_note_id_update_form' note.id %}'>
-                        Update
+                        Edit
                     </a>
                     -
                     <a href='{% url 'elts.views.lend_note_id_delete_form' note.id %}'>
@@ -35,7 +35,7 @@
                     </a>
                 </p>
                 <p>{{ note.note_text }}</p>
-            </article>
+            </section>
         {% endfor %}
     {% else %}
         <p>No notes.</p>
