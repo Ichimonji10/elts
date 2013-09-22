@@ -61,10 +61,10 @@ class Lend(models.Model):
     """
     item_id = models.ForeignKey('Item')
     user_id = models.ForeignKey(User)
-    out_reservation = models.DateField(blank = True, null = True)
-    back_reservation = models.DateField(blank = True, null = True)
-    out_actual = models.DateTimeField(blank = True, null = True)
-    back_actual = models.DateTimeField(blank = True, null = True)
+    due_out = models.DateField(blank = True, null = True)
+    due_back = models.DateField(blank = True, null = True)
+    out = models.DateTimeField(blank = True, null = True)
+    back = models.DateTimeField(blank = True, null = True)
 
 class Tag(models.Model):
     """A descriptive label for an ``Item``.

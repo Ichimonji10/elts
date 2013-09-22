@@ -227,21 +227,21 @@ class LendFormTestCase(TestCase):
         form = forms.LendForm({'user_id': ItemFactory.create().id})
         self.assertFalse(form.is_valid())
 
-    def test_has_out_reservation(self):
-        """Create a LendForm and set ``out_reservation``."""
+    def test_has_due_out(self):
+        """Create a LendForm and set ``due_out``."""
         form = forms.LendForm({
             'item_id': ItemFactory.create().id,
             'user_id': UserFactory.create().id,
-            'out_reservation': datetime.today(),
+            'due_out': datetime.today(),
         })
         self.assertTrue(form.is_valid())
 
-    def test_has_back_reservation(self):
-        """Create a LendForm and set ``back_reservation``."""
+    def test_has_due_back(self):
+        """Create a LendForm and set ``due_back``."""
         form = forms.LendForm({
             'item_id': ItemFactory.create().id,
             'user_id': UserFactory.create().id,
-            'back_reservation': datetime.today(),
+            'due_back': datetime.today(),
         })
         self.assertTrue(form.is_valid())
 

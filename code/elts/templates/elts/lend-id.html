@@ -12,13 +12,13 @@
         <dt>User</dt>
         <dd>{{ lend.user_id }}</dd>
         <dt>Due out</dt>
-        <dd>{{ lend.out_reservation }}</dd>
+        <dd>{{ lend.due_out }}</dd>
         <dt>Due back</dt>
-        <dd>{{ lend.back_reservation }}</dd>
+        <dd>{{ lend.due_back }}</dd>
         <dt>Out</dt>
-        <dd>{{ lend.out_actual }}</dd>
+        <dd>{{ lend.out }}</dd>
         <dt>Back</dt>
-        <dd>{{ lend.back_actual }}</dd>
+        <dd>{{ lend.back }}</dd>
     </dl>
     <h2>Notes</h2>
     {% if lend|lend_notes %}

@@ -1,6 +1,6 @@
 {% extends 'elts/base.html' %}
-
 {% load tag_tools %}
+{% load model_tools %}
 
 {% block title %}Lends &amp; Reservations{% endblock %}
 
@@ -18,12 +18,12 @@
             <caption>Existing Lends &amp; Reservations</caption>
             <thead>
                 <tr>
-                    <th>Item</th>
-                    <th>User</th>
-                    <th>Out (reserved)</th>
-                    <th>Out (actual)</th>
-                    <th>Back (reserved)</th>
-                    <th>Back (actual)</th>
+                    <th>{{ lends|first|label:"item_id"|capfirst }}</th>
+                    <th>{{ lends|first|label:"user_id"|capfirst }}</th>
+                    <th>{{ lends|first|label:"due_out"|capfirst }}</th>
+                    <th>{{ lends|first|label:"due_back"|capfirst }}</th>
+                    <th>{{ lends|first|label:"out"|capfirst }}</th>
+                    <th>{{ lends|first|label:"back"|capfirst }}</th>
                     <th>Links</th>
                 </tr>
             </thead>
@@ -32,10 +32,10 @@
                     <tr>
                         <td>{{ lend.item_id }}</td>
                         <td>{{ lend.user_id }}</td>
-                        <td>{{ lend.out_reservation }}</td>
-                        <td>{{ lend.out_actual }}</td>
-                        <td>{{ lend.back_reservation }}</td>
-                        <td>{{ lend.back_actual }}</td>
+                        <td>{{ lend.due_out }}</td>
+                        <td>{{ lend.due_back }}</td>
+                        <td>{{ lend.out }}</td>
+                        <td>{{ lend.back }}</td>
                         <td>
                             <a href='{% url 'elts.views.lend_id' lend.id %}'>Details</a>
                             <a href='{% url 'elts.views.lend_id_update_form' lend.id %}'>Edit</a>

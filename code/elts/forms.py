@@ -76,13 +76,13 @@ class LoginForm(Form):
 
 class LendForm(ModelForm):
     """A form for a Lend."""
-    # FIXME: validate out_reservation is before back_reservation
+    # FIXME: validate due_out is before due_back
 
     class Meta(object):
         """Model attributes that are not fields."""
         model = models.Lend
-        fields = ['item_id', 'user_id', 'out_reservation', 'back_reservation']
+        fields = ['item_id', 'user_id', 'due_out', 'due_back']
         widgets = {
-            'out_reservation': DateInput(),
-            'back_reservation': DateInput()
+            'due_out': DateInput(),
+            'due_back': DateInput()
         }
