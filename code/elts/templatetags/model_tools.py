@@ -1,5 +1,6 @@
 """Tools for manipulating models."""
 from django.template import Library
+from django.db.models.fields import FieldDoesNotExist
 
 # Functions decorated with @register.filter can be used as filters.
 register = Library() # pylint: disable=C0103
@@ -13,4 +14,7 @@ def label(model, field_name):
     ``field_name`` is the name of a field defined on that model.
 
     """
-    return model._meta.get_field(field_name).verbose_name
+    try:
+        return model._meta.get_field(field_name).verbose_name
+    except FieldDoesNotExist:
+        return ''
