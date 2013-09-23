@@ -1,23 +1,23 @@
 {% extends 'elts/base.html' %}
-
 {% load tag_tools %}
+{% load model_tools %}
 
 {% block title %}{{ item.name }}{% endblock %}
 
 {% block body %}
     <h1>Lend {{ lend.id }}</h1>
     <dl>
-        <dt>Item</dt>
+        <dt>{{ lend|label:"item_id"|capfirst }}</dt>
         <dd>{{ lend.item_id }}</dd>
-        <dt>User</dt>
+        <dt>{{ lend|label:"user_id"|capfirst }}</dt>
         <dd>{{ lend.user_id }}</dd>
-        <dt>Due out</dt>
+        <dt>{{ lend|label:"due_out"|capfirst }}</dt>
         <dd>{{ lend.due_out }}</dd>
-        <dt>Due back</dt>
+        <dt>{{ lend|label:"due_back"|capfirst }}</dt>
         <dd>{{ lend.due_back }}</dd>
-        <dt>Out</dt>
+        <dt>{{ lend|label:"out"|capfirst }}</dt>
         <dd>{{ lend.out }}</dd>
-        <dt>Back</dt>
+        <dt>{{ lend|label:"back"|capfirst }}</dt>
         <dd>{{ lend.back }}</dd>
     </dl>
     <h2>Notes</h2>

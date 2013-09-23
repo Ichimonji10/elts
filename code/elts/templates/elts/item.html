@@ -1,6 +1,6 @@
 {% extends 'elts/base.html' %}
-
 {% load tag_tools %}
+{% load model_tools %}
 
 {% block title %}Items{% endblock %}
 
@@ -12,9 +12,9 @@
         <table>
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Tags</th>
+                    <th>{{ items|first|label:"name"|capfirst }}</th>
+                    <th>{{ items|first|label:"description"|capfirst }}</th>
+                    <th>{{ items|first|label:"tags"|capfirst }}</th>
                     <th>Links</th>
                 </tr>
             </thead>
