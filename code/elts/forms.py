@@ -4,8 +4,7 @@ Unless otherwise noted, all forms defined herein can be used to either create or
 update an object.
 
 """
-from django.forms import CharField, Form, ModelForm
-from django.forms.widgets import PasswordInput, Textarea, DateInput
+from django.forms import CharField, Form, ModelForm, widgets
 from elts import models
 
 # pylint: disable=R0903
@@ -23,7 +22,7 @@ class ItemForm(ModelForm):
         """Model attributes that are not fields."""
         model = models.Item
         fields = ['name', 'description', 'tags', 'is_lendable']
-        widgets = {'description': Textarea()}
+        widgets = {'description': widgets.Textarea()}
 
 class TagForm(ModelForm):
     """A form for a Tag."""
@@ -32,7 +31,7 @@ class TagForm(ModelForm):
         """Model attributes that are not fields."""
         model = models.Tag
         fields = ['name', 'description']
-        widgets = {'description': Textarea()}
+        widgets = {'description': widgets.Textarea()}
 
 # Start `NoteForm` definitions.
 
@@ -43,7 +42,7 @@ class ItemNoteForm(ModelForm):
         """Model attributes that are not fields."""
         model = models.ItemNote
         fields = ['note_text']
-        widgets = {'note_text': Textarea()}
+        widgets = {'note_text': widgets.Textarea()}
 
 class UserNoteForm(ModelForm):
     """A form for a UserNote."""
@@ -52,7 +51,7 @@ class UserNoteForm(ModelForm):
         """Model attributes that are not fields."""
         model = models.UserNote
         fields = ['note_text']
-        widgets = {'note_text': Textarea()}
+        widgets = {'note_text': widgets.Textarea()}
 
 class LendNoteForm(ModelForm):
     """A form for a LendNote."""
@@ -61,14 +60,14 @@ class LendNoteForm(ModelForm):
         """Model attributes that are not fields."""
         model = models.LendNote
         fields = ['is_complaint', 'note_text']
-        widgets = {'note_text': Textarea()}
+        widgets = {'note_text': widgets.Textarea()}
 
 # End `NoteForm` definitions.
 
 class LoginForm(Form):
     """A form for logging in a ``User``."""
     username = CharField()
-    password = CharField(widget = PasswordInput)
+    password = CharField(widget = widgets.PasswordInput)
 
     class Meta(object):
         """Model attributes that are not fields."""
@@ -81,8 +80,10 @@ class LendForm(ModelForm):
     class Meta(object):
         """Model attributes that are not fields."""
         model = models.Lend
-        fields = ['item_id', 'user_id', 'due_out', 'due_back']
+        fields = ['item_id', 'user_id', 'due_out', 'due_back', 'out', 'back']
         widgets = {
-            'due_out': DateInput(),
-            'due_back': DateInput()
+            'due_out':  widgets.DateInput(attrs = {'type': 'date'}),
+            'due_back': widgets.DateInput(attrs = {'type': 'date'}),
+            'out':  widgets.DateTimeInput(attrs = {'type': 'datetime'}),
+            'back': widgets.DateTimeInput(attrs = {'type': 'datetime'}),
         }
