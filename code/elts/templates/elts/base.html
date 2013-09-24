@@ -10,27 +10,63 @@
         {% block head %}{% endblock %}
     </head>
     <body>
-        <div id='navbar'>
-            <h1>Site Nav</h1>
+        <nav>
+            <p><img src='{% static 'elts/award.png' %}' alt='placeholder icon' /></p>
             <ul>
-                <li><a href='{% url 'elts.views.index' %}'>Home</a></li>
-                <li><a href='{% url 'elts.views.calendar' %}'>Calendar</a></li>
-                <li><a href='{% url 'elts.views.item' %}'>Items</a></li>
-                <li><a href='{% url 'elts.views.tag' %}'>Tags</a></li>
-                <li><a href='{% url 'elts.views.lend' %}'>Lends &amp; Reservations</a></li>
+                <li>
+                    <a href='{% url 'elts.views.index' %}'>
+                        <img src='{% static 'elts/today.png' %}' alt='current events' />
+                    </a>
+                </li>
+                <li>
+                    <a href='{% url 'elts.views.calendar' %}'>
+                        <img src='{% static 'elts/calendar.png' %}' alt='events this month' />
+                    </a>
+                </li>
+                <li>
+                    <a href='{% url 'elts.views.item' %}'>
+                        <img src='{% static 'elts/item.png' %}' alt='items' />
+                    </a>
+                </li>
+                <li>
+                    <a href='{% url 'elts.views.tag' %}'>
+                        <img src='{% static 'elts/tags.png' %}' alt='tags' />
+                    </a>
+                </li>
+                <li>
+                    <a href='{% url 'elts.views.lend' %}'>
+                        <img src='{% static 'elts/lend.png' %}' alt='lends & reservations' />
+                    </a>
+                </li>
             </ul>
-            <p>Logged in as: {{ user.username }}</p>
+        </nav>
+        <section id='shortcuts'>
+            <p>Welcome, {{ user.username }}</p>
             <form method='post' action='{% url 'elts.views.login' %}'>
                 {% csrf_token %}
                 <input type='hidden' name='_method' value='DELETE' />
-                <p><button>Log Out</button></p>
+                <button>Log Out</button>
             </form>
-        </div>
-        <div id='body'>
-            {% block body %}
-            <p>Replace this default text by inheriting the 'base.html' template and
-            creating a 'block body'.</p>
+            <p>foo foo foo<br />bar bar bar</p>
+            <p>foo foo foo<br />bar bar bar</p>
+            <p>foo foo foo<br />bar bar bar</p>
+            <p>foo foo foo<br />bar bar bar</p>
+            <p>foo foo foo<br />bar bar bar</p>
+            <p>foo foo foo<br />bar bar bar</p>
+        </section>
+        <section id='content'>
+            {% block body_headline %}
+                <h1>Generic content for `block body_headline`</h1>
             {% endblock %}
-        </div>
+            <div>
+                <!-- This div exists soley for styling purposes. -->
+                {% block body %}
+                    <p>
+                        Replace this default text by inheriting the 'base.html'
+                        template and creating a 'block body'.
+                    </p>
+                {% endblock %}
+            </div>
+        </section>
     </body>
 </html>
