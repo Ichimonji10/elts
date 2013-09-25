@@ -1,9 +1,9 @@
 {% extends 'elts/base.html' %}
 
 {% block title %}Create Tag{% endblock %}
+{% block body_title %}Create Tag{% endblock %}
 
 {% block body %}
-    <h1>Create Tag</h1>
     {% include 'elts/_show-errors.html' %}
     <form method='post' action='{% url 'elts.views.tag' %}'>
         {% csrf_token %}

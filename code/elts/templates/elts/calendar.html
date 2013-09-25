@@ -1,16 +1,14 @@
 {% extends 'elts/base.html' %}
-{# Allows {% static 'path/to/resource.ext' %} tag to be used. #}
 {% load staticfiles %}
 {% load calendar_tools %}
 
 {% block title %}Calendar{% endblock %}
-
+{% block body_title %}Calendar{% endblock %}
 {% block head %}
     <link rel='stylesheet' href='{% static 'elts/calendar.css' %}' />
 {% endblock %}
 
 {% block body %}
-    <h1>Calendar</h1>
     <p>Items going out and coming back this month.</p>
     <h2>{{ today | month_and_year }}</h2>
     <ol class='calendar'>

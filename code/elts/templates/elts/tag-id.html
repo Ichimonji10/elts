@@ -2,9 +2,9 @@
 {% load tag_tools %}
 
 {% block title %}{{ tag.name }}{% endblock %}
+{% block body_title %}{{ tag.name }}{% endblock %}
 
 {% block body %}
-    <h1>{{ tag.name }}</h1>
     <p>{{ tag.description|default:"No description." }}</p>
     <h2>Items</h2>
     <ul>

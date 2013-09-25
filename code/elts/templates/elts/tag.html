@@ -3,9 +3,9 @@
 {% load model_tools %}
 
 {% block title %}Tags{% endblock %}
+{% block body_title %}Tags{% endblock %}
 
 {% block body %}
-    <h1>Tags</h1>
     <p>You can create a new tag
     <a href="{% url 'elts.views.tag_create_form' %}">here</a>.</p>
     {% if tags %}

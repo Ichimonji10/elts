@@ -55,17 +55,14 @@
             <p>foo foo foo<br />bar bar bar</p>
         </section>
         <section id='content'>
-            {% block body_headline %}
-                <h1>Generic content for `block body_headline`</h1>
-            {% endblock %}
+            <h1>{% block body_title %}REPLACE ME{%endblock %}</h1>
             <div>
-                <!-- This div exists soley for styling purposes. -->
-                {% block body %}
-                    <p>
-                        Replace this default text by inheriting the 'base.html'
-                        template and creating a 'block body'.
-                    </p>
-                {% endblock %}
+                <!--
+                    All content within `section#content` must appear contiguous
+                    *except* for `section#content h1:first-child`. This div
+                    facilitates that styling.
+                -->
+                {% block body %}<p>ALSO REPLACE ME</p>{% endblock %}
             </div>
         </section>
     </body>
