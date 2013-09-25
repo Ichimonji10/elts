@@ -3,9 +3,9 @@
 {% block title %}Delete Lend {{ lend.id }}{% endblock %}
 
 {% block breadcrumb %}
-    <li>Lend</li>
-    <li>{{ lend.id }}</li>
-    <li>Delete Form</li>
+    <li><a href='{% url 'elts.views.lend' %}'>Lend</a></li>
+    <li><a href='{% url 'elts.views.lend_id' lend.id %}'>{{ lend.id }}</a></li>
+    <li><a href='{% url 'elts.views.lend_id_delete_form' lend.id %}'>Delete Form</a></li>
 {% endblock %}
 
 {% block body %}

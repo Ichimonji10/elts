@@ -4,8 +4,8 @@
 {% block title %}Tag "{{ tag.name }}"{% endblock %}
 
 {% block breadcrumb %}
-    <li>Tag</li>
-    <li>{{ tag.id }}</li>
+    <li><a href='{% url 'elts.views.tag' %}'>Tag</a></li>
+    <li><a href='{% url 'elts.views.tag_id' tag.id %}'>{{ tag.id }}</a></li>
 {% endblock %}
 
 {% block body %}

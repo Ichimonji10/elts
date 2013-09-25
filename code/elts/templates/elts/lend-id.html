@@ -5,8 +5,8 @@
 {% block title %}Lend {{ lend.id }}{% endblock %}
 
 {% block breadcrumb %}
-    <li>Lend</li>
-    <li>{{ lend.id }}</li>
+    <li><a href='{% url 'elts.views.lend' %}'>Lend</a></li>
+    <li><a href='{% url 'elts.views.lend_id' lend.id %}'>{{ lend.id }}</a></li>
 {% endblock %}
 
 {% block body %}

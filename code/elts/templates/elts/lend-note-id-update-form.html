@@ -3,9 +3,15 @@
 {% block title %}Update Lend Note {{ lend_note.id }}{% endblock %}
 
 {% block breadcrumb %}
-    <li>Lend Note</li>
-    <li>{{ lend_note.id }}</li>
-    <li>Update Form</li>
+    <li><a href='{% url 'elts.views.lend' %}'>Lend</a></li>
+    <li>
+        <a href='{% url 'elts.views.lend_id' lend_note.lend_id.id %}'
+        >{{ lend_note.lend_id.id }}</a>
+    </li>
+    <li>
+        <a href='{% url 'elts.views.lend_note_id_update_form' lend_note.id %}'
+        >Note {{ lend_note.id }} Update Form</a>
+    </li>
 {% endblock %}
 
 {% block body %}

@@ -3,9 +3,12 @@
 {% block title %}Update Item "{{ item.name }}"{% endblock %}
 
 {% block breadcrumb %}
-    <li>Item</li>
-    <li>{{ item.id }}</li>
-    <li>Update Form</li>
+    <li><a href='{% url 'elts.views.item' %}'>Item</a></li>
+    <li><a href='{% url 'elts.views.item_id' item.id %}'>{{ item.id }}</a></li>
+    <li>
+        <a href='{% url 'elts.views.item_id_update_form' item.id %}'
+        >Update Form</a>
+    </li>
 {% endblock %}
 
 {% block body %}

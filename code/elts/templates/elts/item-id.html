@@ -4,8 +4,8 @@
 {% block title %}Item "{{ item.name }}"{% endblock %}
 
 {% block breadcrumb %}
-    <li>Item</li>
-    <li>{{ item.id }}</li>
+    <li><a href='{% url 'elts.views.item' %}'>Item</a></li>
+    <li><a href='{% url 'elts.views.item_id' item.id %}'>{{ item.id }}</a></li>
 {% endblock %}
 
 {% block body %}

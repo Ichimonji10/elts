@@ -3,9 +3,15 @@
 {% block title %}Delete Item Note{% endblock %}
 
 {% block breadcrumb %}
-    <li>Item Note</li>
-    <li>{{ item_note.id }}</li>
-    <li>Delete Form</li>
+    <li><a href='{% url 'elts.views.item' %}'>Item</a></li>
+    <li>
+        <a href='{% url 'elts.views.item_id' item_note.item_id.id %}'
+        >{{ item_note.item_id.id }}</a>
+    </li>
+    <li>
+        <a href='{% url 'elts.views.item_note_id_delete_form' item_note.id %}'
+        >Note {{ item_note.id }} Delete Form</a>
+    </li>
 {% endblock %}
 
 {% block body %}
