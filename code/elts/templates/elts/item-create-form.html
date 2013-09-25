@@ -1,9 +1,14 @@
 {% extends 'elts/base.html' %}
 
 {% block title %}Create Item{% endblock %}
-{% block body_title %}Create Item{% endblock %}
+
+{% block breadcrumb %}
+    <li>Item</li>
+    <li>Create Form</li>
+{% endblock %}
 
 {% block body %}
+    <h1>Create Item</h1>
     {% include 'elts/_show-errors.html' %}
     <form method='post' action='{% url 'elts.views.item' %}'>
         {% csrf_token %}

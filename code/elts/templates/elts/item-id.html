@@ -1,10 +1,15 @@
 {% extends 'elts/base.html' %}
 {% load tag_tools %}
 
-{% block title %}{{ item.name }}{% endblock %}
-{% block body_title %}{{ item.name }}{% endblock %}
+{% block title %}Item "{{ item.name }}"{% endblock %}
+
+{% block breadcrumb %}
+    <li>Item</li>
+    <li>{{ item.id }}</li>
+{% endblock %}
 
 {% block body %}
+    <h1>Item "{{ item.name }}"</h1>
     {% if not item.is_lendable %}
         <p>Item is <strong>not</strong> available for lending.</p>
     {% endif %}

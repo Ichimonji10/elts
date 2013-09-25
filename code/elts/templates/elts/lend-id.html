@@ -3,9 +3,14 @@
 {% load model_tools %}
 
 {% block title %}Lend {{ lend.id }}{% endblock %}
-{% block body_title %}Lend {{ lend.id }}{% endblock %}
+
+{% block breadcrumb %}
+    <li>Lend</li>
+    <li>{{ lend.id }}</li>
+{% endblock %}
 
 {% block body %}
+    <h1>Lend {{ lend.id }}</h1>
     <dl>
         <dt>{{ lend|label:"item_id"|capfirst }}</dt>
         <dd>{{ lend.item_id }}</dd>

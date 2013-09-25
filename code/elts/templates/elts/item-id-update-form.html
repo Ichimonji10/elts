@@ -1,9 +1,15 @@
 {% extends 'elts/base.html' %}
 
-{% block title %}{{ item.name }}{% endblock %}
-{% block body_title %}{{ item.name }}{% endblock %}
+{% block title %}Update Item "{{ item.name }}"{% endblock %}
+
+{% block breadcrumb %}
+    <li>Item</li>
+    <li>{{ item.id }}</li>
+    <li>Update Form</li>
+{% endblock %}
 
 {% block body %}
+    <h1>Update Item "{{ item.name }}"</h1>
     {% include 'elts/_show-errors.html' %}
     <form method='post' action='{% url 'elts.views.item_id' item.id %}'>
         {% csrf_token %}

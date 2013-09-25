@@ -1,9 +1,15 @@
 {% extends 'elts/base.html' %}
 
-{% block title %}{{ tag.name }}{% endblock %}
-{% block body_title %}{{ tag.name }}{% endblock %}
+{% block title %}Delete Tag "{{ tag.name }}"{% endblock %}
+
+{% block breadcrumb %}
+    <li>Tag</li>
+    <li>{{ tag.id }}</li>
+    <li>Delete Form</li>
+{% endblock %}
 
 {% block body %}
+    <h1>Delete Tag "{{ tag.name }}"</h1>
     <p>Are you <strong>sure</strong> you want to delete this tag?</p>
     <form method='post' action='{% url 'elts.views.tag_id' tag.id %}'>
         {% csrf_token %}

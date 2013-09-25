@@ -1,9 +1,15 @@
 {% extends 'elts/base.html' %}
 
-{% block title %}{{ tag.name }}{% endblock %}
-{% block body_title %}{{ tag.name }}{% endblock %}
+{% block title %}Update Tag "{{ tag.name }}"{% endblock %}
+
+{% block breadcrumb %}
+    <li>Tag</li>
+    <li>{{ tag.id }}</li>
+    <li>Update Form</li>
+{% endblock %}
 
 {% block body %}
+    <h1>Update Tag "{{ tag.name }}"</h1>
     {% include 'elts/_show-errors.html' %}
     <form method='post' action='{% url 'elts.views.tag_id' tag.id %}'>
         {% csrf_token %}

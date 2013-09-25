@@ -3,11 +3,17 @@
 {% load model_tools %}
 
 {% block title %}Tags{% endblock %}
-{% block body_title %}Tags{% endblock %}
+
+{% block breadcrumb %}
+    <li>Tag</li>
+{% endblock %}
 
 {% block body %}
-    <p>You can create a new tag
-    <a href="{% url 'elts.views.tag_create_form' %}">here</a>.</p>
+    <h1>Tags</h1>
+    <p>
+        You can create a new tag
+        <a href="{% url 'elts.views.tag_create_form' %}">here</a>.
+    </p>
     {% if tags %}
         <table>
             <thead>

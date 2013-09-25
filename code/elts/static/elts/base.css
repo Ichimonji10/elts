@@ -5,58 +5,59 @@
  * entire app, with the exception of the login page.
  *----------------------------------------------------------------------------*/
 
-/* It is assumed that the body sits flush against the browser viewport. */
-body {
-    margin: 0;
-    background-image: url('background.png');
-    min-width: 40em;
-}
-
-/* Create a three-column page layout. The left and right columns are
- * fixed width, and the center column is variable width. The left and
- * right columns must occur before the center column in the markup.
- * Sample HTML:
+/* Create a three-column page layout. The left and right columns are fixed
+ * width, and the center column is variable width. Sample HTML:
  *
- *     <nav>...</nav>
- *     <section id='shortcuts'>...</section>
- *     <section id='content'>...</section>
+ *     <body>
+ *         <nav id='sitenav'>...</nav>
+ *         <section id='shortcuts'>...</section>
+ *         <nav id='breadcrumb'>...</nav>
+ *         <section id='content'>...</section>
+ *     </body>
  */
-nav {
+nav#sitenav {
     width: 7em;
     float: left;
     clear: left;
-}
+    }
 section#shortcuts {
     width: 14em;
     float: right;
     clear: right;
-}
+    }
+nav#breadcrumb,
 section#content {
     margin-left: 8em;
     margin-right: 15em;
-}
+    }
 
 /* Style all three columns. */
-nav > *,
+nav#sitenav > *,
 section#shortcuts > *,
-section#content > * {
+nav#breadcrumb > *,
+section#content {
     background-color: rgba(255, 255, 255, 1); /* white */
     padding: 0.3em;
-}
+    }
+body {
+    margin: 0;
+    background-image: url('background.png');
+    min-width: 40em;
+    }
 
 /* Style the left column. */
-nav > * {
+nav#sitenav > * {
     margin-top: 0;
     margin-bottom: 0;
     border-right:  medium solid black;
     border-bottom: medium solid black;
     border-bottom-right-radius: 0.5em;
-}
-nav ul {
+    }
+nav#sitenav ul {
     width: 70%;
     list-style-type: none;
-}
-nav img {width: 100%;}
+    }
+nav#sitenav img {width: 100%;}
 
 /* Style the right column.
  *
@@ -75,30 +76,33 @@ section#shortcuts form {
     border-left: medium solid black;
     border-bottom: medium solid black;
     border-bottom-left-radius: 0.5em;
-}
+    }
 section#shortcuts form {
     width: 70%;
     margin-left: auto;
-}
+    }
 section#shortcuts form button {width: 100%;}
 section#shortcuts p:not(:first-child) {
     border: medium solid black;
     border-radius: 0.5em;
-}
+    }
 
 /* Style the center column. */
-section#content > h1 {
+nav#breadcrumb ol {
+    list-style-type: none;
     margin-top: 0;
     border-right: medium solid black;
     border-bottom: medium solid black;
     border-left: medium solid black;
     border-bottom-right-radius: 0.5em;
     border-bottom-left-radius: 0.5em;
-}
-section#content > div {
+    }
+nav#breadcrumb li {display: inline;}
+nav#breadcrumb li:not(:last-child):after {content: " \BB ";}
+section#content {
     border: medium solid black;
     border-radius: 0.5em;
-}
+    }
 
 /*------------------------------------------------------------------------------
  * Tables
@@ -106,7 +110,7 @@ section#content > div {
 th, td {
     padding: 0.5em;
     border-bottom: thin solid steelblue;
-}
+    }
 
 /*------------------------------------------------------------------------------
  * Clearfix
@@ -124,4 +128,4 @@ th, td {
     visibility: hidden;
     /* and force `.floatcontainer` to expand and contain it. */
     clear: both;
-}
+    }

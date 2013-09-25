@@ -3,9 +3,13 @@
 {% load model_tools %}
 
 {% block title %}Items{% endblock %}
-{% block body_title %}Items{% endblock %}
+
+{% block breadcrumb %}
+    <li>Item</li>
+{% endblock %}
 
 {% block body %}
+    <h1>Items</h1>
     <p>You can create a new item
     <a href='{% url 'elts.views.item_create_form' %}'>here</a>.</p>
     {% if items %}

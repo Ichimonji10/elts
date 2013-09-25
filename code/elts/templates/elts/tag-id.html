@@ -1,10 +1,15 @@
 {% extends 'elts/base.html' %}
 {% load tag_tools %}
 
-{% block title %}{{ tag.name }}{% endblock %}
-{% block body_title %}{{ tag.name }}{% endblock %}
+{% block title %}Tag "{{ tag.name }}"{% endblock %}
+
+{% block breadcrumb %}
+    <li>Tag</li>
+    <li>{{ tag.id }}</li>
+{% endblock %}
 
 {% block body %}
+    <h1>Tag "{{ tag.name }}"</h1>
     <p>{{ tag.description|default:"No description." }}</p>
     <h2>Items</h2>
     <ul>
