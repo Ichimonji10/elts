@@ -9,8 +9,8 @@
  * width, and the center column is variable width. Sample HTML:
  *
  *     <body>
- *         <nav id='sitenav'>...</nav>
  *         <section id='shortcuts'>...</section>
+ *         <nav id='sitenav'>...</nav>
  *         <nav id='breadcrumb'>...</nav>
  *         <section id='content'>...</section>
  *     </body>
