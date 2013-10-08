@@ -51,11 +51,11 @@ Ensure ``collectstatic`` collected files and lighttpd is functioning::
 
 Initialize the database backend::
 
-    $ code/manage.py syncdb
+    $ /srv/http/elts/code/manage.py syncdb
 
 Start the app server (tweak to taste)::
 
-    $ python2 code/manage.py runfcgi \
+    $ python2 /srv/http/elts/code/manage.py runfcgi \
         host=127.0.0.1 \
         port=4000 \
         protocol=scgi \
