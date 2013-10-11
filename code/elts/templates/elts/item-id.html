@@ -10,31 +10,37 @@
 
 {% block body %}
     <h1>Item "{{ item.name }}"</h1>
+    <p class='controls'>
+        <a href='{% url 'elts.views.item_id_update_form' item.id %}'>Edit</a> or
+        <a href='{% url 'elts.views.item_id_delete_form' item.id %}'>delete</a>
+        this item.
+    </p>
     {% if not item.is_lendable %}
-        <p>Item is <strong>not</strong> available for lending.</p>
+        <p>This item is <strong>not available</strong> for lending.</p>
     {% endif %}
-    <p>{{ item.description|default:'No description.' }}</p>
-    <h2>Tags</h2>
+    {% if item.description %}
+        <p>Description:</p>
+        <p>{{ item.description }}</p>
+    {% else %}
+        <p>This item has <strong>no description</strong>.</p>
+    {% endif %}
     {% if item|item_tags %}
+        <p>Tags attached to this item:</p>
         <ul>
             {% for tag in item|item_tags %}
                 <li>{{ tag|tag_link|safe }}</li>
             {% endfor %}
         </ul>
-    {% else %}
-        <p>No tags.</p>
     {% endif %}
-    <h3>Related Tags</h3>
     {% if item|related_tags %}
+        <p>Related tags:</p>
         <ul>
             {% for tag in item|related_tags %}
                 <li>{{ tag|tag_link|safe }}</li>
             {% endfor %}
         </ul>
-    {% else %}
-        <p>No related tags.</p>
     {% endif %}
-    <h2>Notes</h2>
+    <h2>Notes About This Tag</h2>
     {% if item|item_notes %}
         {% for note in item|item_notes %}
             <article>
@@ -54,7 +60,7 @@
     {% else %}
         <p>No notes.</p>
     {% endif %}
-    <h3>Create Note</h3>
+    <h3>Create A Note</h3>
     <form method='post' action='{% url 'elts.views.item_note' %}'>
         {% csrf_token %}
         <input type='hidden' name='item_id' value='{{item.id}}' />

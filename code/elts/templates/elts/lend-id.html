@@ -11,6 +11,11 @@
 
 {% block body %}
     <h1>Lend {{ lend.id }}</h1>
+    <p class='controls'>
+        <a href='{% url 'elts.views.lend_id_update_form' lend.id %}'>Edit</a> or
+        <a href='{% url 'elts.views.lend_id_delete_form' lend.id %}'>delete</a>
+        this lend.
+    </p>
     <dl>
         <dt>{{ lend|label:"item_id"|capfirst }}</dt>
         <dd>{{ lend.item_id }}</dd>
@@ -25,19 +30,17 @@
         <dt>{{ lend|label:"back"|capfirst }}</dt>
         <dd>{{ lend.back }}</dd>
     </dl>
-    <h2>Notes</h2>
+    <h2>Notes About This Lend</h2>
     {% if lend|lend_notes %}
         {% for note in lend|lend_notes %}
             <section>
                 <p>
                     Comment by {{user.username}} on {{ note.note_date }}<br />
                     <a href='{% url 'elts.views.lend_note_id_update_form' note.id %}'>
-                        Edit
-                    </a>
-                    -
+                        Edit</a> or
                     <a href='{% url 'elts.views.lend_note_id_delete_form' note.id %}'>
-                        Delete
-                    </a>
+                        Delete</a>
+                    this comment.
                 </p>
                 <p>{{ note.note_text }}</p>
             </section>
@@ -45,7 +48,7 @@
     {% else %}
         <p>No notes.</p>
     {% endif %}
-    <h3>Create Note</h3>
+    <h3>Create A Note</h3>
     <form method='post' action='{% url 'elts.views.lend_note' %}'>
         {% csrf_token %}
         <input type='hidden' name='lend_id' value='{{lend.id}}' />
