@@ -1,0 +1,5 @@
+/* Shrink the form for sorting and filtering the table of lends. */
+section#content form p {
+    display: inline-block;
+    margin: 0.5em 2em 0.5em 0;
+}
