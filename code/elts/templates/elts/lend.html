@@ -12,104 +12,112 @@
 
 {% block body %}
     <h1>Reservations &amp; Lent Out Items</h1>
-    <p>
-        To lend out an item with <em>no reservation</em> or to create a <em>new
-        reservation</em>, fill out <a href='{% url 'elts.views.lend_create_form'
-        %}'>this form</a>.
-    </p>
-    <p>
-        The table below lists out current and past lends and reservations. Use
-        the following form to sort the table and restrict it's output.
-    </p>
-    <p>FIXME: implement form logic in views.py</p>
-    <p>FIXME: encapsulate form with forms.py? Allows form re-display</p>
-    <form method='get'>
-        {% csrf_token %}
-        <fieldset>
-            <legend>Column</legend>
-            <p><label>
-                <input type='radio' name='sort_column' value='item_id'>
-                {{ lends|first|label:'item_id'|capfirst }}
-                </label></p>
-            <p><label>
-                <input type='radio' name='sort_column' value='user_id'>
-                {{ lends|first|label:'user_id'|capfirst }}
-                </label></p>
-            <p><label>
-                <input type='radio' name='sort_column' value='due_out'>
-                {{ lends|first|label:'due_out'|capfirst }}
-                </label></p>
-            <p><label>
-                <input type='radio' name='sort_column' value='due_back'>
-                {{ lends|first|label:'due_back'|capfirst }}
-                </label></p>
-            <p><label>
-                <input type='radio' name='sort_column' value='out'>
-                {{ lends|first|label:'out'|capfirst }}
-                </label></p>
-            <p><label>
-                <input type='radio' name='sort_column' value'back'>
-                {{ lends|first|label:'back'|capfirst }}
-                </label></p>
-        </fieldset>
-        <fieldset>
-            <legend>Categories</legend>
-            <p>FIXME: choose better categories.</p>
-            <p><label>
-                <input type='checkbox' value='sort_cat_reserved'>
-                Reserved Items
-                </label></p>
-            <p><label>
-                <input type='checkbox' value='sort_cat_lent'>
-                Lent Out Items
-                </label></p>
-            <p><label>
-                <input type='checkbox' value='sort_cat_returned'>
-                Returned Items
-                </label></p>
-        </fieldset>
-        <fieldset>
-            <legend>Direction</legend>
-            <p><label>
-                <input type='radio' name='sort_direction' value='asc'>
-                Ascending
-                </label></p>
-            <p><label>
-                <input type='radio' name='sort_direction' value='desc'>
-                Descending
-                </label></p>
-        </fieldset>
-        <p><button>Submit</button></p>
-    </form>
-    <table>
-        <caption>Reservations &amp; Lent Out Items</caption>
-        <thead>
-            <tr>
-                <th>{{ lends|first|label:"item_id"|capfirst }}</th>
-                <th>{{ lends|first|label:"user_id"|capfirst }}</th>
-                <th>{{ lends|first|label:"due_out"|capfirst }}</th>
-                <th>{{ lends|first|label:"due_back"|capfirst }}</th>
-                <th>{{ lends|first|label:"out"|capfirst }}</th>
-                <th>{{ lends|first|label:"back"|capfirst }}</th>
-                <th>Links</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for lend in lends %}
+    {% if lends %}
+        <p>
+            To lend out an item with <em>no reservation</em> or to create a <em>new
+            reservation</em>, fill out <a href='{% url 'elts.views.lend_create_form'
+            %}'>this form</a>.
+        </p>
+        <p>
+            The table below lists out current and past lends and reservations. Use
+            the following form to sort the table and restrict it's output.
+        </p>
+        <p>FIXME: implement form logic in views.py</p>
+        <p>FIXME: encapsulate form with forms.py? Allows form re-display</p>
+        <form method='get'>
+            {% csrf_token %}
+            <fieldset>
+                <legend>Column</legend>
+                <p><label>
+                    <input type='radio' name='sort_column' value='item_id'>
+                    {{ lends|first|label:'item_id'|capfirst }}
+                    </label></p>
+                <p><label>
+                    <input type='radio' name='sort_column' value='user_id'>
+                    {{ lends|first|label:'user_id'|capfirst }}
+                    </label></p>
+                <p><label>
+                    <input type='radio' name='sort_column' value='due_out'>
+                    {{ lends|first|label:'due_out'|capfirst }}
+                    </label></p>
+                <p><label>
+                    <input type='radio' name='sort_column' value='due_back'>
+                    {{ lends|first|label:'due_back'|capfirst }}
+                    </label></p>
+                <p><label>
+                    <input type='radio' name='sort_column' value='out'>
+                    {{ lends|first|label:'out'|capfirst }}
+                    </label></p>
+                <p><label>
+                    <input type='radio' name='sort_column' value'back'>
+                    {{ lends|first|label:'back'|capfirst }}
+                    </label></p>
+            </fieldset>
+            <fieldset>
+                <legend>Categories</legend>
+                <p>FIXME: choose better categories.</p>
+                <p><label>
+                    <input type='checkbox' value='sort_cat_reserved'>
+                    Reserved Items
+                    </label></p>
+                <p><label>
+                    <input type='checkbox' value='sort_cat_lent'>
+                    Lent Out Items
+                    </label></p>
+                <p><label>
+                    <input type='checkbox' value='sort_cat_returned'>
+                    Returned Items
+                    </label></p>
+            </fieldset>
+            <fieldset>
+                <legend>Direction</legend>
+                <p><label>
+                    <input type='radio' name='sort_direction' value='asc'>
+                    Ascending
+                    </label></p>
+                <p><label>
+                    <input type='radio' name='sort_direction' value='desc'>
+                    Descending
+                    </label></p>
+            </fieldset>
+            <p><button>Submit</button></p>
+        </form>
+        <table>
+            <caption>Reservations &amp; Lent Out Items</caption>
+            <thead>
                 <tr>
-                    <td>{{ lend.item_id }}</td>
-                    <td>{{ lend.user_id }}</td>
-                    <td>{{ lend.due_out }}</td>
-                    <td>{{ lend.due_back }}</td>
-                    <td>{{ lend.out }}</td>
-                    <td>{{ lend.back }}</td>
-                    <td>
-                        <a href='{% url 'elts.views.lend_id' lend.id %}'>Details</a>
-                        <a href='{% url 'elts.views.lend_id_update_form' lend.id %}'>Edit</a>
-                        <a href='{% url 'elts.views.lend_id_delete_form' lend.id %}'>Delete</a>
-                    </td>
+                    <th>{{ lends|first|label:"item_id"|capfirst }}</th>
+                    <th>{{ lends|first|label:"user_id"|capfirst }}</th>
+                    <th>{{ lends|first|label:"due_out"|capfirst }}</th>
+                    <th>{{ lends|first|label:"due_back"|capfirst }}</th>
+                    <th>{{ lends|first|label:"out"|capfirst }}</th>
+                    <th>{{ lends|first|label:"back"|capfirst }}</th>
+                    <th>Links</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for lend in lends %}
+                    <tr>
+                        <td>{{ lend.item_id }}</td>
+                        <td>{{ lend.user_id }}</td>
+                        <td>{{ lend.due_out }}</td>
+                        <td>{{ lend.due_back }}</td>
+                        <td>{{ lend.out }}</td>
+                        <td>{{ lend.back }}</td>
+                        <td>
+                            <a href='{% url 'elts.views.lend_id' lend.id %}'>Details</a>
+                            <a href='{% url 'elts.views.lend_id_update_form' lend.id %}'>Edit</a>
+                            <a href='{% url 'elts.views.lend_id_delete_form' lend.id %}'>Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>There are no records to display. One of the following has occurred:</p>
+        <ul>
+            <li>No item has ever been lent out or reserved for use.</li>
+            <li>The filters currently in use filtered everything out.</li>
+        </ul>
+    {% endif %}
 {% endblock %}
