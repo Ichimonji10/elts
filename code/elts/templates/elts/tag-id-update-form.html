@@ -1,7 +1,6 @@
 {% extends 'elts/base.html' %}
 
 {% block title %}Update Tag "{{ tag.name }}"{% endblock %}
-
 {% block breadcrumb %}
     <li><a href='{% url 'elts.views.tag' %}'>Tag</a></li>
     <li><a href='{% url 'elts.views.tag_id' tag.id %}'>{{ tag.id }}</a></li>

@@ -1,14 +1,12 @@
 {% extends 'elts/base.html' %}
-{% load staticfiles %}
+{% load static from staticfiles %}
 
 {% block title %}Update Lend {{ lend.id }}{% endblock %}
-
 {% block breadcrumb %}
     <li><a href='{% url 'elts.views.lend' %}'>Lend</a></li>
     <li><a href='{% url 'elts.views.lend_id' lend.id %}'>{{ lend.id }}</a></li>
     <li><a href='{% url 'elts.views.lend_id_update_form' lend.id %}'>Update Form</a></li>
 {% endblock %}
-
 {% block head %}
     <script src='{% static 'elts/lend-id-update-form.js' %}'></script>
 {% endblock %}

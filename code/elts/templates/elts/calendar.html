@@ -1,12 +1,11 @@
 {% extends 'elts/base.html' %}
-{% load staticfiles %}
-{% load calendar_tools %}
+{% load static from staticfiles %}
+{% load day_name_abbrev month_and_year month_days from calendar_tools %}
 
 {% block title %}Calendar{% endblock %}
 {% block head %}
     <link rel='stylesheet' href='{% static 'elts/calendar.css' %}' />
 {% endblock %}
-
 {% block breadcrumb %}
     <li><a href='{% url 'elts.views.calendar' %}'>Calendar</a></li>
 {% endblock %}

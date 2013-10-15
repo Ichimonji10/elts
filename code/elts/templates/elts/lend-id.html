@@ -1,9 +1,8 @@
 {% extends 'elts/base.html' %}
-{% load tag_tools %}
-{% load model_tools %}
+{% load lend_notes from tag_tools %}
+{% load label from model_tools %}
 
 {% block title %}Lend {{ lend.id }}{% endblock %}
-
 {% block breadcrumb %}
     <li><a href='{% url 'elts.views.lend' %}'>Lend</a></li>
     <li><a href='{% url 'elts.views.lend_id' lend.id %}'>{{ lend.id }}</a></li>
@@ -37,10 +36,9 @@
                 <p>
                     Comment by {{user.username}} on {{ note.note_date }}<br />
                     <a href='{% url 'elts.views.lend_note_id_update_form' note.id %}'>
-                        Edit</a> or
+                    Edit</a> or
                     <a href='{% url 'elts.views.lend_note_id_delete_form' note.id %}'>
-                        Delete</a>
-                    this comment.
+                    Delete</a> this comment.
                 </p>
                 <p>{{ note.note_text }}</p>
             </section>

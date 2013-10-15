@@ -1,8 +1,7 @@
 {% extends 'elts/base.html' %}
-{% load tag_tools %}
+{% load tag_items item_link from tag_tools %}
 
 {% block title %}Tag "{{ tag.name }}"{% endblock %}
-
 {% block breadcrumb %}
     <li><a href='{% url 'elts.views.tag' %}'>Tag</a></li>
     <li><a href='{% url 'elts.views.tag_id' tag.id %}'>{{ tag.id }}</a></li>
