@@ -35,18 +35,16 @@ normal template that is intended to be included in other templates with an
     {% include 'elts/_item-edit-form.html' %}
 
 """
-from django.contrib.auth.decorators import login_required
-from django.contrib import auth
-from django.core.exceptions import NON_FIELD_ERRORS
-from django.core.urlresolvers import reverse
-from django import http
-from django.shortcuts import render
-from elts import forms
-from elts import models
-from elts import tables
 from calendar import Calendar, day_name
 from datetime import date
+from django import http
+from django.contrib import auth
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import NON_FIELD_ERRORS
+from django.core.urlresolvers import reverse
+from django.shortcuts import render
 from django_tables2 import RequestConfig
+from elts import forms, models, tables
 
 # pylint: disable=E1101
 # Instance of 'ItemForm' has no 'is_valid' member (no-member)

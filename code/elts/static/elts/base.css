@@ -112,6 +112,14 @@ th, td {
     border-bottom: thin solid steelblue;
     }
 
+th.asc:after {
+    content: '\2193';
+    }
+
+th.desc:after {
+    content: '\2191';
+    }
+
 /*------------------------------------------------------------------------------
  * Clearfix
  *
