@@ -593,6 +593,7 @@ def lend(request):
             {
                 'lends': models.Lend.objects.all(),
                 'table': table,
+                'request': request,
             }
         )
 
