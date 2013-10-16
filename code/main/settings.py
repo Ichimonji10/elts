@@ -157,6 +157,7 @@ TEMPLATE_DIRS = (
 INSTALLED_APPS = (
     'django_extensions',
     'elts',
+    'django_tables2',
 
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -199,3 +200,7 @@ LOGGING = {
         },
     }
 }
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.core.context_processors.request',
+)

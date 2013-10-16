@@ -43,8 +43,10 @@ from django import http
 from django.shortcuts import render
 from elts import forms
 from elts import models
+from elts import tables
 from calendar import Calendar, day_name
 from datetime import date
+from django_tables2 import RequestConfig
 
 # pylint: disable=E1101
 # Instance of 'ItemForm' has no 'is_valid' member (no-member)
@@ -583,10 +585,15 @@ def lend(request):
 
     def get_handler():
         """Return information about all lends."""
+        table = tables.LendTable(models.Lend.objects.all())
+        RequestConfig(request).configure(table)
         return render(
             request,
             'elts/lend.html',
-            {'lends': models.Lend.objects.all()}
+            {
+                'lends': models.Lend.objects.all(),
+                'table': table,
+            }
         )
 
     return {
