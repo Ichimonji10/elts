@@ -1,0 +1,63 @@
+{% csrf_token %}
+<input type='hidden' name='_method' value='PUT' />
+{{ form.non_field_errors }}
+
+{{ form.item_id.errors }}
+<p><label>{{ form.item_id.label }}<br />{{ form.item_id }}</label></p>
+
+{{ form.user_id.errors }}
+<p><label>{{ form.user_id.label }}<br />{{ form.user_id }}</label></p>
+
+{{ form.due_out.errors }}
+<p>
+    <label>{{ form.due_out.label }}<br />{{ form.due_out }}</label>
+    <button
+        type='button'
+        onclick='javascript:fillDate("{{ form.due_out.html_name }}");'
+        >Today</button>
+    <button
+        type='button'
+        onclick='javascript:clearInput("{{ form.due_out.html_name }}");'
+        >Clear</button>
+</p>
+
+{{ form.due_back.errors }}
+<p>
+    <label>{{ form.due_back.label }}<br />{{ form.due_back }}</label>
+    <button
+        type='button'
+        onclick='javascript:fillDate("{{ form.due_back.html_name }}");'
+        >Today</button>
+    <button
+        type='button'
+        onclick='javascript:clearInput("{{ form.due_back.html_name }}");'
+        >Clear</button>
+</p>
+
+{{ form.out.errors }}
+<p>
+    <label>{{ form.out.label }}<br />{{ form.out }}</label>
+    <button
+        type='button'
+        onclick='javascript:fillDateTime("{{ form.out.html_name }}");'
+        >Now</button>
+    <button
+        type='button'
+        onclick='javascript:clearInput("{{ form.out.html_name }}");'
+        >Clear</button>
+</p>
+
+{{ form.back.errors }}
+<p>
+    <label>{{ form.back.label }}<br />{{ form.back }}</label>
+    <button
+        type='button'
+        onclick='javascript:fillDateTime("{{ form.back.html_name }}");'
+        >Now</button>
+    <button
+        type='reset'
+        onclick='javascript:clearInput("{{ form.back.html_name }}");'
+        >Clear</button>
+</p>
+
+<p><button type='reset'>Reset</button><button>Submit</button></p>
