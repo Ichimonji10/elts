@@ -10,7 +10,8 @@
 {% block body %}
     <h1>Item "{{ item.name }}"</h1>
     <p class='controls'>
-        <a href='{% url 'elts.views.item_id_update_form' item.id %}'>Edit</a> or
+        You can
+        <a href='{% url 'elts.views.item_id_update_form' item.id %}'>edit</a> or
         <a href='{% url 'elts.views.item_id_delete_form' item.id %}'>delete</a>
         this item.
     </p>

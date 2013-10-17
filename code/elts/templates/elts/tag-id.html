@@ -10,7 +10,8 @@
 {% block body %}
     <h1>Tag "{{ tag.name }}"</h1>
     <p class='controls'>
-        <a href='{% url 'elts.views.tag_id_update_form' tag.id %}'>Edit</a> or
+        You can
+        <a href='{% url 'elts.views.tag_id_update_form' tag.id %}'>edit</a> or
         <a href='{% url 'elts.views.tag_id_delete_form' tag.id %}'>delete</a>
         this tag.
     </p>

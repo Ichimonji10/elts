@@ -11,7 +11,8 @@
 {% block body %}
     <h1>Lend {{ lend.id }}</h1>
     <p class='controls'>
-        <a href='{% url 'elts.views.lend_id_update_form' lend.id %}'>Edit</a> or
+        You can
+        <a href='{% url 'elts.views.lend_id_update_form' lend.id %}'>edit</a> or
         <a href='{% url 'elts.views.lend_id_delete_form' lend.id %}'>delete</a>
         this lend.
     </p>
