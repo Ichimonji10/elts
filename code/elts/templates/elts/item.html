@@ -1,6 +1,5 @@
 {% extends 'elts/base.html' %}
-{% load item_tags tag_link from tag_tools %}
-{% load label from model_tools %}
+{% load render_table from django_tables2 %}
 
 {% block title %}Items{% endblock %}
 {% block breadcrumb %}
@@ -9,38 +8,9 @@
 
 {% block body %}
     <h1>Items</h1>
-    <p>You can create a new item
-    <a href='{% url 'elts.views.item_create_form' %}'>here</a>.</p>
-    {% if items %}
-        <table>
-            <thead>
-                <tr>
-                    <th>{{ items|first|label:"name"|capfirst }}</th>
-                    <th>{{ items|first|label:"description"|capfirst }}</th>
-                    <th>{{ items|first|label:"tags"|capfirst }}</th>
-                    <th>Links</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in items %}
-                    <tr>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.description|truncatechars:80 }}</td>
-                        <td>
-                            {% for tag in item|item_tags %}
-                                {{ tag|tag_link|safe }}
-                            {% endfor %}
-                        </td>
-                        <td>
-                            <a href='{% url 'elts.views.item_id' item.id %}'>Details</a>
-                            <a href='{% url 'elts.views.item_id_update_form' item.id %}'>Edit</a>
-                            <a href='{% url 'elts.views.item_id_delete_form' item.id %}'>Delete</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No items in database.</p>
-    {% endif %}
+    <p>
+        You can create a new item <a
+        href='{% url 'elts.views.item_create_form' %}'>here</a>.
+    </p>
+    {% render_table table %}
 {% endblock %}

@@ -116,10 +116,16 @@ def item(request):
 
     def get_handler():
         """Return a list of all items."""
+        table = tables.ItemTable(models.Item.objects.all())
+        RequestConfig(request).configure(table)
         return render(
             request,
             'elts/item.html',
-            {'items': models.Item.objects.all()}
+            {
+                'items': models.Item.objects.all(),
+                'table': table,
+                'request': request,
+            }
         )
 
     return {
@@ -277,10 +283,16 @@ def tag(request):
 
     def get_handler():
         """Return information about all tags."""
+        table = tables.TagTable(models.Tag.objects.all())
+        RequestConfig(request).configure(table)
         return render(
             request,
             'elts/tag.html',
-            {'tags': models.Tag.objects.all()}
+            {
+                'lends': models.Tag.objects.all(),
+                'table': table,
+                'request': request,
+            }
         )
 
     return {
