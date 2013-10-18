@@ -24,6 +24,7 @@ lighttpd + flup + sqlite
 Start by installing the following:
 
 * django-extensions
+* django-tables2
 * django (python 2 version)
 * flup (python 2 version)
 * lighttpd
