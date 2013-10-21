@@ -4,7 +4,7 @@ Unless otherwise noted, all forms defined herein can be used to either create or
 update an object.
 
 """
-from django.forms import CharField, Form, ModelForm, widgets
+from django.forms import CharField, Form, ModelForm, widgets, ValidationError
 from elts import models
 
 # pylint: disable=R0903
@@ -75,7 +75,6 @@ class LoginForm(Form):
 
 class LendForm(ModelForm):
     """A form for a Lend."""
-    # FIXME: validate due_out is before due_back
 
     class Meta(object):
         """Model attributes that are not fields."""
@@ -87,3 +86,65 @@ class LendForm(ModelForm):
             'out':  widgets.DateTimeInput(attrs = {'type': 'datetime'}),
             'back': widgets.DateTimeInput(attrs = {'type': 'datetime'}),
         }
+
+    def clean(self):
+        """Perform form-wide validation.
+
+        This method is called after ``Field.clean()`` has been called on each
+        individual field. "Any ValidationError raised by this method will
+        not be associated with a particular field; it will have a special-case
+        association with the field named '__all__'."
+
+        """
+        # Let the ``ModelForm`` parent class do some checks.
+        cleaned_data = super(LendForm, self).clean()
+        # Grab data necessary for validation.
+        due_out = cleaned_data.get('due_out')
+        due_back = cleaned_data.get('due_back')
+        out = cleaned_data.get('out')
+        back = cleaned_data.get('back')
+
+        # FIXME: push each check into a private helper function. Write doctests
+        # for each of those functions.
+
+        # Either ``due_out`` or ``out`` must be set; ``Lend`` objects keep track
+        # of item reservations and lends.
+        if (not due_out) and (not out):
+            raise ValidationError(
+                'Either "{}" or "{}" must be set.'.format(
+                    models.Lend._meta.get_field('due_out').verbose_name,
+                    models.Lend._meta.get_field('out').verbose_name,
+                )
+            )
+
+        # An item can only be returned if it was earlier lent out.
+        if (not out) and back:
+            raise ValidationError(
+                'If "{}" is set, "{}" must also be set.'.format(
+                    models.Lend._meta.get_field('back').verbose_name,
+                    models.Lend._meta.get_field('out').verbose_name,
+                )
+            )
+
+        # If an item is due out and due back, the former must take place before
+        # the latter.
+        if (due_out and due_back) and (due_out > due_back):
+            raise ValidationError(
+                '"{}" must occur before "{}".'.format(
+                    models.Lend._meta.get_field('due_out').verbose_name,
+                    models.Lend._meta.get_field('due_back').verbose_name,
+                )
+            )
+
+        # If an item has been lent out and returned, the former must have taken
+        # place before the latter.
+        if (out and back) and (out > back):
+            raise ValidationError(
+                '"{}" must occur before "{}".'.format(
+                    models.Lend._meta.get_field('out').verbose_name,
+                    models.Lend._meta.get_field('back').verbose_name,
+                )
+            )
+
+        # Always return the full collection of cleaned data.
+        return cleaned_data
