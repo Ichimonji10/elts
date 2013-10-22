@@ -133,4 +133,4 @@ class TagTable(tables.Table):
         consequently, a row in the table).
 
         """
-        return mark_safe(_restful_links('lend', record.id))
+        return mark_safe(_restful_links('tag', record.id))

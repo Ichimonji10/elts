@@ -573,7 +573,7 @@ def lend(request):
     def post_handler():
         """Create a new item lend.
 
-        If creation suceeds, redirect user to ``user_id`` view. Otherwise,
+        If creation suceeds, redirect user to ``lend_id`` view. Otherwise,
         redirect user to ``lend_create_form``.
 
         """

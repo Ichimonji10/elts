@@ -15,6 +15,7 @@
     <h1>Update Lend {{ lend.id }}</h1>
     {% include 'elts/_show-errors.html' %}
     <form method='post' action='{% url 'elts.views.lend_id' lend.id %}'>
+        <input type='hidden' name='_method' value='PUT' />
         {% include 'elts/_create-update-lend.html' %}
     </form>
 {% endblock %}
