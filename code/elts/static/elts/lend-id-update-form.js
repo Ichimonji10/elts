@@ -1,5 +1,39 @@
 /*jslint browser: true, indent: 4, maxlen: 80 */
 
+/* Pad `string` with leading zeroes until it is `length` characters long. */
+function padString(string, length) {
+    'use strict';
+    if (string.length >= length) {
+        return string;
+    }
+    return padString('0' + string, length);
+}
+
+/* Return a string `length` characters long, padded with leading zeroes. */
+function padNumber(number, length) {
+    'use strict';
+    return padString(number.toString(), length);
+}
+
+/* Return a string in the format yyyy-mm-dd. Respect `date`'s time zone. */
+function yearMonthDate(date) {
+    'use strict';
+    return [
+        date.getFullYear(),
+        padNumber(date.getMonth() + 1, 2),
+        padNumber(date.getDate(), 2)
+    ].join('-');
+}
+
+/* Return a string in the format hh:mm. Respect `date`'s time zone. */
+function hourMinute(date) {
+    'use strict';
+    return [
+        padNumber(date.getHours(), 2),
+        padNumber(date.getMinutes(), 2)
+    ].join(':');
+}
+
 /* Clear input `input_name`. */
 function clearInput(inputName) {
     'use strict';
@@ -11,25 +45,18 @@ function clearInput(inputName) {
 /* Populate input `input_name` with the current date. */
 function fillDate(inputName) {
     'use strict';
-    // `toISOString()` returns e.g. "2013-09-24T19:34:17.974Z"
-    /*jslint regexp: true */
-    // FIXME: date has GMT timezone
     document.querySelector(
         'section#content input[name=' + inputName + ']'
-    ).value = new Date().toISOString().replace(/T.*/, '');
+    ).value = yearMonthDate(new Date());
 }
 
 /* Populate input `input_name` with the current date and time. */
 function fillDateTime(inputName) {
     'use strict';
-    // `toISOString()` returns e.g. "2013-09-24T19:34:17.974Z"
-    /*jslint regexp: true */
-    // FIXME: datetime has GMT timezone
+    var now = new Date();
     document.querySelector(
         'section#content input[name=' + inputName + ']'
-    ).value = new Date().toISOString().
-        replace(/T/, ' ').
-        replace(/(\d{2}:\d{2}).*/, '$1');
+    ).value = yearMonthDate(now) + ' ' + hourMinute(now);
 }
 
 /* Check to see if the browser supports date inputs.
