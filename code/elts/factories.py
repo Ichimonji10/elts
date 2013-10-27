@@ -16,6 +16,12 @@ from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyDate, FuzzyDateTime
 import random
 
+# FIXME: use LazyAttribute fields more aggressively to ensure that objects
+# produced are more unique
+# FIXME: constrain the dates used by the LendFactory subclasses to ensure that
+# out of bounds errors occur less often. Also submit a bug report on this topic
+# to the Django project.
+
 # See ``_random_username`` for details on why this charset was chosen.
 USERNAME_CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_@+.-'
 
@@ -195,3 +201,7 @@ class FutureLendFactory(LendFactory):
     # pylint: disable=R0903
     # pylint: disable=W0232
     due_out = FuzzyDate(date.min, date.max)
+
+def random_lend_factory():
+    """Randomly return either PastLendFactory or FutureLendFactory."""
+    return random.choice([PastLendFactory, FutureLendFactory])

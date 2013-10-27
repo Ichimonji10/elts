@@ -66,6 +66,34 @@ class Lend(models.Model):
     out = models.DateTimeField(blank = True, null = True)
     back = models.DateTimeField(blank = True, null = True)
 
+    def http_dict(self):
+        """Encode ``self``'s attributes in a dict.
+
+        The dictionary produced is suitable for use in an HTTP request.
+
+        """
+        # FIXME: add doctests
+        data = {}
+
+        if self.item_id.id:
+            data['item_id'] = self.item_id.id
+        if self.user_id.id:
+            data['user_id'] = self.user_id.id
+
+        # e.g. 'due_out': '2013-10-22'
+        if self.due_out:
+            data['due_out'] = str(self.due_out)
+        if self.due_back:
+            data['due_back'] = str(self.due_back)
+
+        # e.g. '2013-10-27 18:50:00' or '0030-11-19 17:07:32'
+        if self.out:
+            data['out'] = '{} {}'.format(self.out.date(), self.out.time())
+        if self.back:
+            data['back'] = '{} {}'.format(self.back.date(), self.back.time())
+
+        return data
+
 class Tag(models.Model):
     """A descriptive label for an ``Item``.
 

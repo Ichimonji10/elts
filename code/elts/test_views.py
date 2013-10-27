@@ -15,6 +15,7 @@ requests which act like PUT or DELETE requests by virtue of passing the
 '_method' argument.
 
 """
+from datetime import date
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from elts import factories, models
@@ -734,6 +735,7 @@ class LendTestCase(TestCase):
             {
                 'item_id': factories.ItemFactory.create().id,
                 'user_id': factories.UserFactory.create().id,
+                'due_out': str(date.today()),
             }
         )
         self.assertEqual(models.Lend.objects.count(), num_lends + 1)
@@ -818,7 +820,7 @@ class LendIdTestCase(TestCase):
 
         """
         _login(self.client)
-        self.lend = factories.LendFactory.create()
+        self.lend = factories.random_lend_factory().create()
         self.uri = reverse(self.FUNCTION, args = [self.lend.id])
 
     def test_logout(self):
@@ -837,11 +839,8 @@ class LendIdTestCase(TestCase):
 
     def test_put(self):
         """PUT ``self.uri``."""
-        data = dict(
-            _method = 'PUT',
-            item_id = factories.ItemFactory.create().id,
-            user_id = factories.UserFactory.create().id,
-        )
+        data = self.lend.http_dict()
+        data['_method'] = 'PUT'
         response = self.client.post(self.uri, data)
         self.assertRedirects(response, self.uri)
 
@@ -898,7 +897,7 @@ class LendIdDeleteFormTestCase(TestCase):
 
         """
         _login(self.client)
-        self.lend = factories.LendFactory.create()
+        self.lend = factories.random_lend_factory().create()
         self.uri = reverse(self.FUNCTION, args = [self.lend.id])
 
     def test_logout(self):
@@ -965,7 +964,7 @@ class LendIdUpdateFormTestCase(TestCase):
 
         """
         _login(self.client)
-        self.lend = factories.LendFactory.create()
+        self.lend = factories.random_lend_factory().create()
         self.uri = reverse(self.FUNCTION, args = [self.lend.id])
 
     def test_logout(self):

@@ -106,6 +106,8 @@ class LendForm(ModelForm):
 
         # FIXME: push each check into a private helper function. Write doctests
         # for each of those functions.
+        # FIXME: add a check to ensure that a given item isn't being lent out
+        # twice
 
         # Either ``due_out`` or ``out`` must be set; ``Lend`` objects keep track
         # of item reservations and lends.
