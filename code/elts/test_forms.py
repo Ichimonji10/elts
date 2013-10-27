@@ -10,9 +10,8 @@ Each test case is a subclass of ``django.test.TestCase``.
 each test inside a transaction to provide isolation".
 
 """
-from datetime import datetime
 from django.test import TestCase
-from elts.factories import random_utf8_str, UserFactory, ItemFactory
+from elts.factories import random_utf8_str, ItemFactory, FutureLendFactory, PastLendFactory
 from elts import forms, models
 import random
 
@@ -211,9 +210,12 @@ class LendFormTestCase(TestCase):
     """Tests for ``LendForm``."""
     def test_valid(self):
         """Create a valid LendForm."""
+        lend = random.choice([PastLendFactory, FutureLendFactory]).create()
         form = forms.LendForm({
-            'item_id': ItemFactory.create().id,
-            'user_id': UserFactory.create().id,
+            'user_id': lend.user_id.id,
+            'item_id': lend.item_id.id,
+            'due_out': lend.due_out,
+            'out': lend.out,
         })
         self.assertTrue(form.is_valid())
 
@@ -229,19 +231,23 @@ class LendFormTestCase(TestCase):
 
     def test_has_due_out(self):
         """Create a LendForm and set ``due_out``."""
+        lend = random.choice([PastLendFactory, FutureLendFactory]).create()
         form = forms.LendForm({
-            'item_id': ItemFactory.create().id,
-            'user_id': UserFactory.create().id,
-            'due_out': datetime.today(),
+            'user_id': lend.user_id.id,
+            'item_id': lend.item_id.id,
+            'due_out': lend.due_out,
+            'out': lend.out,
         })
         self.assertTrue(form.is_valid())
 
     def test_has_due_back(self):
         """Create a LendForm and set ``due_back``."""
+        lend = random.choice([PastLendFactory, FutureLendFactory]).create()
         form = forms.LendForm({
-            'item_id': ItemFactory.create().id,
-            'user_id': UserFactory.create().id,
-            'due_back': datetime.today(),
+            'user_id': lend.user_id.id,
+            'item_id': lend.item_id.id,
+            'due_out': lend.due_out,
+            'out': lend.out,
         })
         self.assertTrue(form.is_valid())
 

@@ -6,11 +6,14 @@ DjangoModelFactory base class." Otherwise, weird failures occur. Read more about
 Factory Boy here: http://factoryboy.readthedocs.org/en/latest/
 
 """
+from datetime import date, datetime
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from elts import models
-from factory.django import DjangoModelFactory
 from factory import Sequence, SubFactory
+from factory.compat import UTC
+from factory.django import DjangoModelFactory
+from factory.fuzzy import FuzzyDate, FuzzyDateTime
 import random
 
 # See ``_random_username`` for details on why this charset was chosen.
@@ -150,14 +153,45 @@ class ItemNoteFactory(DjangoModelFactory):
     note_text = random_utf8_str(models.Note.MAX_LEN_NOTE_TEXT)
 
 class LendFactory(DjangoModelFactory):
-    """Instantiate an ``elts.models.Lend`` object.
+    """Base attributes for an ``elts.models.Lend`` object."""
+    # pylint: disable=R0903
+    # pylint: disable=W0232
+    FACTORY_FOR = models.Lend
+    ABSTRACT_FACTORY = True
+    item_id = SubFactory(ItemFactory)
+    user_id = SubFactory(UserFactory)
 
-    >>> lend = LendFactory.create()
+class PastLendFactory(LendFactory):
+    """An ``elts.models.Lend`` object whose ``out`` attribute is set.
+
+    >>> lend = PastLendFactory.create()
     >>> lend.full_clean()
     >>> lend.id is None
     False
 
     """
-    FACTORY_FOR = models.Lend
-    item_id = SubFactory(ItemFactory)
-    user_id = SubFactory(UserFactory)
+    # pylint: disable=R0903
+    # pylint: disable=W0232
+    #
+    # Variable assignments (such as ``out = ...``) are interpreted as db column
+    # assignments in factories. However, private variables are exempt from this
+    # treatment. Thus, creating ``_lo`` and ``_hi`` is appropriate.
+    _lo = datetime.min
+    _hi = datetime.max
+    out = FuzzyDateTime(
+        datetime(_lo.year, _lo.month, _lo.day, tzinfo = UTC),
+        datetime(_hi.year, _hi.month, _hi.day, tzinfo = UTC)
+    )
+
+class FutureLendFactory(LendFactory):
+    """An ``elts.models.Lend`` object whose ``due_out`` attribute is set.
+
+    >>> lend = FutureLendFactory.create()
+    >>> lend.full_clean()
+    >>> lend.id is None
+    False
+
+    """
+    # pylint: disable=R0903
+    # pylint: disable=W0232
+    due_out = FuzzyDate(date.min, date.max)
