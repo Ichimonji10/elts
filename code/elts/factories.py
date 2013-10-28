@@ -1,9 +1,21 @@
 """Factory Boy factory definitions.
 
 These factory definitions are used as an alternative to plain old Django
-fixtures. Note especially that "All factories for a Django Model should use the
-DjangoModelFactory base class." Otherwise, weird failures occur. Read more about
-Factory Boy here: http://factoryboy.readthedocs.org/en/latest/
+fixtures. Rather than simply defining a static set of test data, factories can
+be used to generate disgustingly random data. (perfect for testing!)
+
+Notes
+=====
+
+"All factories for a Django Model should use the DjangoModelFactory base class."
+Otherwise, weird failures will occur. Read the Factory Boy docs here:
+http://factoryboy.readthedocs.org/en/latest/
+
+Python 2 does not provide a standard method of tracking timezone data in
+datetime objects. Rather than writing a custom implementation of this feature,
+the factory_boy implementation of timezone data is used. It's beautiful. See:
+* https://github.com/rbarrois/factory_boy/blob/master/factory/compat.py
+* http://docs.python.org/2/library/datetime.html
 
 """
 from datetime import date, datetime
@@ -13,11 +25,9 @@ from elts import models
 from factory import Sequence, SubFactory
 from factory.compat import UTC
 from factory.django import DjangoModelFactory
-from factory.fuzzy import FuzzyDate, FuzzyDateTime
+from factory.fuzzy import FuzzyAttribute, FuzzyDate, FuzzyDateTime
 import random
 
-# FIXME: use LazyAttribute fields more aggressively to ensure that objects
-# produced are more unique
 # FIXME: constrain the dates used by the LendFactory subclasses to ensure that
 # out of bounds errors occur less often. Also submit a bug report on this topic
 # to the Django project.
@@ -98,7 +108,7 @@ class UserFactory(DjangoModelFactory):
     # pylint: disable=W0232
     FACTORY_FOR = User
     username = Sequence(lambda n: _random_username(n))
-    password = make_password(random_utf8_str(20))
+    password = FuzzyAttribute(lambda: make_password(random_utf8_str(1, 20)))
 
 def create_user():
     """Build and save a User.
@@ -112,8 +122,11 @@ def create_user():
     False
 
     """
-    password = random_utf8_str(20)
-    user = UserFactory.create(password = make_password(password)) # pylint: disable=E1101
+    # This function promises that it will return an unencrypted password, but an
+    # unencrypted password cannot be fetched from a User object. The solution is
+    # to make an unencrypted password and _then_ create the User object.
+    password = random_utf8_str(1, 20)
+    user = UserFactory.create(password = make_password(password))  # pylint: disable=E1101
     return [user, password]
 
 class ItemFactory(DjangoModelFactory):
@@ -127,7 +140,7 @@ class ItemFactory(DjangoModelFactory):
     # pylint: disable=R0903
     # pylint: disable=W0232
     FACTORY_FOR = models.Item
-    name = random_utf8_str(models.Item.MAX_LEN_NAME)
+    name = FuzzyAttribute(lambda: random_utf8_str(1, models.Item.MAX_LEN_NAME))
 
 class TagFactory(DjangoModelFactory):
     """Instantiate an ``elts.models.Tag`` object.
@@ -140,7 +153,7 @@ class TagFactory(DjangoModelFactory):
     # pylint: disable=R0903
     # pylint: disable=W0232
     FACTORY_FOR = models.Tag
-    name = random_utf8_str(models.Tag.MAX_LEN_NAME)
+    name = FuzzyAttribute(lambda: random_utf8_str(models.Tag.MAX_LEN_NAME))
 
 class ItemNoteFactory(DjangoModelFactory):
     """Instantiate an ``elts.models.ItemNote`` object.
@@ -156,7 +169,9 @@ class ItemNoteFactory(DjangoModelFactory):
     FACTORY_FOR = models.ItemNote
     author_id = SubFactory(UserFactory)
     item_id = SubFactory(ItemFactory)
-    note_text = random_utf8_str(models.Note.MAX_LEN_NOTE_TEXT)
+    note_text = FuzzyAttribute(
+        lambda: random_utf8_str(models.Note.MAX_LEN_NOTE_TEXT)
+    )
 
 class LendFactory(DjangoModelFactory):
     """Base attributes for an ``elts.models.Lend`` object."""
@@ -203,5 +218,11 @@ class FutureLendFactory(LendFactory):
     due_out = FuzzyDate(date.min, date.max)
 
 def random_lend_factory():
-    """Randomly return either PastLendFactory or FutureLendFactory."""
+    """Return a subclass of LendFactory.
+
+    >>> cls = random_lend_factory()
+    >>> cls.__name__ in ['PastLendFactory', 'FutureLendFactory']
+    True
+
+    """
     return random.choice([PastLendFactory, FutureLendFactory])
