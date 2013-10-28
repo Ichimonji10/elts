@@ -18,7 +18,7 @@ the factory_boy implementation of timezone data is used. It's beautiful. See:
 * http://docs.python.org/2/library/datetime.html
 
 """
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from elts import models
@@ -27,10 +27,6 @@ from factory.compat import UTC
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyAttribute, FuzzyDate, FuzzyDateTime
 import random
-
-# FIXME: constrain the dates used by the LendFactory subclasses to ensure that
-# out of bounds errors occur less often. Also submit a bug report on this topic
-# to the Django project.
 
 # See ``_random_username`` for details on why this charset was chosen.
 USERNAME_CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_@+.-'
@@ -173,8 +169,48 @@ class ItemNoteFactory(DjangoModelFactory):
         lambda: random_utf8_str(models.Note.MAX_LEN_NOTE_TEXT)
     )
 
+# FIXME: Dates are not handled nicely. See docstring.
 class LendFactory(DjangoModelFactory):
-    """Base attributes for an ``elts.models.Lend`` object."""
+    """Base attributes for an ``elts.models.Lend`` object.
+
+    Using random data for dates and datetimes can produce exceptions. They
+    usually look like this:
+
+        ERROR: test_put (elts.test_views.LendIdTestCase)
+        PUT ``self.uri``.
+        ----------------------------------------------------------------------
+        Traceback (most recent call last):
+          File "/srv/http/elts/code/elts/test_views.py", line 844, in test_put
+            response = self.client.post(self.uri, data)
+          [...]
+          File "/usr/lib/python2.7/site-packages/django/utils/timezone.py", line 71, in utcoffset
+            if self._isdst(dt):
+          File "/usr/lib/python2.7/site-packages/django/utils/timezone.py", line 89, in _isdst
+            stamp = _time.mktime(tt)
+        ValueError: year out of range
+
+    Or this:
+
+        ERROR: test_get (elts.test_views.LendIdTestCase)
+        GET ``self.uri``.
+        ----------------------------------------------------------------------
+        Traceback (most recent call last):
+          File "/srv/http/elts/code/elts/test_views.py", line 837, in test_get
+            response = self.client.get(self.uri)
+          [...]
+          File "/usr/lib/python2.7/site-packages/django/utils/timezone.py", line 223, in template_localtime
+            return localtime(value) if should_convert else value
+          File "/usr/lib/python2.7/site-packages/django/utils/timezone.py", line 237, in localtime
+            value = value.astimezone(timezone)
+        OverflowError: date value out of range
+
+    A proper solution is not known at this time, and it is hard to consistently
+    produce this error. In the meantime, a simple hack is used: set the lower
+    and upper bound for dates to year 1900 and 2100, respectively. This is not
+    as ideal as using a value like date.min.year, but it should provide a good
+    enough range of test values while still avoiding random exceptions.
+
+    """
     # pylint: disable=R0903
     # pylint: disable=W0232
     FACTORY_FOR = models.Lend
@@ -194,14 +230,14 @@ class PastLendFactory(LendFactory):
     # pylint: disable=R0903
     # pylint: disable=W0232
     #
-    # Variable assignments (such as ``out = ...``) are interpreted as db column
-    # assignments in factories. However, private variables are exempt from this
-    # treatment. Thus, creating ``_lo`` and ``_hi`` is appropriate.
+    # Variable assignments within factory classes are interpreted as db column
+    # assignments. However, private variables (like ``_lo``) are exempt from
+    # this treatment.
     _lo = datetime.min
     _hi = datetime.max
     out = FuzzyDateTime(
-        datetime(_lo.year, _lo.month, _lo.day, tzinfo = UTC),
-        datetime(_hi.year, _hi.month, _hi.day, tzinfo = UTC)
+        datetime(1900, _lo.month, _lo.day, tzinfo = UTC),
+        datetime(2100, _hi.month, _hi.day, tzinfo = UTC)
     )
 
 class FutureLendFactory(LendFactory):
@@ -215,7 +251,16 @@ class FutureLendFactory(LendFactory):
     """
     # pylint: disable=R0903
     # pylint: disable=W0232
-    due_out = FuzzyDate(date.min, date.max)
+    #
+    # Variable assignments within factory classes are interpreted as db column
+    # assignments. However, private variables (like ``_lo``) are exempt from
+    # this treatment.
+    _lo = date.min
+    _hi = date.max
+    due_out = FuzzyDate(
+        date(1900, _lo.month, _lo.day),
+        date(2100, _hi.month, _hi.day)
+    )
 
 def random_lend_factory():
     """Return a subclass of LendFactory.
