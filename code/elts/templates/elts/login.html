@@ -5,16 +5,21 @@
     <head>
         <meta charset='utf-8'>
         <title>ELTS Login</title>
+        <link rel='stylesheet' href='{% static 'elts/site-wide.css' %}' />
         <link rel='stylesheet' href='{% static 'elts/login.css' %}' />
         {{ head }}
     </head>
     <body>
-        <h1>ELTS Login</h1>
-        <form method='post' action='{% url 'elts.views.login' %}'>
-            {% include 'elts/_show-errors.html' %}
-            {% csrf_token %}
-            {{ form.as_p }}
-            <p><button>Submit</button></p>
-        </form>
+        <div>
+            <h1>Electronic Lending Tracking System</h1>
+            <div>
+                <form method='post' action='{% url 'elts.views.login' %}'>
+                    {% include 'elts/_show-errors.html' %}
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <p><button>Submit</button></p>
+                </form>
+            </div>
+        </div>
     </body>
 </html>

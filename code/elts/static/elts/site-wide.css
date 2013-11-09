@@ -1,0 +1,9 @@
+/* Generic rules.
+ *
+ * These rules apply to the *entire* site. That includes both the login screen
+ * and the rest of the site.
+ */
+body {
+    font-family: sans-serif;
+    background-image: url('background.png');
+    }

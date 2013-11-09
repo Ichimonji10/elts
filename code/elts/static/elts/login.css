@@ -2,8 +2,28 @@ body {
     max-width: 30em;
     margin-left: auto;
     margin-right: auto;
-}
+    }
 
+/* outer box */
+body > div {
+    background-color: rgba(255, 255, 255, 0.6);
+    border: medium solid black;
+    border-radius: 0.5em;
+    padding: 0.5em;
+    }
+
+/* inside outer box, outside inner box */
 h1 {
-    border-bottom: medium solid grey;
-}
+    font-size: x-large;
+    margin-top: 0;
+    margin-bottom: 0.2em;
+    }
+
+/* inner box */
+h1 + div {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: thin solid black;
+    border-radius: 0.3em;
+    padding-right: 0.5em;
+    padding-left: 0.5em;
+    }
