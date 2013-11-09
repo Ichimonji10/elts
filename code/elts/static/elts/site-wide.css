@@ -7,3 +7,21 @@ body {
     font-family: sans-serif;
     background-image: url('background.png');
     }
+a {color: #2C5873;}
+
+/* Set styles for buttons and text inputs. */
+button {background-color: lightgrey;}
+button:hover {background-color: white;}
+button,
+input[type='text'],
+input[type='password'],
+textarea {
+    border: thin solid black;
+    border-radius: 0.3em;
+    padding: 0.2em;
+    }
+input[type='text']:focus,
+input[type='password']:focus,
+textarea:focus {
+    border: thin solid #2C5873;
+    }

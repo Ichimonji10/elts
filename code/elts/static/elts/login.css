@@ -4,14 +4,6 @@ body {
     margin-right: auto;
     }
 
-/* outer box */
-body > div {
-    background-color: rgba(255, 255, 255, 0.6);
-    border: medium solid black;
-    border-radius: 0.5em;
-    padding: 0.5em;
-    }
-
 /* inside outer box, outside inner box */
 h1 {
     font-size: x-large;
@@ -19,11 +11,23 @@ h1 {
     margin-bottom: 0.2em;
     }
 
+body > div, h1 + div {padding: 0.5em;}
+
+/* outer box */
+body > div {
+    background-color: rgba(255, 255, 255, 0.6);
+    border: medium solid black;
+    border-radius: 0.5em;
+    }
+
 /* inner box */
 h1 + div {
     background-color: rgba(255, 255, 255, 0.9);
     border: thin solid black;
     border-radius: 0.3em;
-    padding-right: 0.5em;
-    padding-left: 0.5em;
+    }
+h1 + div p:first-child {margin-top: 0;}
+h1 + div p:last-child {
+    margin-bottom: 0;
+    text-align: right;
     }

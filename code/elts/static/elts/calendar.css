@@ -9,9 +9,9 @@
  */
 ol.calendar {
     margin: 0;
-    padding: 0.5em;
+    padding: 0.2em;
     list-style-type: none;
-    background-color: rgba(70, 130, 180, 1); /* steelblue */
+    background-color: rgba(44, 88, 115, 1); /* dark blue */
 }
 
 /* Make a grid-based calendar.
@@ -27,7 +27,7 @@ ol.calendar li {
     margin: 0;
     padding: 0.5em 0.5%;
     background-color: white;
-    box-shadow: 0 0 0 1px rgba(70, 130, 180, 1) inset; /* steelblue */
+    box-shadow: 0 0 0 1px rgba(44, 88, 115, 1) inset; /* dark blue */
 }
 
 /* Give a height to cells in the second calendar. */

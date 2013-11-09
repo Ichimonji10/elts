@@ -145,7 +145,7 @@ section#content > div {
  *----------------------------------------------------------------------------*/
 th, td {
     padding: 0.5em;
-    border-bottom: thin solid steelblue;
+    border-bottom: thin solid #2C5873;
     }
 
 th.asc:after {
