@@ -10,10 +10,10 @@
     </head>
     <body>
         <section id='shortcuts'>
-            <p>Welcome, {{ user.username }}</p>
             <form method='post' action='{% url 'elts.views.login' %}'>
                 {% csrf_token %}
                 <input type='hidden' name='_method' value='DELETE' />
+                <p>Hello, {{user.username}}</p>
                 <button>Log Out</button>
             </form>
             <p>foo foo foo<br />bar bar bar</p>
@@ -24,7 +24,9 @@
             <p>foo foo foo<br />bar bar bar</p>
         </section>
         <nav id='sitenav'>
-            <p><img src='{% static 'elts/award.png' %}' alt='placeholder icon' /></p>
+            <p>
+                <img src='{% static 'elts/award.png' %}' alt='placeholder icon' />
+            </p>
             <ul>
                 <li>
                     <a href='{% url 'elts.views.index' %}'>
@@ -63,7 +65,9 @@
             </ol>
         </nav>
         <section id='content'>
-            {% block body %}<h1>REPLACE ME</h1>{% endblock %}
+            <div>
+                {% block body %}<h1>REPLACE ME</h1>{% endblock %}
+            </div>
         </section>
     </body>
 </html>

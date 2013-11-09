@@ -1,3 +1,9 @@
+/* Generic rules.
+ *
+ * These rules do not apply to any particular section of the site.
+ */
+body {font-family: sans-serif;}
+
 /*------------------------------------------------------------------------------
  * Basic Layout
  *
@@ -25,32 +31,40 @@ section#shortcuts {
     float: right;
     clear: right;
     }
-nav#breadcrumb,
-section#content {
-    margin-left: 8em;
-    margin-right: 15em;
-    }
+nav#breadcrumb, section#content {margin-right: 15em;}
+section#content {margin-left: 8em;}
 
 /* Style all three columns. */
 nav#sitenav > *,
 section#shortcuts > *,
-nav#breadcrumb > *,
+nav#breadcrumb,
 section#content {
-    background-color: rgba(255, 255, 255, 1); /* white */
+    background-color: rgba(255, 255, 255, 0.6); /* white */
     padding: 0.3em;
     }
+
 body {
     margin: 0;
     background-image: url('background.png');
     min-width: 40em;
     }
 
-/* Style the left column. */
+/* Style the left column. Sample HTML:
+ *
+ * <nav id='sitenav'>
+ *     <p><img /></p>
+ *     <ul>
+ *         <li><a><img /></a></li>
+ *         <li><a><img /></a></li>
+ *     </ul>
+ * </nav>
+ *
+ */
 nav#sitenav > * {
     margin-top: 0;
     margin-bottom: 0;
-    border-right:  medium solid black;
     border-bottom: medium solid black;
+    border-right:  medium solid black;
     border-bottom-right-radius: 0.5em;
     }
 nav#sitenav ul {
@@ -63,45 +77,74 @@ nav#sitenav img {width: 100%;}
  *
  * The first two children are visually distinct from all remaining children. Sample HTML:
  *
- *     <p>...</p>
  *     <form><button></button></form>
  *     <p>...</p>
  *     <p>...</p>
  *     <p>...</p>
  */
-section#shortcuts p:first-child,
 section#shortcuts form {
     margin-top: 0;
-    margin-bottom: 0;
     border-left: medium solid black;
     border-bottom: medium solid black;
     border-bottom-left-radius: 0.5em;
+    text-align: right;
     }
-section#shortcuts form {
-    width: 70%;
-    margin-left: auto;
+section#shortcuts form p {
+    border: 0;
+    margin: 0;
     }
-section#shortcuts form button {width: 100%;}
-section#shortcuts p:not(:first-child) {
-    border: medium solid black;
-    border-radius: 0.5em;
+section#shortcuts p {
+    border-top: medium solid black;
+    border-bottom: medium solid black;
+    border-left: medium solid black;
+    border-bottom-left-radius: 0.5em;
+    border-top-left-radius: 0.5em;
     }
 
-/* Style the center column. */
-nav#breadcrumb ol {
-    list-style-type: none;
-    margin-top: 0;
+/* Style the center column (breadcrumb). This column will bump up against the left column. Sample html:
+ *
+ * <nav id='breadcrumb'>
+ *     <ol>
+ *         <li>...</li>
+ *         <li>...</li>
+ *     </ol>
+ * </nav>
+ *
+ */
+nav#breadcrumb {
     border-right: medium solid black;
     border-bottom: medium solid black;
-    border-left: medium solid black;
     border-bottom-right-radius: 0.5em;
-    border-bottom-left-radius: 0.5em;
+    margin-bottom: 1em;
+    padding-left: 1em;
+    margin-left: 7em;
+}
+nav#breadcrumb ol {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 0;
+    margin-bottom: 0;
     }
 nav#breadcrumb li {display: inline;}
 nav#breadcrumb li:not(:last-child):after {content: " \BB ";}
+nav#breadcrumb a {color: black;}
+
+/* Style the center column (content). Sample HTML:
+ *
+ * <section id='content>
+ *     <!-- dragons be here -->
+ * </section>
+ *
+ */
 section#content {
     border: medium solid black;
     border-radius: 0.5em;
+    }
+section#content > div {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: thin solid black;
+    padding: 0.5em;
+    border-radius: 0.3em;
     }
 
 /*------------------------------------------------------------------------------
