@@ -9,9 +9,7 @@ body {
     }
 a {color: #2C5873;}
 
-/* Set styles for buttons and text inputs. */
-button {background-color: lightgrey;}
-button:hover {background-color: white;}
+/* Set the basic look for buttons and inputs. */
 button,
 input[type='text'],
 input[type='password'],
@@ -25,3 +23,10 @@ input[type='password']:focus,
 textarea:focus {
     border: thin solid #2C5873;
     }
+
+/* Change the background color of buttons upon :hover. */
+button {
+    background-color: lightgrey;
+    transition: background-color 0.3s;
+    }
+button:hover {background-color: white;}
