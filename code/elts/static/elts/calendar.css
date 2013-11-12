@@ -7,12 +7,28 @@
  * Chrom(e/ium) will place a `li`'s number/bullet if that `li` is floated. Set
  * `list-style-type:none` to compensate.
  */
-ol.calendar {
+ol.calendar-head,
+ol.calendar-body {
     margin: 0;
     padding: 0.2em;
     list-style-type: none;
-    background-color: rgba(44, 88, 115, 1); /* dark blue */
-}
+    background: url('backgroundtrans.png'); /* transparent version of bg img */
+    }
+
+ol.calendar-head {
+    border-left: thin solid black;
+    border-top: thin solid black;
+    border-right: thin solid black;
+    border-top-left-radius: 0.3em;
+    border-top-right-radius: 0.3em;
+    }
+ol.calendar-body {
+    border-right: thin solid black;
+    border-bottom: thin solid black;
+    border-left: thin solid black;
+    border-bottom-right-radius: 0.3em;
+    border-bottom-left-radius: 0.3em;
+    }
 
 /* Make a grid-based calendar.
  *
@@ -21,20 +37,21 @@ ol.calendar {
  * 99.75) Use a box-shadow to outline each cell, because box-shadows don't
  * contribute to the width of an element.
  */
-ol.calendar li {
+ol.calendar-head > li,
+ol.calendar-body > li {
     float: left;
-    width: 13.25%;
+    width: 12.75%;
     margin: 0;
     padding: 0.5em 0.5%;
+    margin: 0.1em 0.25%;
     background-color: white;
-    box-shadow: 0 0 0 1px rgba(44, 88, 115, 1) inset; /* dark blue */
-}
+    }
 
 /* Give a height to cells in the second calendar. */
-ol.calendar + ol.calendar li {
+ol.calendar-body > li {
     height: 6em;
     overflow: hidden;
-}
+    }
 
 /* Give a left margin to a calendar cell.
  *
@@ -46,13 +63,13 @@ ol.calendar + ol.calendar li {
  * Only the first cell in a calendar is pushed over, even if multiple cells are
  * given a class of "mon", "tue", etc.
  */
-ol.calendar li.mon:first-child {margin-left: 0;}
-ol.calendar li.tue:first-child {margin-left: 14.25%;}
-ol.calendar li.wed:first-child {margin-left: 28.5%;}
-ol.calendar li.thu:first-child {margin-left: 42.75%;}
-ol.calendar li.fri:first-child {margin-left: 57%;}
-ol.calendar li.sat:first-child {margin-left: 71.25%;}
-ol.calendar li.sun:first-child {margin-left: 85.5%;}
+ol.calendar-body li.mon:first-child {margin-left: 0;}
+ol.calendar-body li.tue:first-child {margin-left: 14.25%;}
+ol.calendar-body li.wed:first-child {margin-left: 28.5%;}
+ol.calendar-body li.thu:first-child {margin-left: 42.75%;}
+ol.calendar-body li.fri:first-child {margin-left: 57%;}
+ol.calendar-body li.sat:first-child {margin-left: 71.25%;}
+ol.calendar-body li.sun:first-child {margin-left: 85.5%;}
 
 /* Make the day number in each calendar cell stand out. */
 span.day_number {
@@ -60,7 +77,10 @@ span.day_number {
     font-size: smaller;
     vertical-align: top;
     text-decoration: underline;
-}
+    }
 
-/* Make the calendar contain all calendar elements. (elements are floats) */
-ol.calendar div.clear {clear: both;}
+/* Style the list of lends within each calendar cell. */
+ol.calendar-body ul {
+    list-style-type: none;
+    padding-left: 0;
+    }
