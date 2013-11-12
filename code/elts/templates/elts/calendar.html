@@ -1,6 +1,6 @@
 {% extends 'elts/base.html' %}
 {% load static from staticfiles %}
-{% load day_name_abbrev month_and_year month_days from calendar_tools %}
+{% load day_name_abbrev month_and_year month_days lends_due_out lends_due_back from calendar_tools %}
 
 {% block title %}Calendar{% endblock %}
 {% block head %}
@@ -14,16 +14,29 @@
     <h1>Calendar</h1>
     <p>Items going out and coming back this month.</p>
     <h2>{{ today | month_and_year }}</h2>
-    <ol class='calendar'>
+    <ol class='calendar-head'>
         {% for day_name in day_names %}
             <li>{{ day_name }}</li>
         {% endfor %}
     </ol>
-    <ol class='calendar floatcontainer'>
+    <ol class='calendar-body floatcontainer'>
         {% for day in today|month_days %}
             <li class='{{ day|day_name_abbrev|lower }}'>
                 <span class='day_number'>{{ day.day }}</span>
-                FIXME: add proper content
+                <ul>
+                    {% for lend in day|lends_due_out %}
+                        <li>
+                            <a href='{% url 'elts.views.lend_id' lend.id %}'>
+                            {{ lend.item_id }} to {{ lend.user_id }}</a>
+                        </li>
+                    {% endfor %}
+                    {% for lend in day|lends_due_back %}
+                        <li>
+                            <a href='{% url 'elts.views.lend_id' lend.id %}'>
+                            {{ lend.item_id }} from {{ lend.user_id }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
             </li>
         {% endfor %}
     </ol>

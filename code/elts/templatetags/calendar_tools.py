@@ -1,5 +1,6 @@
 """Tools for displaying information in a calendar."""
 from django.template import Library
+from elts import models
 import datetime
 
 # Functions decorated with @register.filter can be used as filters.
@@ -64,3 +65,21 @@ def month_days(date_):
     while(day.month == date_.month):
         yield day
         day += one_day
+
+@register.filter
+def lends_due_out(date_):
+    """Return a QuerySet of lends due out on ``date_``.
+
+    ``date_`` is a ``datetime.date`` object.
+
+    """
+    return models.Lend.objects.filter(due_out = date_)
+
+@register.filter
+def lends_due_back(date_):
+    """Return a QuerySet of lends due back on ``date_``.
+
+    ``date_`` is a ``datetime.date`` object.
+
+    """
+    return models.Lend.objects.filter(due_back = date_)
