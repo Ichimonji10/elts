@@ -69,18 +69,23 @@ def index(request):
 def calendar(request):
     """Handle a request for ``calendar/``."""
     def get_handler():
-        """Show items going out and coming back this month."""
+        """Show items going out and coming back during some month.
+
+        By default, show the current month.
+
+        """
         # TODO: allow users to decide which day starts the week.
+        month_offset = _convert_to_int(request.GET.get('month_offset', 0))
+        target_date = _increment_month(date.today(), month_offset)
+        day_names = [day_name[day_num] for day_num in Calendar().iterweekdays()]
         return render(
             request,
             'elts/calendar.html',
             {
-                'today': date.today(),
-                'day_names': [
-                    day_name[day_num]
-                    for day_num
-                    in Calendar().iterweekdays()
-                ]
+                'prev_month': month_offset - 1,
+                'next_month': month_offset + 1,
+                'target_date': target_date,
+                'day_names': day_names
             }
         )
 

@@ -11,16 +11,20 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Calendar</h1>
+    <h1>{{ target_date | month_and_year }}</h1>
     <p>Items going out and coming back this month.</p>
-    <h2>{{ today | month_and_year }}</h2>
+    <p class='calendar-nav'>
+        <a href='?month_offset={{ prev_month }}'>Previous Month</a>
+        <a href='.'>This Month</a>
+        <a href='?month_offset={{ next_month }}'>Next Month</a>
+    </p>
     <ol class='calendar-head'>
         {% for day_name in day_names %}
             <li>{{ day_name }}</li>
         {% endfor %}
     </ol>
     <ol class='calendar-body floatcontainer'>
-        {% for day in today|month_days %}
+        {% for day in target_date|month_days %}
             <li class='{{ day|day_name_abbrev|lower }}'>
                 <span class='day_number'>{{ day.day }}</span>
                 <ul>
