@@ -1,3 +1,13 @@
+/* Style the prev/this/next month links above the calendar. */
+p.calendar-nav {
+    display: flex;
+    margin-bottom: 0;
+    }
+p.calendar-nav a {
+    flex-grow: 1;
+    text-align: center;
+    }
+
 /* Styles for all calendars.
  *
  * Set `margin:0` so two calendars can be stacked on top of each other. The
