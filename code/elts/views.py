@@ -961,3 +961,62 @@ def _request_type(request):
 def _http_405():
     """Return an ``HttpResponse`` with a 405 status code."""
     return http.HttpResponse(status = 405)
+
+def _increment_month(original, delta):
+    """Return a new `datetime.date` object `delta` months before or after
+    `original`.
+
+    `original` is a `datetime.date` object, and it is used as the starting point
+    for finding a new date. `delta` is an integer representing some number of
+    months. The `day` of the date returned is 1.
+
+    >>> from datetime import date
+    >>> original = date(2013, 01, 05)
+    >>> _increment_month(original, 0)
+    datetime.date(2013, 1, 1)
+    >>> _increment_month(original, 1)
+    datetime.date(2013, 2, 1)
+    >>> _increment_month(original, 11)
+    datetime.date(2013, 12, 1)
+    >>> _increment_month(original, 12)
+    datetime.date(2014, 1, 1)
+    >>> _increment_month(original, 13)
+    datetime.date(2014, 2, 1)
+    >>> _increment_month(original, -1)
+    datetime.date(2012, 12, 1)
+    >>> _increment_month(original, -11)
+    datetime.date(2012, 2, 1)
+    >>> _increment_month(original, -12)
+    datetime.date(2012, 1, 1)
+    >>> _increment_month(original, -13)
+    datetime.date(2011, 12, 1)
+    >>> original
+    datetime.date(2013, 1, 5)
+
+    """
+    # `original.month` has values 1 to 12. Both equations convert it to a
+    # zero-based index before anything else.
+    month = ((original.month - 1 + delta) % 12) + 1
+    year = ((original.month - 1 + delta) / 12) + original.year
+    return date(year, month, 1)
+
+def _convert_to_int(value):
+    """Convert `value` to an integer.
+
+    If converting `value` to an integer raises a `ValueError` exception, 0 is
+    returned.
+
+    >>> _convert_to_int(3)
+    3
+    >>> _convert_to_int(3.7)
+    3
+    >>> _convert_to_int('3')
+    3
+    >>> _convert_to_int('foo')
+    0
+
+    """
+    try:
+        return int(value)
+    except ValueError:
+        return 0
