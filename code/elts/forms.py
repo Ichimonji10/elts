@@ -87,6 +87,8 @@ class LendForm(ModelForm):
             'back': widgets.DateTimeInput(attrs = {'type': 'datetime'}),
         }
 
+    # FIXME: This is a whale of a function.
+    # FIXME: Add unit tests.
     def clean(self):
         """Perform form-wide validation.
 
@@ -99,18 +101,13 @@ class LendForm(ModelForm):
         # Let the ``ModelForm`` parent class do some checks.
         cleaned_data = super(LendForm, self).clean()
         # Grab data necessary for validation.
+        item_id = cleaned_data.get('item_id')
         due_out = cleaned_data.get('due_out')
         due_back = cleaned_data.get('due_back')
         out = cleaned_data.get('out')
         back = cleaned_data.get('back')
 
-        # FIXME: push each check into a private helper function. Write doctests
-        # for each of those functions.
-        # FIXME: add a check to ensure that a given item isn't being lent out
-        # twice
-
-        # Either ``due_out`` or ``out`` must be set; ``Lend`` objects keep track
-        # of item reservations and lends.
+        # Either ``due_out`` or ``out`` must be set.
         if (not due_out) and (not out):
             raise ValidationError(
                 'Either "{}" or "{}" must be set.'.format(
@@ -119,34 +116,89 @@ class LendForm(ModelForm):
                 )
             )
 
-        # An item can only be returned if it was earlier lent out.
+        # If ``back`` is set, ``out`` must also be set. That is, an item can
+        # only be returned if it was earlier lent out.
         if (not out) and back:
-            raise ValidationError(
-                'If "{}" is set, "{}" must also be set.'.format(
-                    models.Lend._meta.get_field('back').verbose_name,
-                    models.Lend._meta.get_field('out').verbose_name,
-                )
-            )
+            raise ValidationError(_a_requires_b_message(
+                models.Lend._meta.get_field('back').verbose_name,
+                models.Lend._meta.get_field('out').verbose_name,
+            ))
+
+        # If ``due_back`` is set, ``due_out`` must also be set. That is, an item
+        # can only be due back if it was at some time due out.
+        if (not due_out) and due_back:
+            raise ValidationError(_a_requires_b_message(
+                models.Lend._meta.get_field('due_back').verbose_name,
+                models.Lend._meta.get_field('due_out').verbose_name,
+            ))
 
         # If an item is due out and due back, the former must take place before
         # the latter.
         if (due_out and due_back) and (due_out > due_back):
-            raise ValidationError(
-                '"{}" must occur before "{}".'.format(
-                    models.Lend._meta.get_field('due_out').verbose_name,
-                    models.Lend._meta.get_field('due_back').verbose_name,
-                )
-            )
+            raise ValidationError(_a_before_b_message(
+                models.Lend._meta.get_field('due_out').verbose_name,
+                models.Lend._meta.get_field('due_back').verbose_name,
+            ))
 
         # If an item has been lent out and returned, the former must have taken
         # place before the latter.
         if (out and back) and (out > back):
-            raise ValidationError(
-                '"{}" must occur before "{}".'.format(
-                    models.Lend._meta.get_field('out').verbose_name,
-                    models.Lend._meta.get_field('back').verbose_name,
-                )
+            raise ValidationError(_a_before_b_message(
+                models.Lend._meta.get_field('out').verbose_name,
+                models.Lend._meta.get_field('back').verbose_name,
+            ))
+
+        # Check to see if ``due_out`` conflicts with an existing reservation.
+        if due_out:
+            conflicting_lends = _check_if_item_reserved(item_id, due_out).exclude(
+                id__exact = self.instance.id
             )
+            if conflicting_lends:
+                raise ValidationError(_already_reserved_message(
+                        models.Lend._meta.get_field('due_out').verbose_name,
+                        due_out,
+                        conflicting_lends[0].due_out,
+                        conflicting_lends[0].due_back
+                ))
+
+        # Check to see if ``due_back`` conflicts with an existing reservation.
+        if due_back:
+            conflicting_lends = _check_if_item_reserved(item_id, due_back).exclude(
+                id__exact = self.instance.id
+            )
+            if conflicting_lends:
+                raise ValidationError(_already_reserved_message(
+                        models.Lend._meta.get_field('due_back').verbose_name,
+                        due_back,
+                        conflicting_lends[0].due_out,
+                        conflicting_lends[0].due_back
+                ))
+
+        # Check whether ``item_id`` is already out during ``out``
+        if out:
+            conflicting_lends = _check_if_item_out(item_id, out).exclude(
+                id__exact = self.instance.id
+            )
+            if conflicting_lends:
+                raise ValidationError(_already_out_message(
+                    models.Lend._meta.get_field('out').verbose_name,
+                    out,
+                    conflicting_lends[0].out,
+                    conflicting_lends[0].back
+                ))
+
+        # Check whether ``item_id`` is already out during ``back``
+        if back:
+            conflicting_lends = _check_if_item_out(item_id, back).exclude(
+                id__exact = self.instance.id
+            )
+            if conflicting_lends:
+                raise ValidationError(_already_out_message(
+                    models.Lend._meta.get_field('back').verbose_name,
+                    back,
+                    conflicting_lends[0].out,
+                    conflicting_lends[0].back
+                ))
 
         # Always return the full collection of cleaned data.
         return cleaned_data
