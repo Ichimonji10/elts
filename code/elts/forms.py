@@ -150,3 +150,85 @@ class LendForm(ModelForm):
 
         # Always return the full collection of cleaned data.
         return cleaned_data
+
+def _a_requires_b_message(a, b):
+    """Returns a string stating that ``b`` must be set.
+
+    >>> _a_requires_b_message('foo', 'bar')
+    'If "foo" is set, "bar" must also be set.'
+
+    """
+    return 'If "{}" is set, "{}" must also be set.'.format(a, b)
+
+def _a_before_b_message(a, b):
+    """Returns a string stating that ``a`` must occur before ``b``.
+
+    >>> _a_before_b_message('foo', 'bar')
+    '"foo" must occur before "bar".'
+
+    """
+    return '"{}" must occur before "{}".'.format(a, b)
+
+def _already_out_message(field_name, field_value, before, after):
+    """Returns a string stating that ``field_name`` was already out.
+
+    >>> _already_out_message('foo', 'bar', 'biz', 'baz')
+    'Cannot set "foo" to bar. This item was out from biz to baz.'
+
+    """
+    return 'Cannot set "{}" to {}. This item was out from {} to {}.'.format(
+        field_name,
+        field_value,
+        before,
+        after
+    )
+
+def _already_reserved_message(field_name, field_value, before, after):
+    """Returns a string stating that ``field_name`` is already reserved.
+
+    >>> _already_reserved_message('foo', 'bar', 'biz', 'baz')
+    'Cannot set "foo" to bar. This item is reserved from biz to baz.'
+
+    """
+    return 'Cannot set "{}" to {}. This item is reserved from {} to {}.'.format(
+        field_name,
+        field_value,
+        before,
+        after
+    )
+
+# FIXME: add doctests or unit tests
+def _check_if_item_reserved(item, date_):
+    """Check whether ``item`` is reserved during ``date_``.
+
+    A QuerySet of ``Lend`` objects is returned. Only lends for which due_out <=
+    date_ <= back are included. The QuerySet may be empty.
+
+    ``item`` is an instance of an ``Item`` model.
+
+    ``datetime_`` is a ``date.datetime`` object.
+
+    """
+    return models.Lend.objects.filter(
+        item_id__exact = item,
+        due_out__lte = date_,
+        due_back__gte = date_
+    )
+
+# FIXME: add doctests or unit tests
+def _check_if_item_out(item, datetime_):
+    """Check whether ``item`` is lent out during ``datetime_``.
+
+    A QuerySet of ``Lend`` objects is returned. Only lends for which out <=
+    datetime_ <= back are included. The QuerySet may be empty.
+
+    ``item`` is an instance of an ``Item`` model.
+
+    ``datetime_`` is a ``date.datetime`` object.
+
+    """
+    return models.Lend.objects.filter(
+        item_id__exact = item,
+        out__lte = datetime_,
+        back__gte = datetime_
+    )
