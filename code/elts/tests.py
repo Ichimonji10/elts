@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/1.5/topics/testing/overview/
 
 """
 from doctest import DocTestSuite
-from elts import factories, test_forms, test_views, tables, views
+from elts import factories, test_forms, test_views, tables, views, forms
 from elts.templatetags import calendar_tools
 from unittest import TestSuite, TestLoader
 
@@ -27,4 +27,5 @@ def suite():
     test_suite.addTest(DocTestSuite(calendar_tools))
     test_suite.addTest(DocTestSuite(tables))
     test_suite.addTest(DocTestSuite(views))
+    test_suite.addTest(DocTestSuite(forms))
     return test_suite
