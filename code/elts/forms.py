@@ -19,7 +19,7 @@ class ItemForm(ModelForm):
     """A form for an Item."""
 
     class Meta(object):
-        """Model attributes that are not fields."""
+        """Form attributes that are not fields."""
         model = models.Item
         fields = ['name', 'description', 'tags', 'is_lendable']
         widgets = {'description': widgets.Textarea()}
@@ -28,7 +28,7 @@ class TagForm(ModelForm):
     """A form for a Tag."""
 
     class Meta(object):
-        """Model attributes that are not fields."""
+        """Form attributes that are not fields."""
         model = models.Tag
         fields = ['name', 'description']
         widgets = {'description': widgets.Textarea()}
@@ -39,7 +39,7 @@ class ItemNoteForm(ModelForm):
     """A form for a ItemNote."""
 
     class Meta(object):
-        """Model attributes that are not fields."""
+        """Form attributes that are not fields."""
         model = models.ItemNote
         fields = ['note_text']
         widgets = {'note_text': widgets.Textarea()}
@@ -48,7 +48,7 @@ class UserNoteForm(ModelForm):
     """A form for a UserNote."""
 
     class Meta(object):
-        """Model attributes that are not fields."""
+        """Form attributes that are not fields."""
         model = models.UserNote
         fields = ['note_text']
         widgets = {'note_text': widgets.Textarea()}
@@ -57,7 +57,7 @@ class LendNoteForm(ModelForm):
     """A form for a LendNote."""
 
     class Meta(object):
-        """Model attributes that are not fields."""
+        """Form attributes that are not fields."""
         model = models.LendNote
         fields = ['is_complaint', 'note_text']
         widgets = {'note_text': widgets.Textarea()}
@@ -70,14 +70,14 @@ class LoginForm(Form):
     password = CharField(widget = widgets.PasswordInput)
 
     class Meta(object):
-        """Model attributes that are not fields."""
+        """Form attributes that are not fields."""
         fields = ['username', 'password']
 
 class LendForm(ModelForm):
     """A form for a Lend."""
 
     class Meta(object):
-        """Model attributes that are not fields."""
+        """Form attributes that are not fields."""
         model = models.Lend
         fields = ['item_id', 'user_id', 'due_out', 'due_back', 'out', 'back']
         widgets = {
@@ -204,7 +204,7 @@ class LendForm(ModelForm):
         return cleaned_data
 
 def _a_requires_b_message(a, b):
-    """Returns a string stating that ``b`` must be set.
+    """Return a string stating that ``b`` must be set.
 
     >>> _a_requires_b_message('foo', 'bar')
     'If "foo" is set, "bar" must also be set.'
@@ -213,7 +213,7 @@ def _a_requires_b_message(a, b):
     return 'If "{}" is set, "{}" must also be set.'.format(a, b)
 
 def _a_before_b_message(a, b):
-    """Returns a string stating that ``a`` must occur before ``b``.
+    """Return a string stating that ``a`` must occur before ``b``.
 
     >>> _a_before_b_message('foo', 'bar')
     '"foo" must occur before "bar".'
@@ -222,7 +222,7 @@ def _a_before_b_message(a, b):
     return '"{}" must occur before "{}".'.format(a, b)
 
 def _already_out_message(field_name, field_value, before, after):
-    """Returns a string stating that ``field_name`` was already out.
+    """Return a string stating that ``field_name`` was already out.
 
     >>> _already_out_message('foo', 'bar', 'biz', 'baz')
     'Cannot set "foo" to bar. This item was out from biz to baz.'
@@ -236,7 +236,7 @@ def _already_out_message(field_name, field_value, before, after):
     )
 
 def _already_reserved_message(field_name, field_value, before, after):
-    """Returns a string stating that ``field_name`` is already reserved.
+    """Return a string stating that ``field_name`` is already reserved.
 
     >>> _already_reserved_message('foo', 'bar', 'biz', 'baz')
     'Cannot set "foo" to bar. This item is reserved from biz to baz.'
