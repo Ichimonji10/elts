@@ -11,12 +11,12 @@ each test inside a transaction to provide isolation".
 
 """
 from django.test import TestCase
-from elts.factories import random_utf8_str, ItemFactory, FutureLendFactory, PastLendFactory
+from elts.factories import random_utf8_str, PastLendFactory, FutureLendFactory, random_lend_factory
 from elts import forms, models
 import random
 
 # pylint: disable=E1101
-# Class 'ItemFactory' has no 'create' member (no-member)
+# Class 'PastLendFactory' has no 'create' member (no-member)
 # Instance of 'ItemForm' has no 'is_valid' member (no-member)
 # Instance of 'ItemFormTestCase' has no 'assertTrue' member (no-member)
 
@@ -207,49 +207,62 @@ class LendNoteFormTestCase(TestCase):
         self.assertTrue(form.is_valid())
 
 class LendFormTestCase(TestCase):
-    """Tests for ``LendForm``."""
-    def test_valid(self):
-        """Create a valid LendForm."""
-        lend = random.choice([PastLendFactory, FutureLendFactory]).create()
+    """Tests for ``LendForm``.
+
+    A minimal ``LendForm`` has ``user_id``, ``item_id`` and either ``due_out``
+    or ``out`` set. Therefore, two "test_valid" and three "test_missing"
+    functions are required to test the basic cases of success and failure. The
+    remaining functions test how well ``LendForm.clean()`` behaves.
+
+    """
+    def test_valid_v1(self):
+        """Create a valid LendForm with ``due_out`` set."""
+        lend = FutureLendFactory.create()
         form = forms.LendForm({
             'user_id': lend.user_id.id,
             'item_id': lend.item_id.id,
             'due_out': lend.due_out,
+        })
+        self.assertTrue(form.is_valid())
+
+    def test_valid_v2(self):
+        """Create a valid LendForm with ``out`` set."""
+        lend = PastLendFactory.create()
+        form = forms.LendForm({
+            'user_id': lend.user_id.id,
+            'item_id': lend.item_id.id,
             'out': lend.out,
         })
         self.assertTrue(form.is_valid())
 
     def test_missing_user_id(self):
-        """Create a LendForm with setting ``user_id``."""
-        form = forms.LendForm({'item_id': ItemFactory.create().id})
+        """Create a LendForm without setting ``user_id``."""
+        lend = random_lend_factory().create()
+        form = forms.LendForm({
+            'item_id': lend.item_id.id,
+            'due_out': lend.due_out,
+            'out': lend.out,
+        })
         self.assertFalse(form.is_valid())
 
     def test_missing_item_id(self):
-        """Create a LendForm with setting ``item_id``."""
-        form = forms.LendForm({'user_id': ItemFactory.create().id})
+        """Create a LendForm without setting ``item_id``."""
+        lend = random_lend_factory().create()
+        form = forms.LendForm({
+            'user_id': lend.user_id.id,
+            'due_out': lend.due_out,
+            'out': lend.out,
+        })
         self.assertFalse(form.is_valid())
 
-    def test_has_due_out(self):
-        """Create a LendForm and set ``due_out``."""
-        lend = random.choice([PastLendFactory, FutureLendFactory]).create()
+    def test_missing_out_and_due_out(self):
+        """Create a LendForm without setting ``out`` or ``due_out``."""
+        lend = random_lend_factory().create()
         form = forms.LendForm({
             'user_id': lend.user_id.id,
             'item_id': lend.item_id.id,
-            'due_out': lend.due_out,
-            'out': lend.out,
         })
-        self.assertTrue(form.is_valid())
-
-    def test_has_due_back(self):
-        """Create a LendForm and set ``due_back``."""
-        lend = random.choice([PastLendFactory, FutureLendFactory]).create()
-        form = forms.LendForm({
-            'user_id': lend.user_id.id,
-            'item_id': lend.item_id.id,
-            'due_out': lend.due_out,
-            'out': lend.out,
-        })
-        self.assertTrue(form.is_valid())
+        self.assertFalse(form.is_valid())
 
 class LoginFormTestCase(TestCase):
     """Tests for ``LoginForm``."""
