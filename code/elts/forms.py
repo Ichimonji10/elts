@@ -4,6 +4,8 @@ Unless otherwise noted, all forms defined herein can be used to either create or
 update an object.
 
 """
+from datetime import timedelta
+from django.db.models import Q
 from django.forms import CharField, Form, ModelForm, widgets, ValidationError
 from elts import models
 
@@ -132,73 +134,58 @@ class LendForm(ModelForm):
                 models.Lend._meta.get_field('due_out').verbose_name,
             ))
 
-        # If an item is due out and due back, the former must take place before
-        # the latter.
+        # ``due_out`` must occur before ``due_back``.
         if (due_out and due_back) and (due_out > due_back):
             raise ValidationError(_a_before_b_message(
                 models.Lend._meta.get_field('due_out').verbose_name,
                 models.Lend._meta.get_field('due_back').verbose_name,
             ))
 
-        # If an item has been lent out and returned, the former must have taken
-        # place before the latter.
+        # ``out`` must occur before ``back``.
         if (out and back) and (out > back):
             raise ValidationError(_a_before_b_message(
                 models.Lend._meta.get_field('out').verbose_name,
                 models.Lend._meta.get_field('back').verbose_name,
             ))
 
-        # Check to see if ``due_out`` conflicts with an existing reservation.
-        if due_out:
-            conflicting_lends = _check_if_item_reserved(item_id, due_out).exclude(
-                id__exact = self.instance.id
-            )
-            if conflicting_lends:
-                raise ValidationError(_already_reserved_message(
-                        models.Lend._meta.get_field('due_out').verbose_name,
-                        due_out,
-                        conflicting_lends[0].due_out,
-                        conflicting_lends[0].due_back
-                ))
+# TODO: start rework
 
-        # Check to see if ``due_back`` conflicts with an existing reservation.
+        # TODO: add explanatory message
         if due_back:
-            conflicting_lends = _check_if_item_reserved(item_id, due_back).exclude(
-                id__exact = self.instance.id
-            )
+            # The existence of due_back implies the existence of due_out.
+            conflicting_lends = _find_reservation_conflicts(
+                item_id,
+                due_out,
+                due_back
+            ).exclude(id__exact = self.instance.id)
             if conflicting_lends:
-                raise ValidationError(_already_reserved_message(
-                        models.Lend._meta.get_field('due_back').verbose_name,
-                        due_back,
-                        conflicting_lends[0].due_out,
-                        conflicting_lends[0].due_back
-                ))
-
-        # Check whether ``item_id`` is already out during ``out``
-        if out:
-            conflicting_lends = _check_if_item_out(item_id, out).exclude(
-                id__exact = self.instance.id
-            )
+                # TODO: make proper error message
+                raise ValidationError("error 1")
+        elif due_out:
+            # The existence of due_out does not imply the existence of due_back.
+            conflicting_lends = _find_reservation_conflicts(item_id, due_out
+            ).exclude(id__exact = self.instance.id)
             if conflicting_lends:
-                raise ValidationError(_already_out_message(
-                    models.Lend._meta.get_field('out').verbose_name,
-                    out,
-                    conflicting_lends[0].out,
-                    conflicting_lends[0].back
-                ))
+                # TODO: make proper error message
+                raise ValidationError("error 2")
 
-        # Check whether ``item_id`` is already out during ``back``
+        # TODO: add explanatory message
         if back:
-            conflicting_lends = _check_if_item_out(item_id, back).exclude(
-                id__exact = self.instance.id
-            )
+            # The existence of out implies the existence of back.
+            conflicting_lends = _find_lend_conflicts(item_id, out, back
+            ).exclude(id__exact = self.instance.id)
             if conflicting_lends:
-                raise ValidationError(_already_out_message(
-                    models.Lend._meta.get_field('back').verbose_name,
-                    back,
-                    conflicting_lends[0].out,
-                    conflicting_lends[0].back
-                ))
+                # TODO: make proper error message
+                raise ValidationError("error 3")
+        elif out:
+            # The existence of `out` does not imply the existence of `back`.
+            conflicting_lends = _find_lend_conflicts(item_id, out
+            ).exclude(id__exact = self.instance.id)
+            if conflicting_lends:
+                # TODO: make proper error message
+                raise ValidationError("error 4")
+
+# TODO: end rework
 
         # Always return the full collection of cleaned data.
         return cleaned_data
@@ -249,38 +236,145 @@ def _already_reserved_message(field_name, field_value, before, after):
         after
     )
 
-# FIXME: add doctests or unit tests
-def _check_if_item_reserved(item, date_):
-    """Check whether ``item`` is reserved during ``date_``.
+def _find_reservation_conflicts(item, start, end = None):
+    """Check whether ``item`` is available from ``start`` to ``end``.
 
-    A QuerySet of ``Lend`` objects is returned. Only lends for which due_out <=
-    date_ <= back are included. The QuerySet may be empty.
+    ``item`` is an ``Item`` model object. ``start`` and ``end`` are
+    ``datetime.date`` objects.
 
-    ``item`` is an instance of an ``Item`` model.
+    A QuerySet is returned. If ``item`` is available, the QuerySet is empty.
+    Otherwise, the QuerySet contains conflicting ``Lend`` objects. One of
+    several critera are used when determining whether to add a lend to the
+    QuerySet.
 
-    ``datetime_`` is a ``date.datetime`` object.
+    If ``end`` is not given:
+
+        item == lend.item && (
+            (
+                # see test_conflict_v1
+                Null == existing_lend.due_back
+            ) || (
+                # see test_conflict_v2
+                Null != existing_lend.due_back &&
+                start <= existing_lend.due_back
+            )
+        )
+
+    If ``end`` is given:
+
+        item == lend.item && (
+            # see test_conflict_v3
+            (Null == existing_lend.due_back && (
+                end >= existing_lend.due_out
+            )) ||
+            # see test_conflict_v4
+            (Null != existing_lend.due_back && (
+                (
+                    start >= existing_lend.due_out &&
+                    start <= existing_lend.due_back
+                ) || (
+                    end >= existing_lend.due_out &&
+                    end <= existing_lend.due_back
+                ) || (
+                    start <= existing_lend.due_out &&
+                    end >= existing_lend.due_back
+                )
+            ))
+        )
 
     """
+    if None == end:
+        return models.Lend.objects.filter(
+            (
+                # see test_conflict_v1
+                Q(due_back__isnull = True) |
+                # see test_conflict_v2
+                (
+                    Q(due_back__isnull = False) &
+                    Q(due_back__gte = start)
+                )
+            ),
+            item_id__exact = item
+        )
     return models.Lend.objects.filter(
-        item_id__exact = item,
-        due_out__lte = date_,
-        due_back__gte = date_
+        (
+            # see test_conflict_v3
+            (Q(due_back__isnull = True) & (
+                Q(due_out__lte = end)
+            )) |
+            # see test_conflict_v4
+            (Q(due_back__isnull = False) & (
+                (
+                    Q(due_out__lte = start) &
+                    Q(due_back__gte = start)
+                ) | (
+                    Q(due_out__lte = end) &
+                    Q(due_back__gte = end)
+                ) | (
+                    Q(due_out__gte = start) &
+                    Q(due_back__lte = end)
+                )
+            ))
+        ),
+        item_id__exact = item
     )
 
-# FIXME: add doctests or unit tests
-def _check_if_item_out(item, datetime_):
-    """Check whether ``item`` is lent out during ``datetime_``.
+def _find_lend_conflicts(item, start, end = None):
+    """Check whether ``item`` is available from ``start`` to ``end``.
 
-    A QuerySet of ``Lend`` objects is returned. Only lends for which out <=
-    datetime_ <= back are included. The QuerySet may be empty.
+    ``item`` is an ``Item`` model object. ``start`` and ``end`` are
+    ``datetime.datetime`` objects.
 
-    ``item`` is an instance of an ``Item`` model.
+    A QuerySet is returned. If ``item`` can be lent out, the QuerySet is empty.
+    Otherwise, the QuerySet contains conflicting ``Lend`` objects. To be more
+    exact, the following criteria is used when searching for lends to add to the
+    QuerySet:
 
-    ``datetime_`` is a ``date.datetime`` object.
+        item == lend.item && (
+            (
+                start <= lend.out &&
+                end   >= lend.out
+            ) || (
+                Null  != lend.back &&
+                start >= lend.back
+            )
+        )
+
+    If ``end`` is not specified, it defaults to infinity.
 
     """
+    if None == end:
+        return models.Lend.objects.filter(
+            (
+                # see test_conflict_v5
+                Q(back__isnull = True) |
+                # see test_conflict_v6
+                (
+                    Q(back__isnull = False) &
+                    Q(back__gte = start)
+                )
+            ),
+            item_id__exact = item
+        )
     return models.Lend.objects.filter(
-        item_id__exact = item,
-        out__lte = datetime_,
-        back__gte = datetime_
+        (
+            # see test_conflict_v7
+            (Q(back__isnull = True) & (
+                Q(out__lte = end)
+            )) |
+            # see test_conflict_v8
+            (Q(back__isnull = False) & (
+                (
+                    Q(out__lte = start) &
+                    Q(back__gte = start)
+                ) | (
+                    Q(out__lte = end) &
+                    Q(back__gte = end)
+                ) | (
+                    Q(out__gte = start) &
+                    Q(back__lte = end)
+                )
+            ))
+        ),
+        item_id__exact = item
     )
