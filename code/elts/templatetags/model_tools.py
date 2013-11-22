@@ -13,6 +13,13 @@ def label(model, field_name):
 
     ``field_name`` is the name of a field defined on that model.
 
+    >>> from elts import factories
+    >>> label_ = label(factories.ItemFactory.build(), 'name')
+    >>> isinstance(label_, 'unicode')
+    True
+    >>> label_ == 'name'
+    True
+
     """
     try:
         return model._meta.get_field(field_name).verbose_name
