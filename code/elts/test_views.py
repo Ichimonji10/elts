@@ -456,8 +456,7 @@ class ItemNoteTestCase(TestCase):
         response = self.client.post(
             self.URI,
             {
-                'note_text': \
-                    factories.random_utf8_str(models.Note.MAX_LEN_NOTE_TEXT),
+                'note_text': factories.note_note_text(),
                 'item_id': factories.ItemFactory.create().id
             }
         )
