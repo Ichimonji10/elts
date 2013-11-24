@@ -90,7 +90,6 @@ class LendForm(ModelForm):
         }
 
     # FIXME: This is a whale of a function.
-    # FIXME: Add unit tests.
     def clean(self):
         """Perform form-wide validation.
 
@@ -100,7 +99,7 @@ class LendForm(ModelForm):
         association with the field named '__all__'."
 
         """
-        # Let the ``ModelForm`` parent class do some checks.
+        # Let the parent class do some checks.
         cleaned_data = super(LendForm, self).clean()
         # Grab data necessary for validation.
         item_id = cleaned_data.get('item_id')
@@ -190,6 +189,19 @@ class LendForm(ModelForm):
         # Always return the full collection of cleaned data.
         return cleaned_data
 
+def _infinity_if_none(obj):
+    """Return 'infinity' if ``obj`` is None, else ``obj``.
+
+    >>> _infinity_if_none('foo')
+    'foo'
+    >>> _infinity_if_none(None)
+    'infinity'
+
+    """
+    if obj is None:
+        return 'infinity'
+    return obj
+
 def _a_requires_b_message(a, b):
     """Return a string stating that ``b`` must be set.
 
@@ -208,33 +220,124 @@ def _a_before_b_message(a, b):
     """
     return '"{}" must occur before "{}".'.format(a, b)
 
-def _already_out_message(field_name, field_value, before, after):
-    """Return a string stating that ``field_name`` was already out.
+def _already_out_message(start, end, conflicting_lends):
+    """Return a string stating that an item is lent out from ``start`` to
+    ``end``.
 
-    >>> _already_out_message('foo', 'bar', 'biz', 'baz')
-    'Cannot set "foo" to bar. This item was out from biz to baz.'
+    ``start`` is a ``datetime.datetime`` object.
+
+    ``end`` is either a ``datetime.datetime`` object or ``None``.
+
+    ``conflicting_lends`` is an iterable of ``Lend`` model objects.
+
+    >>> from elts import factories
+    >>> from datetime import timedelta
+    >>> message = _already_out_message(
+    ...     factories.lend_out(),
+    ...     None,
+    ...     []
+    ... )
+    >>> isinstance(message, str)
+    True
+    >>> message = _already_out_message(
+    ...     factories.lend_out(),
+    ...     None,
+    ...     [factories.PastLendFactory.build()]
+    ... )
+    >>> isinstance(message, str)
+    True
+    >>> message = _already_out_message(
+    ...     factories.lend_out(),
+    ...     factories.lend_back(),
+    ...     [
+    ...         factories.PastLendFactory.build(),
+    ...         factories.PastLendFactory.build()
+    ...     ]
+    ... )
+    >>> isinstance(message, str)
+    True
 
     """
-    return 'Cannot set "{}" to {}. This item was out from {} to {}.'.format(
-        field_name,
-        field_value,
-        before,
-        after
+    message = 'Cannot lend item from {} to {}.'.format(
+        start,
+        _infinity_if_none(end)
     )
+    if 1 < len(conflicting_lends):
+        message += 'There are {} conflicting lends: '.format(len(conflicting_lends))
+    elif 1 == len(conflicting_lends):
+        message += 'There is 1 conflicting lend: '
+    else:
+        message += "I don't know why. Something has gone horribly wrong.."
 
-def _already_reserved_message(field_name, field_value, before, after):
-    """Return a string stating that ``field_name`` is already reserved.
+    # list conflicting dates
+    message += ', '.join([
+        'from {} to {}'.format(conflict.out, _infinity_if_none(conflict.back))
+        for conflict
+        in conflicting_lends
+    ]) + '.'
 
-    >>> _already_reserved_message('foo', 'bar', 'biz', 'baz')
-    'Cannot set "foo" to bar. This item is reserved from biz to baz.'
+    return message
+
+def _already_reserved_message(start, end, conflicting_lends):
+    """Return a string stating that an item is reserved from ``start`` to
+    ``end``.
+
+    ``start`` is a ``datetime.date`` object.
+
+    ``end`` is either a ``datetime.date`` object or ``None``.
+
+    ``conflicting_lends`` is an iterable of ``Lend`` model objects.
+
+    >>> from elts import factories
+    >>> from datetime import timedelta
+    >>> message = _already_out_message(
+    ...     factories.lend_due_out(),
+    ...     None,
+    ...     []
+    ... )
+    >>> isinstance(message, str)
+    True
+    >>> message = _already_out_message(
+    ...     factories.lend_due_out(),
+    ...     None,
+    ...     [factories.FutureLendFactory.build()]
+    ... )
+    >>> isinstance(message, str)
+    True
+    >>> message = _already_out_message(
+    ...     factories.lend_due_out(),
+    ...     factories.lend_due_back(),
+    ...     [
+    ...         factories.FutureLendFactory.build(),
+    ...         factories.FutureLendFactory.build()
+    ...     ]
+    ... )
+    >>> isinstance(message, str)
+    True
 
     """
-    return 'Cannot set "{}" to {}. This item is reserved from {} to {}.'.format(
-        field_name,
-        field_value,
-        before,
-        after
+    message = 'Cannot reserve item from {} to {}. '.format(
+        start,
+        _infinity_if_none(end)
     )
+    if 1 < len(conflicting_lends):
+        message += 'There are {} conflicting reservations: '.format(len(conflicting_lends))
+    elif 1 == len(conflicting_lends):
+        message += 'There is 1 conflicting reservation: '
+    else:
+        message += "I don't know why. Something has gone horribly wrong.."
+
+    # list conflicting dates
+    message += ', '.join([
+        'from {} to {}'.format(
+            conflict.due_out,
+            _infinity_if_none(conflict.due_back)
+        )
+        for conflict
+        in conflicting_lends
+    ]) + '.'
+
+    return message
 
 def _find_reservation_conflicts(item, start, end = None):
     """Check whether ``item`` is available from ``start`` to ``end``.
