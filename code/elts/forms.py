@@ -107,6 +107,8 @@ class LendForm(ModelForm):
         due_back = cleaned_data.get('due_back')
         out = cleaned_data.get('out')
         back = cleaned_data.get('back')
+        # The conflict detection code uses this.
+        conflicting_lends = []
 
         # Either ``due_out`` or ``out`` must be set.
         if (not due_out) and (not out):
@@ -147,44 +149,32 @@ class LendForm(ModelForm):
                 models.Lend._meta.get_field('back').verbose_name,
             ))
 
-# TODO: start rework
-
-        # TODO: add explanatory message
-        if due_back:
-            # The existence of due_back implies the existence of due_out.
-            conflicting_lends = _find_reservation_conflicts(
-                item_id,
+        # Check whether ``due_out`` and/or ``due_back`` conflict with existing
+        # reservations.
+        conflicting_lends = _find_reservation_conflicts(
+            item_id,
+            due_out,
+            due_back
+        ).exclude(id__exact = self.instance.id)
+        if conflicting_lends:
+            raise ValidationError(_already_reserved_message(
                 due_out,
-                due_back
-            ).exclude(id__exact = self.instance.id)
-            if conflicting_lends:
-                # TODO: make proper error message
-                raise ValidationError("error 1")
-        elif due_out:
-            # The existence of due_out does not imply the existence of due_back.
-            conflicting_lends = _find_reservation_conflicts(item_id, due_out
-            ).exclude(id__exact = self.instance.id)
-            if conflicting_lends:
-                # TODO: make proper error message
-                raise ValidationError("error 2")
+                due_back,
+                conflicting_lends
+            ))
 
-        # TODO: add explanatory message
-        if back:
-            # The existence of out implies the existence of back.
-            conflicting_lends = _find_lend_conflicts(item_id, out, back
-            ).exclude(id__exact = self.instance.id)
-            if conflicting_lends:
-                # TODO: make proper error message
-                raise ValidationError("error 3")
-        elif out:
-            # The existence of `out` does not imply the existence of `back`.
-            conflicting_lends = _find_lend_conflicts(item_id, out
-            ).exclude(id__exact = self.instance.id)
-            if conflicting_lends:
-                # TODO: make proper error message
-                raise ValidationError("error 4")
-
-# TODO: end rework
+        # Check whether ``out`` and/or ``back`` conflict with existing lends.
+        conflicting_lends = _find_lend_conflicts(
+            item_id,
+            out,
+            back
+        ).exclude(id__exact = self.instance.id)
+        if conflicting_lends:
+            raise ValidationError(_already_out_message(
+                out,
+                back,
+                conflicting_lends
+            ))
 
         # Always return the full collection of cleaned data.
         return cleaned_data
