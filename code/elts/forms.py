@@ -339,18 +339,20 @@ def _already_reserved_message(start, end, conflicting_lends):
 
     return message
 
-def _find_reservation_conflicts(item, start, end = None):
+def _find_reservation_conflicts(item, start = None, end = None):
     """Check whether ``item`` is available from ``start`` to ``end``.
 
     ``item`` is an ``Item`` model object. ``start`` and ``end`` are
     ``datetime.date`` objects.
 
-    A QuerySet is returned. If ``item`` is available, the QuerySet is empty.
+    A QuerySet is returned. If ``item`` can be reserved, the QuerySet is empty.
     Otherwise, the QuerySet contains conflicting ``Lend`` objects. One of
     several critera are used when determining whether to add a lend to the
     QuerySet.
 
-    If ``end`` is not given:
+    If ``start`` is not given, an empty QuerySet is immediately returned.
+
+    If ``start`` is given:
 
         item == lend.item && (
             (
@@ -363,7 +365,7 @@ def _find_reservation_conflicts(item, start, end = None):
             )
         )
 
-    If ``end`` is given:
+    If ``start`` and ``end`` are given:
 
         item == lend.item && (
             # see test_conflict_v3
@@ -386,7 +388,10 @@ def _find_reservation_conflicts(item, start, end = None):
         )
 
     """
-    if None == end:
+    if start is None:
+        return models.Lend.objects.none()
+
+    if (start is not None) and (end is None):
         return models.Lend.objects.filter(
             (
                 # see test_conflict_v1
@@ -399,6 +404,8 @@ def _find_reservation_conflicts(item, start, end = None):
             ),
             item_id__exact = item
         )
+
+    # start and end should be present
     return models.Lend.objects.filter(
         (
             # see test_conflict_v3
@@ -422,7 +429,7 @@ def _find_reservation_conflicts(item, start, end = None):
         item_id__exact = item
     )
 
-def _find_lend_conflicts(item, start, end = None):
+def _find_lend_conflicts(item, start = None, end = None):
     """Check whether ``item`` is available from ``start`` to ``end``.
 
     ``item`` is an ``Item`` model object. ``start`` and ``end`` are
@@ -430,23 +437,51 @@ def _find_lend_conflicts(item, start, end = None):
 
     A QuerySet is returned. If ``item`` can be lent out, the QuerySet is empty.
     Otherwise, the QuerySet contains conflicting ``Lend`` objects. To be more
-    exact, the following criteria is used when searching for lends to add to the
-    QuerySet:
+    several critera are used when determining whether to add a lend to the
+    QuerySet.
+
+    If ``start`` is not given, an empty QuerySet is immediately returned.
+
+    If ``start`` is given:
 
         item == lend.item && (
             (
-                start <= lend.out &&
-                end   >= lend.out
+                # see test_conflict_v5
+                Null == existing_lend.back
             ) || (
-                Null  != lend.back &&
-                start >= lend.back
+                # see test_conflict_v6
+                Null != existing_lend.back &&
+                start <= existing_lend.back
             )
         )
 
-    If ``end`` is not specified, it defaults to infinity.
+    If ``start`` and ``end`` are given:
+
+        item == lend.item && (
+            # see test_conflict_v7
+            (Null == existing_lend.back && (
+                end >= existing_lend.out
+            )) ||
+            # see test_conflict_v8
+            (Null != existing_lend.back && (
+                (
+                    start >= existing_lend.out &&
+                    start <= existing_lend.back
+                ) || (
+                    end >= existing_lend.out &&
+                    end <= existing_lend.back
+                ) || (
+                    start <= existing_lend.out &&
+                    end >= existing_lend.back
+                )
+            ))
+        )
 
     """
-    if None == end:
+    if start is None:
+        return models.Lend.objects.none()
+
+    if (start is not None) and (end is None):
         return models.Lend.objects.filter(
             (
                 # see test_conflict_v5
@@ -459,6 +494,8 @@ def _find_lend_conflicts(item, start, end = None):
             ),
             item_id__exact = item
         )
+
+    # start and end should be present
     return models.Lend.objects.filter(
         (
             # see test_conflict_v7
