@@ -1,7 +1,11 @@
 {% extends 'elts/base.html' %}
 {% load item_tags related_tags item_notes tag_link from tag_tools %}
+{% load static from staticfiles %}
 
 {% block title %}Item "{{ item.name }}"{% endblock %}
+{% block head %}
+    <link rel='stylesheet' href='{% static 'elts/object-id.css' %}' />
+{% endblock %}
 {% block breadcrumb %}
     <li><a href='{% url 'elts.views.item' %}'>Item</a></li>
     <li><a href='{% url 'elts.views.item_id' item.id %}'>{{ item.id }}</a></li>
@@ -10,16 +14,13 @@
 {% block body %}
     <h1>Item "{{ item.name }}"</h1>
     <p class='controls'>
-        You can
-        <a href='{% url 'elts.views.item_id_update_form' item.id %}'>edit</a> or
-        <a href='{% url 'elts.views.item_id_delete_form' item.id %}'>delete</a>
-        this item.
+        <a href='{% url 'elts.views.item_id_update_form' item.id %}'>Edit</a> or
+        <a href='{% url 'elts.views.item_id_delete_form' item.id %}'>Delete</a>
     </p>
     {% if not item.is_lendable %}
         <p>This item is <strong>not available</strong> for lending.</p>
     {% endif %}
     {% if item.description %}
-        <p>Description:</p>
         <p>{{ item.description }}</p>
     {% else %}
         <p>This item has <strong>no description</strong>.</p>

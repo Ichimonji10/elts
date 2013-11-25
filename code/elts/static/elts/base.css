@@ -157,3 +157,10 @@ section#content > div {
     /* and force `.floatcontainer` to expand and contain it. */
     clear: both;
     }
+
+/*------------------------------------------------------------------------------
+Other Rules
+------------------------------------------------------------------------------*/
+
+/* Push down below its label. */
+textarea {display: block;}
