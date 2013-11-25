@@ -10,44 +10,54 @@
 
 {% block body %}
     <h1>Lend {{ lend.id }}</h1>
-    <p class='controls'>
-        You can
-        <a href='{% url 'elts.views.lend_id_update_form' lend.id %}'>edit</a> or
-        <a href='{% url 'elts.views.lend_id_delete_form' lend.id %}'>delete</a>
-        this lend.
+    <p>
+        <a href='{% url 'elts.views.lend_id_update_form' lend.id %}'>Edit</a> or
+        <a href='{% url 'elts.views.lend_id_delete_form' lend.id %}'>Delete</a>
     </p>
-    <dl>
-        <dt>{{ lend|label:"item_id"|capfirst }}</dt>
-        <dd>{{ lend.item_id }}</dd>
-        <dt>{{ lend|label:"user_id"|capfirst }}</dt>
-        <dd>{{ lend.user_id }}</dd>
-        <dt>{{ lend|label:"due_out"|capfirst }}</dt>
-        <dd>{{ lend.due_out }}</dd>
-        <dt>{{ lend|label:"due_back"|capfirst }}</dt>
-        <dd>{{ lend.due_back }}</dd>
-        <dt>{{ lend|label:"out"|capfirst }}</dt>
-        <dd>{{ lend.out }}</dd>
-        <dt>{{ lend|label:"back"|capfirst }}</dt>
-        <dd>{{ lend.back }}</dd>
-    </dl>
+    <table>
+        <tbody>
+            <tr>
+                <th>{{ lend|label:"item_id"|capfirst }}</th>
+                <td>{{ lend.item_id }}</td>
+            </tr>
+            <tr>
+                <th>{{ lend|label:"user_id"|capfirst }}</th>
+                <td>{{ lend.user_id }}</td>
+            </tr>
+            <tr>
+                <th>{{ lend|label:"due_out"|capfirst }}</th>
+                <td>{{ lend.due_out }}</td>
+            </tr>
+            <tr>
+                <th>{{ lend|label:"due_back"|capfirst }}</th>
+                <td>{{ lend.due_back }}</td>
+            </tr>
+            <tr>
+                <th>{{ lend|label:"out"|capfirst }}</th>
+                <td>{{ lend.out }}</td>
+            </tr>
+            <tr>
+                <th>{{ lend|label:"back"|capfirst }}</th>
+                <td>{{ lend.back }}</td>
+            </tr>
+        </tbody>
+    </table>
     <h2>Notes About This Lend</h2>
     {% if lend|lend_notes %}
         {% for note in lend|lend_notes %}
-            <section>
-                <p>
-                    Comment by {{user.username}} on {{ note.note_date }}<br />
-                    <a href='{% url 'elts.views.lend_note_id_update_form' note.id %}'>
-                    Edit</a> or
-                    <a href='{% url 'elts.views.lend_note_id_delete_form' note.id %}'>
-                    Delete</a> this comment.
-                </p>
-                <p>{{ note.note_text }}</p>
-            </section>
+            <h3>On {{ note.note_date}}, {{ user.username }} said:</h3>
+            <p>
+                <a href='{% url 'elts.views.lend_note_id_update_form' note.id %}'>
+                Edit</a> or
+                <a href='{% url 'elts.views.lend_note_id_delete_form' note.id %}'>
+                Delete</a>
+            </p>
+            <blockquote>{{ note.note_text }}</blockquote>
         {% endfor %}
     {% else %}
         <p>No notes.</p>
     {% endif %}
-    <h3>Create A Note</h3>
+    <h2>Create A Note</h2>
     <form method='post' action='{% url 'elts.views.lend_note' %}'>
         {% csrf_token %}
         <input type='hidden' name='lend_id' value='{{lend.id}}' />
