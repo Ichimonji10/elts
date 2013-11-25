@@ -141,22 +141,6 @@ section#content > div {
     }
 
 /*------------------------------------------------------------------------------
- * Tables
- *----------------------------------------------------------------------------*/
-th, td {
-    padding: 0.5em;
-    border-bottom: thin solid #2C5873;
-    }
-
-th.asc:after {
-    content: '\2193';
-    }
-
-th.desc:after {
-    content: '\2191';
-    }
-
-/*------------------------------------------------------------------------------
  * Clearfix
  *
  * The famous and essential clearfix, used to make a block wrap floated content.

@@ -1,0 +1,19 @@
+/* This stylesheet can be used with any of the "object" templates, such as
+ * tag.html or lend.html.
+ */
+
+/*------------------------------------------------------------------------------
+ * Tables
+ *----------------------------------------------------------------------------*/
+th, td {
+    padding: 0.5em;
+    border-bottom: thin solid #2C5873;
+    }
+
+th.asc:after {
+    content: '\2193';
+    }
+
+th.desc:after {
+    content: '\2191';
+    }
