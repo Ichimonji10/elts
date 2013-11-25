@@ -1,0 +1,38 @@
+/* Sample HTML:
+ *
+ *     <h1>Lend 15</h1>
+ *     <p>You can <a ...>edit</a> or <a ...>delete</a> this lend.</p>
+ *     <table>
+ *         <tbody>...</tbody>
+ *     </table>
+ *     <h2>Notes About This Lend</h2>
+ *     <!-- h3, p, and blockquote may occur zero or more times -->
+ *     <h3>...</h3>
+ *     <p>...</p>
+ *     <blockquote>...</blockquote>
+ *     <h2>Create A Note</h2>
+ *     <form>
+ *         <label>Is complaint:</label>
+ *         <input type=checkbox>
+ *         <label>Note text:</label>
+ *         <textarea></textarea>
+ *         <p><button>Submit</button></p>
+ *     </form>
+ */
+
+/* For the headline at the top of the page. */
+h1:first-child {margin-bottom: 0;}
+h1:first-child + p {margin-top: 0;}
+
+/* For the headline above each blockquote. */
+h3 {margin-bottom: 0;}
+h3 + p {margin-top: 0;}
+h3, h3 + p {font-size: 90%;}
+
+/* Push the text area down below its label. */
+textarea {display: block;}
+
+/* For the table of info about this object. */
+th:after {content: ':';}
+th {font-weight: normal; text-align: right;}
+td {font-weight: bold;}

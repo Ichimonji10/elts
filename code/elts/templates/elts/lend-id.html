@@ -1,8 +1,12 @@
 {% extends 'elts/base.html' %}
 {% load lend_notes from tag_tools %}
 {% load label from model_tools %}
+{% load static from staticfiles %}
 
 {% block title %}Lend {{ lend.id }}{% endblock %}
+{% block head %}
+    <link rel='stylesheet' href='{% static 'elts/lend-id.css' %}' />
+{% endblock %}
 {% block breadcrumb %}
     <li><a href='{% url 'elts.views.lend' %}'>Lend</a></li>
     <li><a href='{% url 'elts.views.lend_id' lend.id %}'>{{ lend.id }}</a></li>
