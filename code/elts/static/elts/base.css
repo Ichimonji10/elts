@@ -80,12 +80,8 @@ section#shortcuts form {
     border-left: medium solid black;
     border-bottom: medium solid black;
     border-bottom-left-radius: 0.5em;
-    text-align: right;
     }
-section#shortcuts form p {
-    border: 0;
-    margin: 0;
-    }
+section#shortcuts form button {width:100%;}
 section#shortcuts p {
     border-top: medium solid black;
     border-bottom: medium solid black;

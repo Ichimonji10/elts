@@ -14,8 +14,7 @@
             <form method='post' action='{% url 'elts.views.login' %}'>
                 {% csrf_token %}
                 <input type='hidden' name='_method' value='DELETE' />
-                <p>Hello, {{user.username}}</p>
-                <button>Log Out</button>
+                <button>log out {{user.username}}</button>
             </form>
             <p>foo foo foo<br />bar bar bar</p>
             <p>foo foo foo<br />bar bar bar</p>
