@@ -98,6 +98,22 @@ def calendar(request):
     )()
 
 @login_required
+def category(request):
+    pass
+
+@login_required
+def category_id(request):
+    pass
+
+@login_required
+def category_id_update_form(request):
+    pass
+
+@login_required
+def category_id_delete_form(request):
+    pass
+
+@login_required
 def item(request):
     """Handle a request for ``item/``."""
     def post_handler():
