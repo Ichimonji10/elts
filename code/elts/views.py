@@ -45,6 +45,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render
 from django_tables2 import RequestConfig
 from elts import forms, models, tables
+import json
 
 # pylint: disable=E1101
 # Instance of 'ItemForm' has no 'is_valid' member (no-member)
@@ -194,7 +195,7 @@ def item_id(request, item_id_):
                 reverse('elts.views.item_id', args = [item_id_])
             )
         else:
-            request.session['form'] = form
+            request.session['form'] = json.dumps(form.data)
             return http.HttpResponseRedirect(
                 reverse('elts.views.item_id_update_form', args = [item_id_])
             )
@@ -227,7 +228,12 @@ def item_id_update_form(request, item_id_):
 
     def get_handler():
         """Return a form for updating item ``item_id_``."""
-        form = request.session.pop('form', forms.ItemForm(instance = item_))
+        form_data = request.session.pop('form', None)
+        if form_data:
+            form = forms.ItemForm(json.loads(form_data))
+        else:
+            form = forms.ItemForm(instance = item_)
+        #form = request.session.pop('form', forms.ItemForm(instance = item_))
         return render(
             request,
             'elts/item-id-update-form.html',
