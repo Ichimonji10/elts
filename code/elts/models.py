@@ -116,6 +116,19 @@ class Tag(models.Model):
         """Used by Python and Django when coercing a model instance to a str."""
         return self.name
 
+class Category(models.Model):
+    """A collection of ``Tag``s belonging to a user.
+
+    A user can search for items based on their tags. If the search is saved,
+    then it is called a "priority category", and it is saved in this table.
+
+    """
+    MAX_LEN_NAME = 30
+
+    user = models.ForeignKey(User)
+    name = models.CharField(max_length = MAX_LEN_NAME, blank = True)
+    tags = models.ManyToManyField('Tag')
+
 # Begin ``Note`` model definitions =============================================
 
 class Note(models.Model):
