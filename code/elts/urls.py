@@ -10,6 +10,10 @@ URL                             POST     GET    PUT      DELETE
 =============================== ======== ====== ======== ========
 ``/``                                    *
 ``calendar/``                            *
+``category/``                   *
+``category/<id>/``                       *      *
+``category/<id>/update-form``   *
+``category/<id>/delete-form``   *
 ``item/``                       *        *
 ``item/create-form/``                    *
 ``item/<id>/``                           *      *        *
@@ -70,6 +74,10 @@ urlpatterns = patterns( # pylint: disable=C0103
     'elts.views',
     url(r'^$',                             'index'),
     url(r'^calendar/$',                    'calendar'),
+    url(r'^category/$',                    'category'),
+    url(r'^category/(\d+)/$',              'category_id'),
+    url(r'^category/(\d+)/update-form/$',  'category_id_update_form'),
+    url(r'^category/(\d+)/delete-form/$',  'category_id_delete_form'),
     url(r'^item/$',                        'item'),
     url(r'^item/create-form/$',            'item_create_form'),
     url(r'^item/(\d+)/$',                  'item_id'),
