@@ -40,13 +40,12 @@ REST
 ====
 
 The URLs in this application are organized in a typical RESTful manner. This
-means that a URL consists soley of nouns. For example, if trying to delete tag
-15, the URL ``/item/15/delete/`` would be incorrect. Instead, a client should
-make a ``DELETE`` HTTP request to ``/item/15/``. Being RESTful also means that
-URLs are decomposable. If ``/tag/15/lend/`` is available, then ``/tag/15/``,
-``/tag/``, and ``/`` should also be available. There is much to the RESTful
-design philosophy beyond these few points, and the curious are encouraged to do
-some research.
+means that a URL consists soley of nouns. For example, ``/item/15/delete/`` is
+an invalid URL, as "delete" is not a noun. (It is OK to send an HTTP DELETE
+message to ``/item/15/``) Being RESTful also means that URLs are decomposable.
+If ``/tag/15/update-form/`` is available, then ``/tag/15/``, ``/tag/``, and
+``/`` should also be available. There is much to the RESTful design philosophy
+beyond these few points, and the curious are encouraged to do some research.
 
 Client Compatibility
 ====================
