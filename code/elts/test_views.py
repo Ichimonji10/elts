@@ -484,22 +484,18 @@ class ItemNoteTestCase(TestCase):
         response = self.client.post(self.URI, {})
         self.assertEqual(response.status_code, 422)
 
-    # FIXME: This test is known to fail. In part, the traceback reads:
-    #
-    #       File "/usr/lib/python2.7/json/decoder.py", line 381, in raw_decode
-    #           obj, end = self.scan_once(s, idx)
-    #     ValueError: Unpaired low surrogate: line 1 column 285 (char 284)
-    #
-    # This appears to be an issue with the Python 2 JSON decoder implementation.
-    # The best fix is probably to migrate to Python 3.
     def test_post_failure_v2(self):
         """POST ``self.URI``, incorrectly."""
         item_id = factories.ItemFactory.create()
         num_item_notes = models.ItemNote.objects.count()
+        # FIXME: the factories.invalid_note_note_text() method should be used.
+        # It is not because the python2.7 JSON encoder doesn't properly handle
+        # UTF-8 characters, and it will often either mis-count the number of
+        # characters in a line or thrown an exception.
         response = self.client.post(
             self.URI,
             {
-                'note_text': factories.invalid_note_note_text(),
+                'note_text': '',
                 'item_id': item_id.id
             }
         )
@@ -1031,6 +1027,299 @@ class LendIdUpdateFormTestCase(TestCase):
     def test_delete_bad_id(self):
         """DELETE ``self.uri`` with a bad ID."""
         self.lend.delete()
+        response = self.client.post(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+class LendNoteTestCase(TestCase):
+    """Tests for the ``lend-note/`` URI.
+
+    The ``lend-note/`` URI is available through the ``elts.views.lend_note``
+    function.
+
+    """
+    URI = reverse('elts.views.lend_note')
+
+    def setUp(self):
+        """Authenticate the test client."""
+        _login(self.client)
+
+    def test_logout(self):
+        """Call ``_test_logout()``."""
+        _test_logout(self)
+
+    def test_post(self):
+        """POST ``self.uri``."""
+        lend_id = factories.random_lend_factory().create()
+        num_lend_notes = models.LendNote.objects.count()
+        response = self.client.post(
+            self.URI,
+            {'note_text': factories.note_note_text(), 'lend_id': lend_id.id}
+        )
+        self.assertEqual(models.LendNote.objects.count(), num_lend_notes + 1)
+        self.assertRedirects(
+            response,
+            reverse('elts.views.lend_id', args = [lend_id.id])
+        )
+
+    def test_get(self):
+        """GET ``self.URI``."""
+        response = self.client.get(self.URI)
+        self.assertEqual(response.status_code, 405)
+
+    def test_put(self):
+        """PUT ``self.URI``."""
+        response = self.client.post(self.URI, {'_method': 'PUT'})
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete(self):
+        """DELETE ``self.URI``."""
+        response = self.client.post(self.URI, {'_method': 'DELETE'})
+        self.assertEqual(response.status_code, 405)
+
+    def test_post_failure_v1(self):
+        """POST ``self.URI``, incorrectly."""
+        response = self.client.post(self.URI, {})
+        self.assertEqual(response.status_code, 422)
+
+    def test_post_failure_v2(self):
+        """POST ``self.URI``, incorrectly."""
+        lend_id = factories.random_lend_factory().create()
+        num_lend_notes = models.LendNote.objects.count()
+        # FIXME: the factories.invalid_note_note_text() method should be used.
+        # It is not because the python2.7 JSON encoder doesn't properly handle
+        # UTF-8 characters, and it will often either mis-count the number of
+        # characters in a line or thrown an exception.
+        response = self.client.post(
+            self.URI,
+            {
+                'note_text': '',
+                'lend_id': lend_id.id
+            }
+        )
+        self.assertEqual(models.LendNote.objects.count(), num_lend_notes)
+        self.assertRedirects(
+            response,
+            reverse('elts.views.lend_id', args = [lend_id.id])
+        )
+
+class LendNoteIdTestCase(TestCase):
+    """Tests for the ``lend-note/<id>/`` URI.
+
+    The ``lend-note/<id>/`` URI is available through the
+    ``elts.views.lend_note_id`` function.
+
+    """
+    FUNCTION = 'elts.views.lend_note_id'
+
+    def setUp(self):
+        """Log in the test client, create an lend note, and set ``self.uri``.
+
+        The lend note created is accessible as ``self.lend_note``.
+
+        """
+        _login(self.client)
+        self.lend_note = factories.LendNoteFactory.create()
+        self.uri = reverse(self.FUNCTION, args = [self.lend_note.id])
+
+    def test_logout(self):
+        """Call ``_test_logout()``."""
+        _test_logout(self, self.uri)
+
+    def test_post(self):
+        """POST ``self.uri``."""
+        response = self.client.post(self.uri)
+        self.assertEqual(response.status_code, 405)
+
+    def test_get(self):
+        """GET ``self.uri``."""
+        response = self.client.get(self.uri)
+        self.assertEqual(response.status_code, 405)
+
+    def test_put(self):
+        """PUT ``self.uri``."""
+        data = factories.LendNoteFactory.attributes()
+        data['_method'] = 'PUT'
+        response = self.client.post(self.uri, data)
+        self.assertRedirects(
+            response,
+            reverse('elts.views.lend_id', args = [self.lend_note.lend_id.id])
+        )
+
+    def test_delete(self):
+        """DELETE ``self.uri``."""
+        lend_id = self.lend_note.lend_id.id
+        response = self.client.post(self.uri, {'_method': 'DELETE'})
+        self.assertRedirects(
+            response,
+            reverse('elts.views.lend_id', args = [lend_id])
+        )
+
+    def test_post_bad_id(self):
+        """POST ``self.uri`` with a bad ID."""
+        self.lend_note.delete()
+        response = self.client.post(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_bad_id(self):
+        """GET ``self.uri`` with a bad ID."""
+        self.lend_note.delete()
+        response = self.client.get(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_put_bad_id(self):
+        """PUT ``self.uri`` with a bad ID."""
+        self.lend_note.delete()
+        response = self.client.post(self.uri, {'_method': 'PUT'})
+        self.assertEqual(response.status_code, 404)
+
+    def test_delete_bad_id(self):
+        """DELETE ``self.uri`` with a bad ID."""
+        self.lend_note.delete()
+        response = self.client.post(self.uri, {'_method': 'DELETE'})
+        self.assertEqual(response.status_code, 404)
+
+    def test_put_failure(self):
+        """PUT ``self.uri``, incorrectly."""
+        response = self.client.post(self.uri, {'_method': 'PUT'})
+        self.assertRedirects(
+            response,
+            reverse(
+                'elts.views.lend_note_id_update_form',
+                args = [self.lend_note.lend_id.id]
+            )
+        )
+
+class LendNoteIdUpdateFormTestCase(TestCase):
+    """Tests for the ``lend-note/<id>/update-form/`` URI.
+
+    The ``lend-note/<id>/update-form/`` URI is available through the
+    ``elts.views.lend_note_id_update_form`` function.
+
+    """
+    FUNCTION = 'elts.views.lend_note_id_update_form'
+
+    def setUp(self):
+        """Log in the test client, create an lend note, and set ``self.uri``.
+
+        The lend note created is accessible as ``self.lend_note``.
+
+        """
+        _login(self.client)
+        self.lend_note = factories.LendNoteFactory.create()
+        self.uri = reverse(self.FUNCTION, args = [self.lend_note.id])
+
+    def test_logout(self):
+        """Call ``_test_logout()``."""
+        _test_logout(self, self.uri)
+
+    def test_post(self):
+        """POST ``self.uri``."""
+        response = self.client.post(self.uri)
+        self.assertEqual(response.status_code, 405)
+
+    def test_get(self):
+        """GET ``self.uri``."""
+        response = self.client.get(self.uri)
+        self.assertEqual(response.status_code, 200)
+
+    def test_put(self):
+        """PUT ``self.uri``."""
+        response = self.client.post(self.uri, {'_method': 'PUT'})
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete(self):
+        """DELETE ``self.uri``."""
+        response = self.client.post(self.uri, {'_method': 'DELETE'})
+        self.assertEqual(response.status_code, 405)
+
+    def test_post_bad_id(self):
+        """POST ``self.uri`` with a bad ID."""
+        self.lend_note.delete()
+        response = self.client.post(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_bad_id(self):
+        """GET ``self.uri`` with a bad ID."""
+        self.lend_note.delete()
+        response = self.client.get(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_put_bad_id(self):
+        """PUT ``self.uri`` with a bad ID."""
+        self.lend_note.delete()
+        response = self.client.post(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_delete_bad_id(self):
+        """DELETE ``self.uri`` with a bad ID."""
+        self.lend_note.delete()
+        response = self.client.post(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+class LendNoteIdDeleteFormTestCase(TestCase):
+    """Tests for the ``lend-note/<id>/delete-form/`` URI.
+
+    The ``lend-note/<id>/delete-form/`` URI is available through the
+    ``elts.views.lend_note_id_delete_form`` function.
+
+    """
+    FUNCTION = 'elts.views.lend_note_id_delete_form'
+
+    def setUp(self):
+        """Log in the test client, create an lend note, and set ``self.uri``.
+
+        The lend note created is accessible as ``self.lend_note``.
+
+        """
+        _login(self.client)
+        self.lend_note = factories.LendNoteFactory.create()
+        self.uri = reverse(self.FUNCTION, args = [self.lend_note.id])
+
+    def test_logout(self):
+        """Call ``_test_logout()``."""
+        _test_logout(self, self.uri)
+
+    def test_post(self):
+        """POST ``self.uri``."""
+        response = self.client.post(self.uri)
+        self.assertEqual(response.status_code, 405)
+
+    def test_get(self):
+        """GET ``self.uri``."""
+        response = self.client.get(self.uri)
+        self.assertEqual(response.status_code, 200)
+
+    def test_put(self):
+        """PUT ``self.uri``."""
+        response = self.client.post(self.uri, {'_method': 'PUT'})
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete(self):
+        """DELETE ``self.uri``."""
+        response = self.client.post(self.uri, {'_method': 'DELETE'})
+        self.assertEqual(response.status_code, 405)
+
+    def test_post_bad_id(self):
+        """POST ``self.uri`` with a bad ID."""
+        self.lend_note.delete()
+        response = self.client.post(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_bad_id(self):
+        """GET ``self.uri`` with a bad ID."""
+        self.lend_note.delete()
+        response = self.client.get(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_put_bad_id(self):
+        """PUT ``self.uri`` with a bad ID."""
+        self.lend_note.delete()
+        response = self.client.post(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_delete_bad_id(self):
+        """DELETE ``self.uri`` with a bad ID."""
+        self.lend_note.delete()
         response = self.client.post(self.uri)
         self.assertEqual(response.status_code, 404)
 

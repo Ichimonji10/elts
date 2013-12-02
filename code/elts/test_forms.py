@@ -137,11 +137,6 @@ class UserNoteFormTestCase(TestCase):
 
 class LendNoteFormTestCase(TestCase):
     """Tests for ``LendNoteForm``."""
-    @classmethod
-    def _is_complaint(cls):
-        """Return a value for the ``is_complaint`` form field."""
-        return random.choice([True, False])
-
     def test_valid(self):
         """Create a valid LendNoteForm."""
         form = forms.LendNoteForm({'note_text': factories.note_note_text()})
@@ -163,7 +158,7 @@ class LendNoteFormTestCase(TestCase):
         """Create a LendNoteForm and set ``is_complaint``."""
         form = forms.LendNoteForm({
             'note_text': factories.note_note_text(),
-            'is_complaint': self._is_complaint()
+            'is_complaint': factories.lend_note_is_complaint()
         })
         self.assertTrue(form.is_valid())
 
