@@ -888,11 +888,12 @@ def login(request):
     """Handle a request for ``login/``."""
     def get_handler():
         """Return a form for logging in."""
-        return render(
-            request,
-            'elts/login.html',
-            {'form': request.session.pop('form', forms.LoginForm())}
-        )
+        form_data = request.session.pop('form', None)
+        if form_data:
+            form = forms.LoginForm(json.loads(form_data))
+        else:
+            form = forms.LoginForm()
+        return render(request, 'elts/login.html', {'form': form})
 
     # Log in user
     def post_handler():
@@ -905,7 +906,7 @@ def login(request):
         # Check validity of submitted data
         form = forms.LoginForm(request.POST)
         if not form.is_valid():
-            request.session['form'] = form
+            request.session['form'] = json.dumps(form.data)
             return http.HttpResponseRedirect(reverse('elts.views.login'))
 
         # Check for invalid credentials.
@@ -917,7 +918,7 @@ def login(request):
             form._errors[NON_FIELD_ERRORS] = form.error_class([
                 'Credentials are invalid.'
             ])
-            request.session['form'] = form
+            request.session['form'] = json.dumps(form.data)
             return http.HttpResponseRedirect(reverse('elts.views.login'))
 
         # Check for inactive user
@@ -925,7 +926,7 @@ def login(request):
             form._errors[NON_FIELD_ERRORS] = form.error_class([
                 'Account is inactive.'
             ])
-            request.session['form'] = form
+            request.session['form'] = json.dumps(form.data)
             return http.HttpResponseRedirect(reverse('elts.views.login'))
 
         # Everything checks out. Let 'em in.
