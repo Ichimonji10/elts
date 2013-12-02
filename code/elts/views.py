@@ -675,7 +675,7 @@ def lend_id(request, lend_id_):
                 reverse('elts.views.lend_id', args = [lend_id_])
             )
         else:
-            request.session['form'] = form
+            request.session['form'] = json.dumps(form.data)
             return http.HttpResponseRedirect(
                 reverse('elts.views.lend_id_update_form', args = [lend_id_])
             )
@@ -708,7 +708,11 @@ def lend_id_update_form(request, lend_id_):
 
     def get_handler():
         """Return a form for updating lend ``lend_id_``."""
-        form = request.session.pop('form', forms.LendForm(instance = lend_))
+        form_data = request.session.pop('form', None)
+        if form_data:
+            form = forms.LendForm(json.loads(form_data))
+        else:
+            form = forms.LendForm(instance = lend_)
         return render(
             request,
             'elts/lend-id-update-form.html',
