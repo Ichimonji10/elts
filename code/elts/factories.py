@@ -237,52 +237,6 @@ def invalid_tag_description():
 
 #-------------------------------------------------------------------------------
 
-class ItemNoteFactory(DjangoModelFactory):
-    """Instantiate an ``elts.models.ItemNote`` object.
-
-    >>> item_note = ItemNoteFactory.create()
-    >>> item_note.full_clean()
-    >>> item_note.id is None
-    False
-
-    """
-    # pylint: disable=R0903
-    # pylint: disable=W0232
-    FACTORY_FOR = models.ItemNote
-    author_id = SubFactory(UserFactory)
-    item_id = SubFactory(ItemFactory)
-    note_text = FuzzyAttribute(lambda: note_note_text()) # pylint: disable=W0108
-
-def note_note_text():
-    """Return a value suitable for the ``Note.note_text`` model attribute.
-
-    >>> from elts.models import Note
-    >>> note = note_note_text()
-    >>> isinstance(note, unicode)
-    True
-    >>> len(note) >= 1
-    True
-    >>> len(note) <= Note.MAX_LEN_NOTE_TEXT
-    True
-
-    """
-    return _random_utf8_str(1, models.Note.MAX_LEN_NOTE_TEXT)
-
-def invalid_note_note_text():
-    """Return a value suitable for the ``Note.note_text`` model attribute.
-
-    >>> from elts.models import Note
-    >>> note = invalid_note_note_text()
-    >>> isinstance(note, unicode)
-    True
-    >>> len(note) == Note.MAX_LEN_NOTE_TEXT + 1
-    True
-
-    """
-    return _random_utf8_str(models.Note.MAX_LEN_NOTE_TEXT + 1)
-
-#-------------------------------------------------------------------------------
-
 class LendFactory(DjangoModelFactory):
     # pylint: disable=C0301
     """Base attributes for an ``elts.models.Lend`` object.
@@ -417,6 +371,77 @@ def lend_back():
 
     """
     return lend_out()
+
+#-------------------------------------------------------------------------------
+
+class ItemNoteFactory(DjangoModelFactory):
+    """Instantiate an ``elts.models.ItemNote`` object.
+
+    >>> item_note = ItemNoteFactory.create()
+    >>> item_note.full_clean()
+    >>> item_note.id is None
+    False
+
+    """
+    # pylint: disable=R0903
+    # pylint: disable=W0232
+    FACTORY_FOR = models.ItemNote
+    author_id = SubFactory(UserFactory)
+    item_id = SubFactory(ItemFactory)
+    note_text = FuzzyAttribute(lambda: note_note_text()) # pylint: disable=W0108
+
+class LendNoteFactory(DjangoModelFactory):
+    """Instantiate an ``elts.models.LendNote`` object.
+
+    >>> lend_note = LendNoteFactory.create()
+    >>> lend_note.full_clean()
+    >>> lend_note.id is None
+    False
+
+    """
+    # pylint: disable=R0903
+    # pylint: disable=W0232
+    FACTORY_FOR = models.LendNote
+    author_id = SubFactory(UserFactory)
+    lend_id = SubFactory(random_lend_factory())
+    note_text = FuzzyAttribute(lambda: note_note_text()) # pylint: disable=W0108
+
+def note_note_text():
+    """Return a value suitable for the ``Note.note_text`` model attribute.
+
+    >>> from elts.models import Note
+    >>> note = note_note_text()
+    >>> isinstance(note, unicode)
+    True
+    >>> len(note) >= 1
+    True
+    >>> len(note) <= Note.MAX_LEN_NOTE_TEXT
+    True
+
+    """
+    return _random_utf8_str(1, models.Note.MAX_LEN_NOTE_TEXT)
+
+def invalid_note_note_text():
+    """Return a value suitable for the ``Note.note_text`` model attribute.
+
+    >>> from elts.models import Note
+    >>> note = invalid_note_note_text()
+    >>> isinstance(note, unicode)
+    True
+    >>> len(note) == Note.MAX_LEN_NOTE_TEXT + 1
+    True
+
+    """
+    return _random_utf8_str(models.Note.MAX_LEN_NOTE_TEXT + 1)
+
+def lend_note_is_complaint():
+    """Return a value for the ``LendNote.is_complaint()`` model attribute.
+
+    >>> lend_note_is_complaint() in [True, False]
+    True
+
+    """
+    return random.choice([True, False])
 
 #-------------------------------------------------------------------------------
 
