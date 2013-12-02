@@ -58,7 +58,7 @@ class ItemFormTestCase(TestCase):
         """Create an ItemForm and set ``tags``."""
         form = forms.ItemForm({
             'name': factories.item_name(),
-            'tags': factories.item_tags(),
+            'tags': [tag.id for tag in factories.item_tags()],
         })
         self.assertTrue(form.is_valid())
 

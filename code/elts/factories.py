@@ -141,18 +141,23 @@ def item_description():
     return _random_utf8_str(1, models.Item.MAX_LEN_DESCRIPTION)
 
 def item_tags():
-    """Return a value suitable for the ``Item.tags`` model attribute.
+    """Return a list of objects for the ``Item.tags`` model attribute.
 
-    >>> tag_ids = item_tags()
-    >>> isinstance(tag_ids, list)
+    >>> from elts.models import Tag
+    >>> tags = item_tags()
+    >>> isinstance(tags, list)
+    True
+    >>> if len(tags) > 0:
+    ...     isinstance(tags[0], Tag)
+    ... else:
+    ...     True
     True
 
     """
     return [
-        # pylint: disable=E1101
-        TagFactory.create().id
+        TagFactory.create()  # pylint: disable=E1101
         for i
-        in range(0, random.randint(0, 2))
+        in range(0, random.randint(0, 2)) # upper limit is arbitrary
     ]
 
 def item_is_lendable():
