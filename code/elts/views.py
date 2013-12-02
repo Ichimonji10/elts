@@ -594,8 +594,7 @@ def lend(request):
                 )
             )
         else:
-            # Put ``form`` into session for retrieval by ``lend_create_form``.
-            request.session['form'] = form
+            request.session['form'] = json.dumps(form.data)
             return http.HttpResponseRedirect(
                 reverse('elts.views.lend_create_form')
             )
@@ -627,13 +626,12 @@ def lend_create_form(request):
     """Handle a request for ``lend/create_form/``."""
     def get_handler():
         """Return a form for creating an lend."""
-        return render(
-            request,
-            'elts/lend-create-form.html',
-            # If user submits a form containing errors, method ``lend`` will
-            # put that form into the session. Use it if available.
-            {'form': request.session.pop('form', forms.LendForm())}
-        )
+        form_data = request.session.pop('form', None)
+        if form_data:
+            form = forms.LendForm(json.loads(form_data))
+        else:
+            form = forms.LendForm()
+        return render(request, 'elts/lend-create-form.html', {'form': form})
 
     return {
         'GET': get_handler,
