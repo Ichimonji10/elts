@@ -338,7 +338,7 @@ def tag_id(request, tag_id_):
                 reverse('elts.views.tag_id', args = [tag_id_])
             )
         else:
-            request.session['form'] = form
+            request.session['form'] = json.dumps(form.data)
             return http.HttpResponseRedirect(
                 reverse(
                     'elts.views.tag_id_update_form',
@@ -393,16 +393,15 @@ def tag_id_update_form(request, tag_id_):
 
     def get_handler():
         """Return a form for updating tag ``tag_id_``."""
+        form_data = request.session.pop('form', None)
+        if form_data:
+            form = forms.TagForm(json.loads(form_data))
+        else:
+            form = forms.TagForm(instance = tag_)
         return render(
             request,
             'elts/tag-id-update-form.html',
-            {
-                'tag': tag_,
-                'form': request.session.pop(
-                    'form',
-                    forms.TagForm(instance = tag_)
-                ),
-            }
+            {'tag': tag_, 'form': form}
         )
 
     return {
