@@ -232,7 +232,6 @@ def item_id_update_form(request, item_id_):
             form = forms.ItemForm(json.loads(form_data))
         else:
             form = forms.ItemForm(instance = item_)
-        #form = request.session.pop('form', forms.ItemForm(instance = item_))
         return render(
             request,
             'elts/item-id-update-form.html',
@@ -279,10 +278,7 @@ def tag(request):
         if form.is_valid():
             new_tag = form.save()
             return http.HttpResponseRedirect(
-                reverse(
-                    'elts.views.tag_id',
-                    args = [new_tag.id],
-                )
+                reverse('elts.views.tag_id', args = [new_tag.id])
             )
         else:
             request.session['form'] = json.dumps(form.data)
@@ -490,10 +486,7 @@ def item_note_id(request, item_note_id_):
         if form.is_valid():
             form.save()
             return http.HttpResponseRedirect(
-                reverse(
-                    'elts.views.item_id',
-                    args = [item_id_]
-                )
+                reverse('elts.views.item_id', args = [item_id_])
             )
         else:
             request.session['form'] = json.dumps(form.data)
@@ -588,10 +581,7 @@ def lend(request):
         if form.is_valid():
             new_lend = form.save()
             return http.HttpResponseRedirect(
-                reverse(
-                    'elts.views.lend_id',
-                    args = [new_lend.id],
-                )
+                reverse('elts.views.lend_id', args = [new_lend.id])
             )
         else:
             request.session['form'] = json.dumps(form.data)
@@ -803,10 +793,7 @@ def lend_note_id(request, lend_note_id_):
         if form.is_valid():
             form.save()
             return http.HttpResponseRedirect(
-                reverse(
-                    'elts.views.lend_id',
-                    args = [lend_id_]
-                )
+                reverse('elts.views.lend_id', args = [lend_id_])
             )
         else:
             request.session['form'] = form
