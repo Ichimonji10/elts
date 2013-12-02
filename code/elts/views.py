@@ -115,7 +115,7 @@ def item(request):
             )
         else:
             # Put ``form`` into session for retreival by ``item_create_form``.
-            request.session['form'] = form
+            request.session['form'] = json.dumps(form.data)
             return http.HttpResponseRedirect(
                 reverse('elts.views.item_create_form')
             )
@@ -147,13 +147,12 @@ def item_create_form(request):
     """Handle a request for ``item/create-form/``."""
     def get_handler():
         """Return a form for creating an item."""
-        return render(
-            request,
-            'elts/item-create-form.html',
-            # If user submits a form containing errors, method ``item`` will
-            # put that form into session storage. Use it if available.
-            {'form': request.session.pop('form', forms.ItemForm())}
-        )
+        form_data = request.session.pop('form', None)
+        if form_data:
+            form = forms.ItemForm(json.loads(form_data))
+        else:
+            form = forms.ItemForm()
+        return render(request, 'elts/item-create-form.html', {'form': form})
 
     return {
         'GET': get_handler,
