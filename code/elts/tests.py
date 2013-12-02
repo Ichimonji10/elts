@@ -1,31 +1,18 @@
 """Unit tests for this django app.
 
-``django.utils.unittest`` is an alias for Django's bundled copy of unittest2,
-backported for Python 2.5 compatibility. If you have Python2.7 (ergo unittest2)
-installed already, that will be used instead.
-
-For details on Django's testing tools, see:
-https://docs.djangoproject.com/en/1.5/topics/testing/overview/
+For details on testing with Django, see:
+https://docs.djangoproject.com/en/1.6/topics/testing/overview/
 
 """
 from doctest import DocTestSuite
-from elts import factories, test_forms, test_views, tables, views, forms
-from elts.templatetags import calendar_tools
-from unittest import TestSuite, TestLoader
+from templatetags import calendar_tools
+import factories, forms, tables, views
 
-def suite():
-    """Collects test suites and doctests in this Django app into a single suite.
-
-    In Django 1.6, this will no longer be necessary. Django will simply look for
-    test cases in any file whose name begins with "test".
-
-    """
-    test_suite = TestSuite()
-    test_suite.addTest(TestLoader().loadTestsFromModule(test_forms))
-    test_suite.addTest(TestLoader().loadTestsFromModule(test_views))
-    test_suite.addTest(DocTestSuite(factories))
-    test_suite.addTest(DocTestSuite(calendar_tools))
-    test_suite.addTest(DocTestSuite(tables))
-    test_suite.addTest(DocTestSuite(views))
-    test_suite.addTest(DocTestSuite(forms))
-    return test_suite
+def load_tests(loader, tests, ignore):
+    """Create a suite of doctests from this Django application."""
+    tests.addTests(DocTestSuite(factories))
+    tests.addTests(DocTestSuite(forms))
+    tests.addTests(DocTestSuite(tables))
+    tests.addTests(DocTestSuite(calendar_tools))
+    tests.addTests(DocTestSuite(views))
+    return tests
