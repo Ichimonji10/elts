@@ -22,7 +22,7 @@ from datetime import date, datetime
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from elts import models
-from factory import Sequence, SubFactory
+from factory import Sequence, SubFactory, post_generation
 from factory.compat import UTC
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyAttribute, FuzzyDate, FuzzyDateTime
@@ -376,6 +376,61 @@ def lend_back():
 
     """
     return lend_out()
+
+#-------------------------------------------------------------------------------
+
+class CategoryFactory(DjangoModelFactory):
+    """Instantiate an ``elts.models.Category`` object.
+
+    >>> category = CategoryFactory.create()
+    >>> category.full_clean()
+    >>> category.id is None
+    False
+    >>> CategoryFactory.create(tags = []).tags.count()
+    0
+
+    """
+    # pylint: disable=R0903
+    # pylint: disable=W0232
+    FACTORY_FOR = models.Category
+    user = SubFactory(UserFactory)
+
+    @post_generation
+    def tags(self, create, extracted, **kwargs):
+        """Assign a value to the ``Category.tags`` model attribute.
+
+        The ``@post_generation`` decorator ensures that this method is only
+        called after the ``create()`` method is called. If an iterable is passed
+        to the constructor, its values will be used when populating the ``tags``
+        many-to-many relationship. Otherwise, the values returned by
+        ``category_tags()`` are used.
+
+        """
+        if not create:
+            # build() was called. ``self`` has not been saved.
+            return
+        if extracted is None:
+            for tag in category_tags():
+                self.tags.add(tag)
+        else:
+            for tag in extracted:
+                self.tags.add(tag)
+
+def category_tags():
+    """Return values for the ``Category.tags`` model attribute.
+
+    >>> from elts.models import Tag
+    >>> tags = category_tags()
+    >>> isinstance(tags, list)
+    True
+    >>> if len(tags) > 0:
+    ...     isinstance(tags[0], Tag)
+    ... else:
+    ...     True
+    True
+
+    """
+    return item_tags()
 
 #-------------------------------------------------------------------------------
 
