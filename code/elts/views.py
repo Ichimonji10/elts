@@ -115,7 +115,7 @@ def item(request):
             )
         else:
             # Put ``form`` into session for retreival by ``item_create_form``.
-            request.session['form'] = json.dumps(form.data)
+            request.session['form_data'] = json.dumps(form.data)
             return http.HttpResponseRedirect(
                 reverse('elts.views.item_create_form')
             )
@@ -147,7 +147,7 @@ def item_create_form(request):
     """Handle a request for ``item/create-form/``."""
     def get_handler():
         """Return a form for creating an item."""
-        form_data = request.session.pop('form', None)
+        form_data = request.session.pop('form_data', None)
         if form_data:
             form = forms.ItemForm(json.loads(form_data))
         else:
@@ -171,7 +171,7 @@ def item_id(request, item_id_):
 
     def get_handler():
         """Return information about item ``item_id_``."""
-        form_data = request.session.pop('form', None)
+        form_data = request.session.pop('form_data', None)
         if form_data:
             form = forms.ItemNoteForm(json.loads(form_data))
         else:
@@ -196,7 +196,7 @@ def item_id(request, item_id_):
                 reverse('elts.views.item_id', args = [item_id_])
             )
         else:
-            request.session['form'] = json.dumps(form.data)
+            request.session['form_data'] = json.dumps(form.data)
             return http.HttpResponseRedirect(
                 reverse('elts.views.item_id_update_form', args = [item_id_])
             )
@@ -229,7 +229,7 @@ def item_id_update_form(request, item_id_):
 
     def get_handler():
         """Return a form for updating item ``item_id_``."""
-        form_data = request.session.pop('form', None)
+        form_data = request.session.pop('form_data', None)
         if form_data:
             form = forms.ItemForm(json.loads(form_data))
         else:
@@ -283,7 +283,7 @@ def tag(request):
                 reverse('elts.views.tag_id', args = [new_tag.id])
             )
         else:
-            request.session['form'] = json.dumps(form.data)
+            request.session['form_data'] = json.dumps(form.data)
             return http.HttpResponseRedirect(
                 reverse('elts.views.tag_create_form')
             )
@@ -336,7 +336,7 @@ def tag_id(request, tag_id_):
                 reverse('elts.views.tag_id', args = [tag_id_])
             )
         else:
-            request.session['form'] = json.dumps(form.data)
+            request.session['form_data'] = json.dumps(form.data)
             return http.HttpResponseRedirect(
                 reverse(
                     'elts.views.tag_id_update_form',
@@ -367,7 +367,7 @@ def tag_create_form(request):
     """Handle a request for ``tag/create-form/``."""
     def get_handler():
         """Return a form for creating a new tag."""
-        form_data = request.session.pop('form', None)
+        form_data = request.session.pop('form_data', None)
         if form_data:
             form = forms.TagForm(json.loads(form_data))
         else:
@@ -391,7 +391,7 @@ def tag_id_update_form(request, tag_id_):
 
     def get_handler():
         """Return a form for updating tag ``tag_id_``."""
-        form_data = request.session.pop('form', None)
+        form_data = request.session.pop('form_data', None)
         if form_data:
             form = forms.TagForm(json.loads(form_data))
         else:
@@ -454,7 +454,7 @@ def item_note(request):
                 item_id = item_,
             ).save()
         else:
-            request.session['form'] = json.dumps(form.data)
+            request.session['form_data'] = json.dumps(form.data)
 
         # Return the user to this page whether or not the note was saved.
         return http.HttpResponseRedirect(
@@ -491,7 +491,7 @@ def item_note_id(request, item_note_id_):
                 reverse('elts.views.item_id', args = [item_id_])
             )
         else:
-            request.session['form'] = json.dumps(form.data)
+            request.session['form_data'] = json.dumps(form.data)
             return http.HttpResponseRedirect(
                 reverse(
                     'elts.views.item_note_id_update_form',
@@ -528,7 +528,7 @@ def item_note_id_update_form(request, item_note_id_):
 
     def get_handler():
         """Return a form for updating item note ``item_note_id_``."""
-        form_data = request.session.pop('form', None)
+        form_data = request.session.pop('form_data', None)
         if form_data:
             form = forms.ItemNoteForm(json.loads(form_data))
         else:
@@ -586,7 +586,7 @@ def lend(request):
                 reverse('elts.views.lend_id', args = [new_lend.id])
             )
         else:
-            request.session['form'] = json.dumps(form.data)
+            request.session['form_data'] = json.dumps(form.data)
             return http.HttpResponseRedirect(
                 reverse('elts.views.lend_create_form')
             )
@@ -618,7 +618,7 @@ def lend_create_form(request):
     """Handle a request for ``lend/create_form/``."""
     def get_handler():
         """Return a form for creating an lend."""
-        form_data = request.session.pop('form', None)
+        form_data = request.session.pop('form_data', None)
         if form_data:
             form = forms.LendForm(json.loads(form_data))
         else:
@@ -642,7 +642,7 @@ def lend_id(request, lend_id_):
 
     def get_handler():
         """Return information about lend ``lend_id_``."""
-        form_data = request.session.pop('form', None)
+        form_data = request.session.pop('form_data', None)
         if form_data:
             form = forms.LendNoteForm(json.loads(form_data))
         else:
@@ -667,7 +667,7 @@ def lend_id(request, lend_id_):
                 reverse('elts.views.lend_id', args = [lend_id_])
             )
         else:
-            request.session['form'] = json.dumps(form.data)
+            request.session['form_data'] = json.dumps(form.data)
             return http.HttpResponseRedirect(
                 reverse('elts.views.lend_id_update_form', args = [lend_id_])
             )
@@ -700,7 +700,7 @@ def lend_id_update_form(request, lend_id_):
 
     def get_handler():
         """Return a form for updating lend ``lend_id_``."""
-        form_data = request.session.pop('form', None)
+        form_data = request.session.pop('form_data', None)
         if form_data:
             form = forms.LendForm(json.loads(form_data))
         else:
@@ -763,7 +763,7 @@ def lend_note(request):
                 lend_id = lend_,
             ).save()
         else:
-            request.session['form'] = json.dumps(form.data)
+            request.session['form_data'] = json.dumps(form.data)
 
         # Return the user to this page whether or not the note was saved.
         return http.HttpResponseRedirect(
@@ -800,7 +800,7 @@ def lend_note_id(request, lend_note_id_):
                 reverse('elts.views.lend_id', args = [lend_id_])
             )
         else:
-            request.session['form'] = json.dumps(form.data)
+            request.session['form_data'] = json.dumps(form.data)
             return http.HttpResponseRedirect(
                 reverse(
                     'elts.views.lend_note_id_update_form',
@@ -837,7 +837,7 @@ def lend_note_id_update_form(request, lend_note_id_):
 
     def get_handler():
         """Return a form for updating lend note ``lend_note_id_``."""
-        form_data = request.session.pop('form', None)
+        form_data = request.session.pop('form_data', None)
         if form_data:
             form = forms.LendNoteForm(json.loads(form_data))
         else:
@@ -882,7 +882,7 @@ def login(request):
     """Handle a request for ``login/``."""
     def get_handler():
         """Return a form for logging in."""
-        form_data = request.session.pop('form', None)
+        form_data = request.session.pop('form_data', None)
         if form_data:
             form = forms.LoginForm(json.loads(form_data))
         else:
@@ -900,7 +900,7 @@ def login(request):
         # Check validity of submitted data
         form = forms.LoginForm(request.POST)
         if not form.is_valid():
-            request.session['form'] = json.dumps(form.data)
+            request.session['form_data'] = json.dumps(form.data)
             return http.HttpResponseRedirect(reverse('elts.views.login'))
 
         # Check for invalid credentials.
@@ -912,7 +912,7 @@ def login(request):
             form._errors[NON_FIELD_ERRORS] = form.error_class([
                 'Credentials are invalid.'
             ])
-            request.session['form'] = json.dumps(form.data)
+            request.session['form_data'] = json.dumps(form.data)
             return http.HttpResponseRedirect(reverse('elts.views.login'))
 
         # Check for inactive user
@@ -920,7 +920,7 @@ def login(request):
             form._errors[NON_FIELD_ERRORS] = form.error_class([
                 'Account is inactive.'
             ])
-            request.session['form'] = json.dumps(form.data)
+            request.session['form_data'] = json.dumps(form.data)
             return http.HttpResponseRedirect(reverse('elts.views.login'))
 
         # Everything checks out. Let 'em in.
