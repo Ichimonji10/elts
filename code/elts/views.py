@@ -164,10 +164,10 @@ def item_create_form(request):
     def get_handler():
         """Return a form for creating an item."""
         form_data = request.session.pop('form_data', None)
-        if form_data:
-            form = forms.ItemForm(json.loads(form_data))
-        else:
+        if form_data is None:
             form = forms.ItemForm()
+        else:
+            form = forms.ItemForm(json.loads(form_data))
         return render(request, 'elts/item-create-form.html', {'form': form})
 
     return {
@@ -188,10 +188,10 @@ def item_id(request, item_id_):
     def get_handler():
         """Return information about item ``item_id_``."""
         form_data = request.session.pop('form_data', None)
-        if form_data:
-            form = forms.ItemNoteForm(json.loads(form_data))
-        else:
+        if form_data is None:
             form = forms.ItemNoteForm()
+        else:
+            form = forms.ItemNoteForm(json.loads(form_data))
         return render(
             request,
             'elts/item-id.html',
@@ -246,10 +246,10 @@ def item_id_update_form(request, item_id_):
     def get_handler():
         """Return a form for updating item ``item_id_``."""
         form_data = request.session.pop('form_data', None)
-        if form_data:
-            form = forms.ItemForm(json.loads(form_data))
-        else:
+        if form_data is None:
             form = forms.ItemForm(instance = item_)
+        else:
+            form = forms.ItemForm(json.loads(form_data))
         return render(
             request,
             'elts/item-id-update-form.html',
@@ -384,10 +384,10 @@ def tag_create_form(request):
     def get_handler():
         """Return a form for creating a new tag."""
         form_data = request.session.pop('form_data', None)
-        if form_data:
-            form = forms.TagForm(json.loads(form_data))
-        else:
+        if form_data is None:
             form = forms.TagForm()
+        else:
+            form = forms.TagForm(json.loads(form_data))
         return render(request, 'elts/tag-create-form.html', {'form': form})
 
     return {
@@ -408,10 +408,10 @@ def tag_id_update_form(request, tag_id_):
     def get_handler():
         """Return a form for updating tag ``tag_id_``."""
         form_data = request.session.pop('form_data', None)
-        if form_data:
-            form = forms.TagForm(json.loads(form_data))
-        else:
+        if form_data is None:
             form = forms.TagForm(instance = tag_)
+        else:
+            form = forms.TagForm(json.loads(form_data))
         return render(
             request,
             'elts/tag-id-update-form.html',
@@ -545,10 +545,10 @@ def item_note_id_update_form(request, item_note_id_):
     def get_handler():
         """Return a form for updating item note ``item_note_id_``."""
         form_data = request.session.pop('form_data', None)
-        if form_data:
-            form = forms.ItemNoteForm(json.loads(form_data))
-        else:
+        if form_data is None:
             form = forms.ItemNoteForm(instance = item_note_)
+        else:
+            form = forms.ItemNoteForm(json.loads(form_data))
         return render(
             request,
             'elts/item-note-id-update-form.html',
@@ -635,10 +635,10 @@ def lend_create_form(request):
     def get_handler():
         """Return a form for creating an lend."""
         form_data = request.session.pop('form_data', None)
-        if form_data:
-            form = forms.LendForm(json.loads(form_data))
-        else:
+        if form_data is None:
             form = forms.LendForm()
+        else:
+            form = forms.LendForm(json.loads(form_data))
         return render(request, 'elts/lend-create-form.html', {'form': form})
 
     return {
@@ -659,10 +659,10 @@ def lend_id(request, lend_id_):
     def get_handler():
         """Return information about lend ``lend_id_``."""
         form_data = request.session.pop('form_data', None)
-        if form_data:
-            form = forms.LendNoteForm(json.loads(form_data))
-        else:
+        if form_data is None:
             form = forms.LendNoteForm()
+        else:
+            form = forms.LendNoteForm(json.loads(form_data))
         return render(
             request,
             'elts/lend-id.html',
@@ -717,10 +717,10 @@ def lend_id_update_form(request, lend_id_):
     def get_handler():
         """Return a form for updating lend ``lend_id_``."""
         form_data = request.session.pop('form_data', None)
-        if form_data:
-            form = forms.LendForm(json.loads(form_data))
-        else:
+        if form_data is None:
             form = forms.LendForm(instance = lend_)
+        else:
+            form = forms.LendForm(json.loads(form_data))
         return render(
             request,
             'elts/lend-id-update-form.html',
@@ -854,10 +854,10 @@ def lend_note_id_update_form(request, lend_note_id_):
     def get_handler():
         """Return a form for updating lend note ``lend_note_id_``."""
         form_data = request.session.pop('form_data', None)
-        if form_data:
-            form = forms.LendNoteForm(json.loads(form_data))
-        else:
+        if form_data is None:
             form = forms.LendNoteForm(instance = lend_note_)
+        else:
+            form = forms.LendNoteForm(json.loads(form_data))
         return render(
             request,
             'elts/lend-note-id-update-form.html',
@@ -899,10 +899,10 @@ def login(request):
     def get_handler():
         """Return a form for logging in."""
         form_data = request.session.pop('form_data', None)
-        if form_data:
-            form = forms.LoginForm(json.loads(form_data))
-        else:
+        if form_data is None:
             form = forms.LoginForm()
+        else:
+            form = forms.LoginForm(json.loads(form_data))
         return render(request, 'elts/login.html', {'form': form})
 
     # Log in user
