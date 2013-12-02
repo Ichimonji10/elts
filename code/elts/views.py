@@ -642,13 +642,15 @@ def lend_id(request, lend_id_):
 
     def get_handler():
         """Return information about lend ``lend_id_``."""
+        form_data = request.session.pop('form', None)
+        if form_data:
+            form = forms.LendNoteForm(json.loads(form_data))
+        else:
+            form = forms.LendNoteForm()
         return render(
             request,
             'elts/lend-id.html',
-            {
-                'lend': lend_,
-                'form': request.session.pop('form', forms.LendNoteForm()),
-            }
+            {'lend': lend_, 'form': form}
         )
 
     def put_handler():
@@ -761,7 +763,7 @@ def lend_note(request):
                 lend_id = lend_,
             ).save()
         else:
-            request.session['form'] = form
+            request.session['form'] = json.dumps(form.data)
 
         # Return the user to this page whether or not the note was saved.
         return http.HttpResponseRedirect(
@@ -798,7 +800,7 @@ def lend_note_id(request, lend_note_id_):
                 reverse('elts.views.lend_id', args = [lend_id_])
             )
         else:
-            request.session['form'] = form
+            request.session['form'] = json.dumps(form.data)
             return http.HttpResponseRedirect(
                 reverse(
                     'elts.views.lend_note_id_update_form',
@@ -835,10 +837,11 @@ def lend_note_id_update_form(request, lend_note_id_):
 
     def get_handler():
         """Return a form for updating lend note ``lend_note_id_``."""
-        form = request.session.pop(
-            'form',
-            forms.LendNoteForm(instance = lend_note_)
-        )
+        form_data = request.session.pop('form', None)
+        if form_data:
+            form = forms.LendNoteForm(json.loads(form_data))
+        else:
+            form = forms.LendNoteForm(instance = lend_note_)
         return render(
             request,
             'elts/lend-note-id-update-form.html',
