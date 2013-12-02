@@ -4,30 +4,30 @@ body {
     margin-right: auto;
     }
 
-/* inside outer box, outside inner box */
+/* outer and inner box */
+div, form {padding: 0.5em;}
+
+/* outer box */
+div {
+    background-color: rgba(255, 255, 255, 0.6);
+    border: medium solid black;
+    border-radius: 0.5em;
+    }
+
+/* between outer and inner box */
 h1 {
     font-size: x-large;
     margin-top: 0;
     margin-bottom: 0.2em;
     }
 
-body > div, h1 + div {padding: 0.5em;}
-
-/* outer box */
-body > div {
-    background-color: rgba(255, 255, 255, 0.6);
-    border: medium solid black;
-    border-radius: 0.5em;
-    }
-
 /* inner box */
-h1 + div {
+form {
     background-color: rgba(255, 255, 255, 0.9);
     border: thin solid black;
     border-radius: 0.3em;
     }
-h1 + div p:first-child {margin-top: 0;}
-h1 + div p:last-child {
+form p:last-child {
     margin-bottom: 0;
     text-align: right;
     }

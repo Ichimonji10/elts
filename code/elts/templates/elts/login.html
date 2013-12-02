@@ -12,14 +12,12 @@
     <body>
         <div>
             <h1>Electronic Lending Tracking System</h1>
-            <div>
-                <form method='post' action='{% url 'elts.views.login' %}'>
-                    {% include 'elts/_show-errors.html' %}
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <p><button>Submit</button></p>
-                </form>
-            </div>
+            <form method='post' action='{% url 'elts.views.login' %}'>
+                {% include 'elts/_show-errors.html' %}
+                {% csrf_token %}
+                {{ form.as_p }}
+                <p><button>Submit</button></p>
+            </form>
         </div>
     </body>
 </html>
