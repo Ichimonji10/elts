@@ -285,8 +285,7 @@ def tag(request):
                 )
             )
         else:
-            # Put ``form`` into session for retreival by ``tag_create_form``.
-            request.session['form'] = form
+            request.session['form'] = json.dumps(form.data)
             return http.HttpResponseRedirect(
                 reverse('elts.views.tag_create_form')
             )
@@ -370,14 +369,12 @@ def tag_create_form(request):
     """Handle a request for ``tag/create-form/``."""
     def get_handler():
         """Return a form for creating a new tag."""
-        return render(
-            request,
-            'elts/tag-create-form.html',
-            {
-                # Put ``form`` into session for retreival by ``tag_create_form``
-                'form': request.session.pop('form', forms.TagForm())
-            }
-        )
+        form_data = request.session.pop('form', None)
+        if form_data:
+            form = forms.TagForm(json.loads(form_data))
+        else:
+            form = forms.TagForm()
+        return render(request, 'elts/tag-create-form.html', {'form': form})
 
     return {
         'GET': get_handler,
