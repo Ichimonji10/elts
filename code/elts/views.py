@@ -171,13 +171,15 @@ def item_id(request, item_id_):
 
     def get_handler():
         """Return information about item ``item_id_``."""
+        form_data = request.session.pop('form', None)
+        if form_data:
+            form = forms.ItemNoteForm(json.loads(form_data))
+        else:
+            form = forms.ItemNoteForm()
         return render(
             request,
             'elts/item-id.html',
-            {
-                'item': item_,
-                'form': request.session.pop('form', forms.ItemNoteForm()),
-            }
+            {'item': item_, 'form': form}
         )
 
     def put_handler():
@@ -452,7 +454,7 @@ def item_note(request):
                 item_id = item_,
             ).save()
         else:
-            request.session['form'] = form
+            request.session['form'] = json.dumps(form.data)
 
         # Return the user to this page whether or not the note was saved.
         return http.HttpResponseRedirect(

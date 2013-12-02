@@ -452,21 +452,16 @@ class ItemNoteTestCase(TestCase):
 
     def test_post(self):
         """POST ``self.uri``."""
+        item_id = factories.ItemFactory.create()
         num_item_notes = models.ItemNote.objects.count()
         response = self.client.post(
             self.URI,
-            {
-                'note_text': factories.note_note_text(),
-                'item_id': factories.ItemFactory.create().id
-            }
+            {'note_text': factories.note_note_text(), 'item_id': item_id.id}
         )
         self.assertEqual(models.ItemNote.objects.count(), num_item_notes + 1)
         self.assertRedirects(
             response,
-            reverse(
-                'elts.views.item_id',
-                args = [models.ItemNote.objects.latest('id').item_id.id]
-            )
+            reverse('elts.views.item_id', args = [item_id.id])
         )
 
     def test_get(self):
@@ -484,10 +479,35 @@ class ItemNoteTestCase(TestCase):
         response = self.client.post(self.URI, {'_method': 'DELETE'})
         self.assertEqual(response.status_code, 405)
 
-    def test_post_failure(self):
+    def test_post_failure_v1(self):
         """POST ``self.URI``, incorrectly."""
         response = self.client.post(self.URI, {})
         self.assertEqual(response.status_code, 422)
+
+    # FIXME: This test is known to fail. In part, the traceback reads:
+    #
+    #       File "/usr/lib/python2.7/json/decoder.py", line 381, in raw_decode
+    #           obj, end = self.scan_once(s, idx)
+    #     ValueError: Unpaired low surrogate: line 1 column 285 (char 284)
+    #
+    # This appears to be an issue with the Python 2 JSON decoder implementation.
+    # The best fix is probably to migrate to Python 3.
+    def test_post_failure_v2(self):
+        """POST ``self.URI``, incorrectly."""
+        item_id = factories.ItemFactory.create()
+        num_item_notes = models.ItemNote.objects.count()
+        response = self.client.post(
+            self.URI,
+            {
+                'note_text': factories.invalid_note_note_text(),
+                'item_id': item_id.id
+            }
+        )
+        self.assertEqual(models.ItemNote.objects.count(), num_item_notes)
+        self.assertRedirects(
+            response,
+            reverse('elts.views.item_id', args = [item_id.id])
+        )
 
 class ItemNoteIdTestCase(TestCase):
     """Tests for the ``item-note/<id>/`` URI.
