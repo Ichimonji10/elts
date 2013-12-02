@@ -5,10 +5,8 @@ This repo contains the source code for the Electronic Lending Tracking System
 (ELTS). You can get the full source code for ELTS from
 https://github.com/Ichimonji10/elts.git.
 
-ELTS is written using the Django web app framework. The `The Django Book`_ and
-the official `Django documentation`_ are good references. The Django Book is old
-but extremely readable; the Django documentation is up-to-date but harder to
-grok.
+ELTS is written using the Django web app framework. For more on Django, read the
+excellent `Django documentation`_.
 
 Deployment Guidelines
 =====================
@@ -25,8 +23,8 @@ Start by installing the following:
 
 * django-extensions
 * django-tables2
-* django (python 2 version)
-* flup (python 2 version)
+* django 1.6
+* flup
 * lighttpd
 * mysql
 
@@ -228,7 +226,7 @@ The latter is a bad idea.
     inside another directory named for the application itself.
 
     -- `Django documentation
-    <https://docs.djangoproject.com/en/1.5/intro/tutorial03/#write-views-that-actually-do-something>`__
+    <https://docs.djangoproject.com/en/1.6/intro/tutorial03/#write-views-that-actually-do-something>`__
 
 collectstatic
 -------------

@@ -56,7 +56,7 @@ class Lend(models.Model):
     Note that ``null = True`` is set for several fields. While this should not
     be done for string-based columns, it is OK for other column types such as
     dates and booleans. For more info, see:
-    https://docs.djangoproject.com/en/1.5/ref/models/fields/#field-options
+    https://docs.djangoproject.com/en/1.6/ref/models/fields/#field-options
 
     """
     item_id = models.ForeignKey('Item')
