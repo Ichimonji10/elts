@@ -16,7 +16,7 @@
  *     </body>
  */
 nav#sitenav {
-    width: 7em;
+    width: 4em;
     float: left;
     clear: left;
     }
@@ -26,7 +26,7 @@ section#shortcuts {
     clear: right;
     }
 nav#breadcrumb, section#content {margin-right: 15em;}
-section#content {margin-left: 8em;}
+section#content {margin-left: 5em;}
 
 /* Style all three columns. */
 nav#sitenav > *,
@@ -58,11 +58,10 @@ nav#sitenav > * {
     margin-bottom: 0;
     border-bottom: medium solid black;
     border-right:  medium solid black;
-    border-bottom-right-radius: 0.5em;
     }
 nav#sitenav ul {
-    width: 70%;
     list-style-type: none;
+    border-bottom-right-radius: 0.5em;
     }
 nav#sitenav img {width: 100%;}
 
@@ -106,7 +105,7 @@ nav#breadcrumb {
     border-bottom-right-radius: 0.5em;
     margin-bottom: 1em;
     padding-left: 1em;
-    margin-left: 7em;
+    margin-left: 4em;
 }
 nav#breadcrumb ol {
     list-style-type: none;
