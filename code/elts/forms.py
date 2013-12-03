@@ -35,6 +35,45 @@ class TagForm(ModelForm):
         fields = ['name', 'description']
         widgets = {'description': widgets.Textarea()}
 
+class CategoryForm(ModelForm):
+    """A form for a Catgory."""
+
+    class Meta(object):
+        """Form attributes that are not fields.
+
+        Note that, although ``user`` is a required attribute of the ``Category``
+        model, it is not included in this form. The user should never have a
+        chance to set that particular form field, so including it here does not
+        make sense. Instead, it is the responsibility of views to set that
+        attribute.
+
+        So how is that done? One cannot simply set 'user' on this form while or
+        after creating it.
+
+        >>> from django.db import IntegrityError
+        >>> category_form = CategoryForm({'name': 'test', 'user': 1})
+        >>> try:
+        ...     category_form.save()
+        ... except IntegrityError:
+        ...     pass
+
+        Instead, one must create a ``Category`` object from the form, muck with
+        that object, save the object and save its many-to-many relationships.
+
+        >>> from elts import factories
+        >>> category_form = CategoryForm({'name': 'test'})
+        >>> category = category_form.save(commit = False)
+        >>> category.user = factories.UserFactory.create()
+        >>> category.save()
+        >>> category_form.save_m2m()
+
+        For more information, see
+        https://docs.djangoproject.com/en/dev/topics/forms/modelforms/#the-save-method
+
+        """
+        model = models.Category
+        fields = ['name', 'tags']
+
 # Start `NoteForm` definitions.
 
 class ItemNoteForm(ModelForm):

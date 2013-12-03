@@ -127,7 +127,7 @@ class Category(models.Model):
 
     user = models.ForeignKey(User)
     name = models.CharField(max_length = MAX_LEN_NAME, blank = True)
-    tags = models.ManyToManyField('Tag')
+    tags = models.ManyToManyField('Tag', blank = True)
 
 # Begin ``Note`` model definitions =============================================
 
