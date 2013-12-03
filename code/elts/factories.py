@@ -416,6 +416,34 @@ class CategoryFactory(DjangoModelFactory):
             for tag in extracted:
                 self.tags.add(tag)
 
+def category_name():
+    """Return a value for the ``Category.name`` model attribute.
+
+    >>> from elts.models import Category
+    >>> name = category_name()
+    >>> isinstance(name, unicode)
+    True
+    >>> len(name) >= 1
+    True
+    >>> len(name) <= Category.MAX_LEN_NAME
+    True
+
+    """
+    return _random_utf8_str(1, models.Category.MAX_LEN_NAME)
+
+def invalid_category_name():
+    """Return a value unsuitable for the ``Category.name`` model attribute.
+
+    >>> from elts.models import Category
+    >>> name = invalid_category_name()
+    >>> isinstance(name, unicode)
+    True
+    >>> len(name) == Category.MAX_LEN_NAME + 1
+    True
+
+    """
+    return _random_utf8_str(models.Category.MAX_LEN_NAME + 1)
+
 def category_tags():
     """Return values for the ``Category.tags`` model attribute.
 

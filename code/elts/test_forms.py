@@ -97,6 +97,30 @@ class TagFormTestCase(TestCase):
         })
         self.assertFalse(form.is_valid())
 
+class CategoryFormTestCase(TestCase):
+    """Tests for ``CategoryForm``."""
+    def test_valid(self):
+        """Create a valid CategoryForm."""
+        form = forms.CategoryForm({})
+        self.assertTrue(form.is_valid())
+
+    def test_has_name(self):
+        """Create a CategoryForm and set ``name``."""
+        form = forms.CategoryForm({'name': factories.category_name()})
+        self.assertTrue(form.is_valid())
+
+    def test_invalid_name(self):
+        """Create a CategoryForm and set an invalid value for ``name``."""
+        form = forms.CategoryForm({'name': factories.invalid_category_name()})
+        self.assertFalse(form.is_valid())
+
+    def test_has_tags(self):
+        """Create a CategoryForm and set ``tags``."""
+        form = forms.CategoryForm({
+            'tags': [tag.id for tag in factories.category_tags()]
+        })
+        self.assertTrue(form.is_valid())
+
 class ItemNoteFormTestCase(TestCase):
     """Tests for ``ItemNoteForm``."""
     def test_valid(self):
