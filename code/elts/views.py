@@ -103,7 +103,7 @@ def category(request):
     def post_handler():
         """Create a new category.
 
-        If creation suceeds, redirect user to ``index`` view. Otherwise,
+        If creation suceeds, redirect user to ``category_id`` view. Otherwise,
         redirect uesr to ``category_create_form`` view.
 
         """
@@ -114,7 +114,9 @@ def category(request):
             new_category.user = request.user
             new_category.save()
             form.save_m2m()
-            return http.HttpResponseRedirect(reverse('elts.views.index'))
+            return http.HttpResponseRedirect(
+                reverse('elts.views.category_id', args = [new_category.id])
+            )
         else:
             request.session['form_data'] = json.dumps(form.data)
             return http.HttpResponseRedirect(
@@ -155,17 +157,23 @@ def category_id(request, category_id_):
     except models.Category.DoesNotExist:
         raise http.Http404
 
+    def get_handler():
+        """Return information about category ``category_id_``."""
+        return render(request, 'elts/category-id.html', {'category': category_})
+
     def put_handler():
         """Update category ``category_id_``.
 
-        If update succeeds, redirect user to ``index`` view. Otherwise, redirect
-        user to ``category_id_update_form``.
+        If update succeeds, redirect user to ``category_id`` view. Otherwise,
+        redirect user to ``category_id_update_form``.
 
         """
         form = forms.CategoryForm(request.POST, instance = category_)
         if form.is_valid():
             form.save()
-            return http.HttpResponseRedirect(reverse('elts.views.index'))
+            return http.HttpResponseRedirect(
+                reverse('elts.views.category_id', args = [category_id_])
+            )
         else:
             request.session['form_data'] = json.dumps(form.data)
             return http.HttpResponseRedirect(
@@ -185,6 +193,7 @@ def category_id(request, category_id_):
         return http.HttpResponseRedirect(reverse('elts.views.index'))
 
     return {
+        'GET': get_handler,
         'PUT': put_handler,
         'DELETE': delete_handler,
     }.get(

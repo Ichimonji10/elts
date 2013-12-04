@@ -149,7 +149,13 @@ class CategoryTestCase(TestCase):
             factories.CategoryFactory.attributes()
         )
         self.assertEqual(models.Category.objects.count(), num_categories + 1)
-        self.assertRedirects(response, reverse('elts.views.index'))
+        self.assertRedirects(
+            response,
+            reverse(
+                'elts.views.category_id',
+                args = [models.Category.objects.latest('id').id]
+            )
+        )
 
     def test_get(self):
         """GET ``self.URI``."""
@@ -245,14 +251,14 @@ class CategoryIdTestCase(TestCase):
     def test_get(self):
         """GET ``self.uri``."""
         response = self.client.get(self.uri)
-        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response.status_code, 200)
 
     def test_put(self):
         """PUT ``self.uri``."""
         data = factories.CategoryFactory.attributes()
         data['_method'] = 'PUT'
         response = self.client.post(self.uri, data)
-        self.assertRedirects(response, reverse('elts.views.index'))
+        self.assertRedirects(response, self.uri)
 
     def test_delete(self):
         """DELETE ``self.uri``."""
