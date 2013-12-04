@@ -130,6 +130,313 @@ class CalendarTestCase(TestCase):
         response = self.client.post(self.URI, {'_method': 'DELETE'})
         self.assertEqual(response.status_code, 405)
 
+class CategoryTestCase(TestCase):
+    """Tests for the ``category/`` URI.
+
+    The ``category/`` URI is available through the ``elts.views.category``
+    function.
+
+    """
+    URI = reverse('elts.views.category')
+
+    def setUp(self):
+        """Authenticate the test client."""
+        _login(self.client)
+
+    def test_logout(self):
+        """Call ``_test_logout()``."""
+        _test_logout(self)
+
+    def test_post(self):
+        """POST ``self.URI``."""
+        num_categories = models.Category.objects.count()
+        response = self.client.post(
+            self.URI,
+            factories.CategoryFactory.attributes()
+        )
+        self.assertEqual(models.Category.objects.count(), num_categories + 1)
+        self.assertRedirects(response, reverse('elts.views.index'))
+
+    def test_get(self):
+        """GET ``self.URI``."""
+        response = self.client.get(self.URI)
+        self.assertEqual(response.status_code, 405)
+
+    def test_put(self):
+        """PUT ``self.URI``."""
+        response = self.client.post(self.URI, {'_method': 'PUT'})
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete(self):
+        """DELETE ``self.URI``."""
+        response = self.client.post(self.URI, {'_method': 'DELETE'})
+        self.assertEqual(response.status_code, 405)
+
+    def test_post_failure(self):
+        """POST ``self.URI``, incorrectly."""
+        response = self.client.post(
+            self.URI,
+            {'name': factories.invalid_category_name()}
+        )
+        self.assertRedirects(
+            response,
+            reverse('elts.views.category_create_form')
+        )
+
+class CategoryCreateFormTestCase(TestCase):
+    """Tests for the ``category/create-form/`` URI.
+
+    The ``category/create-form/`` URI is available through the
+    ``elts.views.category_create_form`` function.
+
+    """
+    URI = reverse('elts.views.category_create_form')
+
+    def setUp(self):
+        """Authenticate the test client."""
+        _login(self.client)
+
+    def test_logout(self):
+        """Call ``_test_logout()``."""
+        _test_logout(self)
+
+    def test_post(self):
+        """POST ``self.URI``."""
+        response = self.client.post(self.URI)
+        self.assertEqual(response.status_code, 405)
+
+    def test_get(self):
+        """GET ``self.URI``."""
+        response = self.client.get(self.URI)
+        self.assertEqual(response.status_code, 200)
+
+    def test_put(self):
+        """PUT ``self.URI``."""
+        response = self.client.post(self.URI, {'_method': 'PUT'})
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete(self):
+        """DELETE ``self.URI``."""
+        response = self.client.post(self.URI, {'_method': 'DELETE'})
+        self.assertEqual(response.status_code, 405)
+
+class CategoryIdTestCase(TestCase):
+    """Tests for the ``category/<id>/`` URI.
+
+    The ``category/<id>/`` URI is available through the
+    ``elts.views.category_id`` function.
+
+    """
+    FUNCTION = 'elts.views.category_id'
+
+    def setUp(self):
+        """Authenticate the test client, create a category and set ``self.uri``.
+
+        The category created is accessible as ``self.category``.
+
+        """
+        _login(self.client)
+        self.category = factories.CategoryFactory.create()
+        self.uri = reverse(self.FUNCTION, args = [self.category.id])
+
+    def test_logout(self):
+        """Call ``_test_logout()``."""
+        _test_logout(self, self.uri)
+
+    def test_post(self):
+        """POST ``self.uri``."""
+        response = self.client.post(self.uri, {})
+        self.assertEqual(response.status_code, 405)
+
+    def test_get(self):
+        """GET ``self.uri``."""
+        response = self.client.get(self.uri)
+        self.assertEqual(response.status_code, 405)
+
+    def test_put(self):
+        """PUT ``self.uri``."""
+        data = factories.CategoryFactory.attributes()
+        data['_method'] = 'PUT'
+        response = self.client.post(self.uri, data)
+        self.assertRedirects(response, reverse('elts.views.index'))
+
+    def test_delete(self):
+        """DELETE ``self.uri``."""
+        response = self.client.post(self.uri, {'_method': 'DELETE'})
+        self.assertRedirects(response, reverse('elts.views.index'))
+
+    def test_post_bad_id(self):
+        """POST ``self.uri`` with a bad ID."""
+        self.category.delete()
+        response = self.client.post(self.uri, {})
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_bad_id(self):
+        """GET ``self.uri`` with a bad ID."""
+        self.category.delete()
+        response = self.client.get(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_put_bad_id(self):
+        """PUT ``self.uri`` with a bad ID."""
+        self.category.delete()
+        response = self.client.post(self.uri, {'_method': 'PUT'})
+        self.assertEqual(response.status_code, 404)
+
+    def test_delete_bad_id(self):
+        """DELETE ``self.uri`` with a bad ID."""
+        self.category.delete()
+        response = self.client.post(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_put_failure(self):
+        """PUT ``self.uri``, incorrectly."""
+        response = self.client.post(
+            self.uri,
+            {'name': factories.invalid_category_name(), '_method': 'PUT'}
+        )
+        self.assertRedirects(
+            response,
+            reverse(
+                'elts.views.category_id_update_form',
+                args = [self.category.id]
+            )
+        )
+
+class CategoryIdDeleteFormTestCase(TestCase):
+    """Tests for the ``category/<id>/delete-form/`` URI.
+
+    The ``category/<id>/delete-form/`` URI is available through the
+    ``elts.views.category_id_delete_form`` function.
+
+    """
+    FUNCTION = 'elts.views.category_id_delete_form'
+
+    def setUp(self):
+        """Authenticate the test client, create a category and set ``self.uri``.
+
+        The category created is accessible as ``self.category``.
+
+        """
+        _login(self.client)
+        self.category = factories.CategoryFactory.create()
+        self.uri = reverse(self.FUNCTION, args = [self.category.id])
+
+    def test_logout(self):
+        """Call ``_test_logout()``."""
+        _test_logout(self, self.uri)
+
+    def test_post(self):
+        """POST ``self.uri``."""
+        response = self.client.post(self.uri, {})
+        self.assertEqual(response.status_code, 405)
+
+    def test_get(self):
+        """GET ``self.uri``."""
+        response = self.client.get(self.uri)
+        self.assertEqual(response.status_code, 200)
+
+    def test_put(self):
+        """PUT ``self.uri``."""
+        response = self.client.post(self.uri, {'_method': 'PUT'})
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete(self):
+        """DELETE ``self.uri``."""
+        response = self.client.post(self.uri, {'_method': 'DELETE'})
+        self.assertEqual(response.status_code, 405)
+
+    def test_post_bad_id(self):
+        """POST ``self.uri`` with a bad ID."""
+        self.category.delete()
+        response = self.client.post(self.uri, {})
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_bad_id(self):
+        """GET ``self.uri`` with a bad ID."""
+        self.category.delete()
+        response = self.client.get(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_put_bad_id(self):
+        """PUT ``self.uri`` with a bad ID."""
+        self.category.delete()
+        response = self.client.post(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_delete_bad_id(self):
+        """DELETE ``self.uri`` with a bad ID."""
+        self.category.delete()
+        response = self.client.post(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+class CategoryIdUpdateFormTestCase(TestCase):
+    """Tests for the ``category/<id>/update-form/`` URI.
+
+    The ``category/<id>/update-form/`` URI is available through the
+    ``elts.views.category_id_update_form`` function.
+
+    """
+    FUNCTION = 'elts.views.category_id_update_form'
+
+    def setUp(self):
+        """Authenticate the test client, create a category and set ``self.uri``.
+
+        The category created is accessible as ``self.category``.
+
+        """
+        _login(self.client)
+        self.category = factories.CategoryFactory.create()
+        self.uri = reverse(self.FUNCTION, args = [self.category.id])
+
+    def test_logout(self):
+        """Call ``_test_logout()``."""
+        _test_logout(self, self.uri)
+
+    def test_post(self):
+        """POST ``self.uri``."""
+        response = self.client.post(self.uri, {})
+        self.assertEqual(response.status_code, 405)
+
+    def test_get(self):
+        """GET ``self.uri``."""
+        response = self.client.get(self.uri)
+        self.assertEqual(response.status_code, 200)
+
+    def test_put(self):
+        """PUT ``self.uri``."""
+        response = self.client.post(self.uri, {'_method': 'PUT'})
+        self.assertEqual(response.status_code, 405)
+
+    def test_delete(self):
+        """DELETE ``self.uri``."""
+        response = self.client.post(self.uri, {'_method': 'DELETE'})
+        self.assertEqual(response.status_code, 405)
+
+    def test_post_bad_id(self):
+        """POST ``self.uri`` with a bad ID."""
+        self.category.delete()
+        response = self.client.post(self.uri, {})
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_bad_id(self):
+        """GET ``self.uri`` with a bad ID."""
+        self.category.delete()
+        response = self.client.get(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_put_bad_id(self):
+        """PUT ``self.uri`` with a bad ID."""
+        self.category.delete()
+        response = self.client.post(self.uri)
+        self.assertEqual(response.status_code, 404)
+
+    def test_delete_bad_id(self):
+        """DELETE ``self.uri`` with a bad ID."""
+        self.category.delete()
+        response = self.client.post(self.uri)
+        self.assertEqual(response.status_code, 404)
+
 class ItemTestCase(TestCase):
     """Tests for the ``item/`` URI.
 

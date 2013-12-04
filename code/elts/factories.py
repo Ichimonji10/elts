@@ -431,6 +431,9 @@ def category_name():
     """
     return _random_utf8_str(1, models.Category.MAX_LEN_NAME)
 
+# FIXME: The python2.7 JSON encoder doesn't properly handle UTF-8 characters,
+# and it will often either mis-count the number of characters in a line or
+# thrown an exception. Upgrade to python 3.
 def invalid_category_name():
     """Return a value unsuitable for the ``Category.name`` model attribute.
 
@@ -442,7 +445,8 @@ def invalid_category_name():
     True
 
     """
-    return _random_utf8_str(models.Category.MAX_LEN_NAME + 1)
+    return u'x' * (models.Category.MAX_LEN_NAME + 1)
+    #return _random_utf8_str(models.Category.MAX_LEN_NAME + 1)
 
 def category_tags():
     """Return values for the ``Category.tags`` model attribute.
