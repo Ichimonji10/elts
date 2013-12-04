@@ -1,0 +1,21 @@
+{% extends 'elts/base.html' %}
+
+{% block title %}Update Category "{{ category.name }}"{% endblock %}
+{% block breadcrumb %}
+    <li><a href='{% url 'elts.views.category_id' category.id %}'>Category {{ category.id }}</a></li>
+    <li>
+        <a href='{% url 'elts.views.category_id_update_form' category.id %}'
+        >Update Form</a>
+    </li>
+{% endblock %}
+
+{% block body %}
+    <h1>Update Category "{{ category.name }}"</h1>
+    {% include 'elts/_show-errors.html' %}
+    <form method='post' action='{% url 'elts.views.category_id' category.id %}'>
+        {% csrf_token %}
+        <input type='hidden' name='_method' value='PUT' />
+        {{ form.as_p }}
+        <p><button>Submit</button></p>
+    </form>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'elts/base.html' %}
+
+{% block title %}Create Category{% endblock %}
+{% block breadcrumb %}
+    <li><a href='{% url 'elts.views.category_create_form' %}'>Category Create Form</a></li>
+{% endblock %}
+
+{% block body %}
+    <h1>Create Category</h1>
+    {% include 'elts/_show-errors.html' %}
+    <form method='post' action='{% url 'elts.views.category' %}'>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <p><button>Submit</button></p>
+    </form>
+{% endblock %}

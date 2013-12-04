@@ -16,12 +16,11 @@
                 <input type='hidden' name='_method' value='DELETE' />
                 <button>log out {{user.username}}</button>
             </form>
-            <p>foo foo foo<br />bar bar bar</p>
-            <p>foo foo foo<br />bar bar bar</p>
-            <p>foo foo foo<br />bar bar bar</p>
-            <p>foo foo foo<br />bar bar bar</p>
-            <p>foo foo foo<br />bar bar bar</p>
-            <p>foo foo foo<br />bar bar bar</p>
+            <!-- FIXME: show priority categories -->
+            <p>
+                Create a <a href='{% url 'elts.views.category_create_form' %}'>
+                new category</a>.
+            </p>
         </section>
         <nav id='sitenav'>
             <p>

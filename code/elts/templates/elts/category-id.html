@@ -1,0 +1,19 @@
+{% extends 'elts/base.html' %}
+{% load category_tags from category_tools %}
+
+{% block breadcrumb %}
+    <li><a href='{% url 'elts.views.category_id' category.id %}'>Category {{ category.id }}</a></li>
+{% endblock %}
+
+{% block body %}
+    <h1>Category "{{ category.name }}"</h1>
+    {% if category|category_tags %}
+        <ul>
+            {% for tag in category|category_tags %}
+                <li>{{ tag }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>This category has no tags associated with it.</p>
+    {% endif %}
+{% endblock %}
