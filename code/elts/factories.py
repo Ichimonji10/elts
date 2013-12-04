@@ -509,6 +509,9 @@ def note_note_text():
     """
     return _random_utf8_str(1, models.Note.MAX_LEN_NOTE_TEXT)
 
+# FIXME: The python2.7 JSON encoder doesn't properly handle UTF-8 characters,
+# and it will often either mis-count the number of characters in a line or
+# thrown an exception. Upgrade to python 3.
 def invalid_note_note_text():
     """Return a value suitable for the ``Note.note_text`` model attribute.
 
@@ -520,7 +523,8 @@ def invalid_note_note_text():
     True
 
     """
-    return _random_utf8_str(models.Note.MAX_LEN_NOTE_TEXT + 1)
+    return u'x' * (models.Note.MAX_LEN_NOTE_TEXT + 1)
+    #return _random_utf8_str(models.Note.MAX_LEN_NOTE_TEXT + 1)
 
 def lend_note_is_complaint():
     """Return a value for the ``LendNote.is_complaint()`` model attribute.

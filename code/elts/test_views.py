@@ -488,14 +488,10 @@ class ItemNoteTestCase(TestCase):
         """POST ``self.URI``, incorrectly."""
         item_id = factories.ItemFactory.create()
         num_item_notes = models.ItemNote.objects.count()
-        # FIXME: the factories.invalid_note_note_text() method should be used.
-        # It is not because the python2.7 JSON encoder doesn't properly handle
-        # UTF-8 characters, and it will often either mis-count the number of
-        # characters in a line or thrown an exception.
         response = self.client.post(
             self.URI,
             {
-                'note_text': '',
+                'note_text': factories.invalid_note_note_text(),
                 'item_id': item_id.id
             }
         )
@@ -1085,14 +1081,10 @@ class LendNoteTestCase(TestCase):
         """POST ``self.URI``, incorrectly."""
         lend_id = factories.random_lend_factory().create()
         num_lend_notes = models.LendNote.objects.count()
-        # FIXME: the factories.invalid_note_note_text() method should be used.
-        # It is not because the python2.7 JSON encoder doesn't properly handle
-        # UTF-8 characters, and it will often either mis-count the number of
-        # characters in a line or thrown an exception.
         response = self.client.post(
             self.URI,
             {
-                'note_text': '',
+                'note_text': factories.invalid_note_note_text(),
                 'lend_id': lend_id.id
             }
         )
