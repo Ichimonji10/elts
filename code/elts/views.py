@@ -99,19 +99,149 @@ def calendar(request):
 
 @login_required
 def category(request):
-    pass
+    """Handle a request for ``category/``."""
+    def post_handler():
+        """Create a new category.
+
+        If creation suceeds, redirect user to ``index`` view. Otherwise,
+        redirect uesr to ``category_create_form`` view.
+
+        """
+        form = forms.CategoryForm(request.POST)
+        if form.is_valid():
+            # See CategoryForm docstring for explanation of this procedure.
+            new_category = form.save(commit = False)
+            new_category.user = request.user
+            new_category.save()
+            form.save_m2m()
+            return http.HttpResponseRedirect(reverse('elts.views.index'))
+        else:
+            request.session['form_data'] = json.dumps(form.data)
+            return http.HttpResponseRedirect(
+                reverse('elts.views.category_create_form')
+            )
+
+    return {
+        'POST': post_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
 
 @login_required
-def category_id(request):
-    pass
+def category_create_form(request):
+    """Handle a request for ``category/create-form/``."""
+    def get_handler():
+        """Return a form for creating a category."""
+        form_data = request.session.pop('form_data', None)
+        if form_data is None:
+            form = forms.CategoryForm()
+        else:
+            form = forms.CategoryForm(json.loads(form_data))
+        return render(request, 'elts/category-create-form.html', {'form': form})
+
+    return {
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
 
 @login_required
-def category_id_update_form(request):
-    pass
+def category_id(request, category_id_):
+    """Handle a request for ``category/<id>/``."""
+    try:
+        category_ = models.Category.objects.get(id = category_id_)
+    except models.Category.DoesNotExist:
+        raise http.Http404
+
+    def put_handler():
+        """Update category ``category_id_``.
+
+        If update succeeds, redirect user to ``index`` view. Otherwise, redirect
+        user to ``category_id_update_form``.
+
+        """
+        form = forms.CategoryForm(request.POST, instance = category_)
+        if form.is_valid():
+            form.save()
+            return http.HttpResponseRedirect(reverse('elts.views.index'))
+        else:
+            request.session['form_data'] = json.dumps(form.data)
+            return http.HttpResponseRedirect(
+                reverse(
+                    'elts.views.category_id_update_form',
+                    args = [category_id_]
+                )
+            )
+
+    def delete_handler():
+        """Delete category ``category_id_``.
+
+        After delete, redirect user to ``index`` view.
+
+        """
+        category_.delete()
+        return http.HttpResponseRedirect(reverse('elts.views.index'))
+
+    return {
+        'PUT': put_handler,
+        'DELETE': delete_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
 
 @login_required
-def category_id_delete_form(request):
-    pass
+def category_id_update_form(request, category_id_):
+    """Handle a request for ``category/<id>/update-form/``."""
+    try:
+        category_ = models.Category.objects.get(id = category_id_)
+    except models.Category.DoesNotExist:
+        raise http.Http404
+
+    def get_handler():
+        """Return a form for updating category ``category_id_``."""
+        form_data = request.session.pop('form_data', None)
+        if form_data is None:
+            form = forms.CategoryForm(instance = category_)
+        else:
+            form = forms.CategoryForm(json.loads(form_data))
+        return render(
+            request,
+            'elts/category-id-update-form.html',
+            {'category': category_, 'form': form}
+        )
+
+    return {
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
+
+@login_required
+def category_id_delete_form(request, category_id_):
+    """Handle a request for ``category/<id>/delete-form/``."""
+    try:
+        category_ = models.Category.objects.get(id = category_id_)
+    except models.Category.DoesNotExist:
+        raise http.Http404
+
+    def get_handler():
+        """Return a form for deleting category ``category_id_``."""
+        return render(
+            request,
+            'elts/category-id-delete-form.html',
+            {'category': category_}
+        )
+
+    return {
+        'GET': get_handler,
+    }.get(
+        _request_type(request),
+        _http_405
+    )()
 
 @login_required
 def item(request):
