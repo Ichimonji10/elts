@@ -1,13 +1,7 @@
-"""Unit tests for this django app's views.
-
-The test cases in this module are called from ``tests.py``.
+"""Unit tests for the ``views`` module.
 
 Each test case  in this module tests a single view. For example,
 ``ItemCreateFormTestCase`` tests just the ``item_create_form`` view.
-
-Each test case is a subclass of ``django.test.TestCase``.
-"``django.test.TestCase`` [...] is a subclass of ``unittest.TestCase`` that runs
-each test inside a transaction to provide isolation".
 
 Despite naming conventions which would indicate otherwise, no tests in this
 module send PUT or DELETE requests. Instead, tests simply construct POST

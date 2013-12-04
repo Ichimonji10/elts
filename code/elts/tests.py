@@ -1,6 +1,7 @@
-"""Unit tests for this django app.
+"""Collect this app's doctests into a single suite.
 
-For details on testing with Django, see:
+Do not attempt to find other types of tests, such as unit tests. For details on
+testing with Django, see:
 https://docs.djangoproject.com/en/1.6/topics/testing/overview/
 
 """

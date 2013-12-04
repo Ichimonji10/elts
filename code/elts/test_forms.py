@@ -1,13 +1,7 @@
-"""Unit tests for this django app's forms.
-
-The test cases in this module are called from ``tests.py``.
+"""Unit tests for the ``forms`` module.
 
 Each test case in this module tests a single form. For example, the
 ``ItemFormTestCase`` tests just the ``ItemForm`` form.
-
-Each test case is a subclass of ``django.test.TestCase``.
-"``django.test.TestCase`` [...] is a subclass of ``unittest.TestCase`` that runs
-each test inside a transaction to provide isolation".
 
 """
 from datetime import timedelta
