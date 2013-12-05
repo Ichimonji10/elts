@@ -1,5 +1,7 @@
 """Tools for inspecting ``Category`` model objects in templates."""
-from datetime import date
+from django.utils.timezone import utc
+from datetime import date, datetime
+from django.db.models import Q
 from django.template import Library
 from elts import models
 
@@ -26,25 +28,44 @@ def category_tags(category):
     return models.Tag.objects.filter(category__exact = category) # pylint: disable=E1101
 
 # FIXME: write doctests
-def _category_items(category):
+def _items(category):
     return models.Item.objects.filter(tags__category__exact = category) # pylint: disable=E1101
+
+# FIXME: write doctests
+def _lends(items):
+    return models.Lend.objects.filter(item_id__in = items)
 
 # FIXME: write doctests
 @register.filter
 def category_items_total(category):
-    return _category_items(category).count()
+    return _items(category).count()
 
 # FIXME: write doctests
 @register.filter
 def category_items_available(category):
-    return 'FIXME'
+    now = datetime.utcnow().replace(tzinfo = utc)
+    items = _items(category)
+    conflicting_lends = _lends(items).filter(
+        # Find lends where either of the following holds true.
+        (
+            # `out` and `back` are set and `now` occurs between those datetimes.
+            Q(out__isnull = False) &
+            Q(back__isnull = False) &
+            Q(out__lte = now) &
+            Q(back__gte = now)
+        ) | (
+            # Only `out` is set and `now` occurs after that datetime.
+            Q(out__isnull = False) &
+            Q(back__isnull = True) &
+            Q(out__lte = now)
+        )
+    )
+    return items.exclude(lend__in = conflicting_lends).count()
 
 # FIXME: write doctests
 @register.filter
 def category_next_due_out(category):
-    lend = models.Lend.objects.filter(
-        item_id__in = _category_items(category)
-    ).filter(
+    lend = _lends(_items(category)).filter(
         due_out__gte = date.today()
     ).order_by('due_out').first()
     if lend is None:
@@ -55,9 +76,7 @@ def category_next_due_out(category):
 # FIXME: write doctests
 @register.filter
 def category_next_due_back(category):
-    lend = models.Lend.objects.filter(
-        item_id__in = _category_items(category)
-    ).filter(
+    lend = _lends(_items(category)).filter(
         due_back__gte = date.today()
     ).order_by('due_back').first()
     if lend is None:
