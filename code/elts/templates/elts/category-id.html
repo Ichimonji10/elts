@@ -1,19 +1,29 @@
 {% extends 'elts/base.html' %}
 {% load category_tags from category_tools %}
+{% load static from staticfiles %}
 
+{% block title %}Category "{{ category.name }}"{% endblock %}
+{% block head %}
+    <link rel='stylesheet' href='{% static 'elts/object-id.css' %}' />
+{% endblock %}
 {% block breadcrumb %}
     <li><a href='{% url 'elts.views.category_id' category.id %}'>Category {{ category.id }}</a></li>
 {% endblock %}
 
 {% block body %}
     <h1>Category "{{ category.name }}"</h1>
+    <p class='controls'>
+        <a href='{% url 'elts.views.category_id_update_form' category.id %}'>Edit</a> or
+        <a href='{% url 'elts.views.category_id_delete_form' category.id %}'>Delete</a>
+    </p>
     {% if category|category_tags %}
+        <p>This category has the following tags:</p>
         <ul>
             {% for tag in category|category_tags %}
                 <li>{{ tag }}</li>
             {% endfor %}
         </ul>
     {% else %}
-        <p>This category has no tags associated with it.</p>
+        <p>This category has <strong>no tags</strong>.</p>
     {% endif %}
 {% endblock %}

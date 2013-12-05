@@ -1,4 +1,5 @@
 {% load static from staticfiles %}
+{% load category_items_available category_items_total category_next_out category_next_back from category_tools %}
 
 <!DOCTYPE HTML>
 <html lang='en'>
@@ -16,10 +17,21 @@
                 <input type='hidden' name='_method' value='DELETE' />
                 <button>log out {{user.username}}</button>
             </form>
-            <!-- FIXME: show priority categories -->
+            {% for category in user.category_set.all %}
+                <p>
+                    <!-- FIXME: create proper link for category.name -->
+                    <!-- FIXME: implement available, next out and next back -->
+                    <a href='.'>{{ category.name }}</a>
+                    (<a href='{% url 'elts.views.category_id' category.id %}'
+                    >details</a>)<br />
+                    Available: {{ category|category_items_available }}/{{ category|category_items_total }}<br />
+                    Next out: {{ category|category_next_out }}<br />
+                    Next back: {{ category|category_next_back }}
+                </p>
+            {% endfor %}
             <p>
-                Create a <a href='{% url 'elts.views.category_create_form' %}'>
-                new category</a>.
+                Create a <a href='{% url 'elts.views.category_create_form' %}'
+                >new category</a>.
             </p>
         </section>
         <nav id='sitenav'>
