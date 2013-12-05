@@ -18,12 +18,12 @@ the factory_boy implementation of timezone data is used. It's beautiful. See:
 * http://docs.python.org/2/library/datetime.html
 
 """
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
+from django.utils.timezone import utc
 from elts import models
 from factory import Sequence, SubFactory, post_generation
-from factory.compat import UTC
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyAttribute, FuzzyDate, FuzzyDateTime
 import random
@@ -335,12 +335,9 @@ def lend_due_out():
     True
 
     """
-    lower = date.min
-    upper = date.max
-    return FuzzyDate(
-        date(1900, lower.month, lower.day),
-        date(2100, upper.month, upper.day)
-    ).fuzz()
+    today = date.today()
+    offset = timedelta(days = 365 * 100)
+    return FuzzyDate(today - offset, today + offset).fuzz()
 
 def lend_due_back():
     """Return a value suitable for the ``Lend.due_back`` attribute.
@@ -360,12 +357,9 @@ def lend_out():
     True
 
     """
-    lower = datetime.min
-    upper = datetime.max
-    return FuzzyDateTime(
-        datetime(1900, lower.month, lower.day, tzinfo = UTC),
-        datetime(2100, upper.month, upper.day, tzinfo = UTC)
-    ).fuzz()
+    now = datetime.utcnow().replace(tzinfo = utc)
+    offset = timedelta(days = 365 * 100)
+    return FuzzyDateTime(now - offset, now + offset).fuzz()
 
 def lend_back():
     """Return a value suitable for the ``Lend.back`` attribute.

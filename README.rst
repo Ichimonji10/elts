@@ -22,12 +22,13 @@ lighttpd + flup + sqlite
 Start by installing the following:
 
 * django-extensions
-* django-tables2
-* django 1.6
-* factory_boy
-* flup
 * lighttpd
 * mysql
+* python2-django (v1.6)
+* python2-django-tables2
+* python2-factory_boy
+* python2-flup
+* python2-pytz
 
 Unfortunately, flup (and seemingly every other FastCGI and SCGI handler
 available) do not yet support python 3. As a result, the python 2 versions of
