@@ -1,4 +1,5 @@
 """Tools for inspecting ``Category`` model objects in templates."""
+from datetime import date
 from django.template import Library
 from elts import models
 
@@ -25,9 +26,13 @@ def category_tags(category):
     return models.Tag.objects.filter(category__exact = category) # pylint: disable=E1101
 
 # FIXME: write doctests
+def _category_items(category):
+    return models.Item.objects.filter(tags__category__exact = category) # pylint: disable=E1101
+
+# FIXME: write doctests
 @register.filter
 def category_items_total(category):
-    return models.Item.objects.filter(tags__category__exact = category).count() # pylint: disable=E1101
+    return _category_items(category).count()
 
 # FIXME: write doctests
 @register.filter
@@ -36,10 +41,26 @@ def category_items_available(category):
 
 # FIXME: write doctests
 @register.filter
-def category_next_out(category):
-    return 'FIXME'
+def category_next_due_out(category):
+    lend = models.Lend.objects.filter(
+        item_id__in = _category_items(category)
+    ).filter(
+        due_out__gte = date.today()
+    ).order_by('due_out').first()
+    if lend is None:
+        return 'n/a'
+    else:
+        return lend.due_out
 
 # FIXME: write doctests
 @register.filter
-def category_next_back(category):
-    return 'FIXME'
+def category_next_due_back(category):
+    lend = models.Lend.objects.filter(
+        item_id__in = _category_items(category)
+    ).filter(
+        due_back__gte = date.today()
+    ).order_by('due_back').first()
+    if lend is None:
+        return 'n/a'
+    else:
+        return lend.due_back

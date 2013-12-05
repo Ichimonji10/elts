@@ -1,5 +1,5 @@
 {% load static from staticfiles %}
-{% load category_items_available category_items_total category_next_out category_next_back from category_tools %}
+{% load category_items_available category_items_total category_next_due_out category_next_due_back from category_tools %}
 
 <!DOCTYPE HTML>
 <html lang='en'>
@@ -25,8 +25,8 @@
                     (<a href='{% url 'elts.views.category_id' category.id %}'
                     >details</a>)<br />
                     Available: {{ category|category_items_available }}/{{ category|category_items_total }}<br />
-                    Next out: {{ category|category_next_out }}<br />
-                    Next back: {{ category|category_next_back }}
+                    Next due out: {{ category|category_next_due_out }}<br />
+                    Next due back: {{ category|category_next_due_back }}
                 </p>
             {% endfor %}
             <p>
