@@ -157,7 +157,7 @@ def item_tags():
     return [
         TagFactory.create()  # pylint: disable=E1101
         for i
-        in range(0, random.randint(0, 2)) # upper limit is arbitrary
+        in range(0, random.randint(0, 3)) # upper limit is arbitrary
     ]
 
 def item_is_lendable():
@@ -394,6 +394,7 @@ class CategoryFactory(DjangoModelFactory):
     # pylint: disable=W0232
     FACTORY_FOR = models.Category
     user = SubFactory(UserFactory)
+    name = FuzzyAttribute(lambda: category_name()) # pylint: disable=W0108
 
     @post_generation
     def tags(self, create, extracted, **kwargs):
@@ -409,10 +410,7 @@ class CategoryFactory(DjangoModelFactory):
         if not create:
             # build() was called. ``self`` has not been saved.
             return
-        if extracted is None:
-            for tag in category_tags():
-                self.tags.add(tag)
-        else:
+        if extracted is not None:
             for tag in extracted:
                 self.tags.add(tag)
 

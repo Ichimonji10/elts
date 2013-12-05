@@ -126,7 +126,7 @@ class Category(models.Model):
     MAX_LEN_NAME = 30
 
     user = models.ForeignKey(User)
-    name = models.CharField(max_length = MAX_LEN_NAME, blank = True)
+    name = models.CharField(max_length = MAX_LEN_NAME)
     tags = models.ManyToManyField('Tag', blank = True)
 
 # Begin ``Note`` model definitions =============================================
