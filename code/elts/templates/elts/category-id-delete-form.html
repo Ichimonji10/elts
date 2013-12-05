@@ -2,11 +2,11 @@
 
 {% block title %}Delete Category "{{ category.name }}"{% endblock %}
 {% block breadcrumb %}
-    <li><a href='{% url 'elts.views.category_id' category.id %}'>Category {{ category.id }}</a></li>
-    <li>
-        <a href='{% url 'elts.views.category_id_delete_form' category.id %}'
-        >Delete Form</a>
-    </li>
+    <li><a href='{% url 'elts.views.item' %}'>Item</a></li>
+    <li><a href='{% url 'elts.views.category_id' category.id %}'
+        >Category {{ category.id }}</a></li>
+    <li><a href='{% url 'elts.views.category_id_delete_form' category.id %}'
+        >Delete Form</a></li>
 {% endblock %}
 
 {% block body %}

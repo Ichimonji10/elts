@@ -263,7 +263,7 @@ class CategoryIdTestCase(TestCase):
     def test_delete(self):
         """DELETE ``self.uri``."""
         response = self.client.post(self.uri, {'_method': 'DELETE'})
-        self.assertRedirects(response, reverse('elts.views.index'))
+        self.assertRedirects(response, reverse('elts.views.item'))
 
     def test_post_bad_id(self):
         """POST ``self.uri`` with a bad ID."""

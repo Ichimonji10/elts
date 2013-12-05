@@ -186,11 +186,11 @@ def category_id(request, category_id_):
     def delete_handler():
         """Delete category ``category_id_``.
 
-        After delete, redirect user to ``index`` view.
+        After delete, redirect user to ``item`` view.
 
         """
         category_.delete()
-        return http.HttpResponseRedirect(reverse('elts.views.index'))
+        return http.HttpResponseRedirect(reverse('elts.views.item'))
 
     return {
         'GET': get_handler,

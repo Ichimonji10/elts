@@ -19,14 +19,11 @@
             </form>
             {% for category in user.category_set.all %}
                 <p>
-                    <!-- FIXME: create proper link for category.name -->
-                    <!-- FIXME: implement available, next out and next back -->
-                    <a href='.'>{{ category.name }}</a>
-                    (<a href='{% url 'elts.views.category_id' category.id %}'
-                    >details</a>)<br />
-                    Available: {{ category|category_items_available }}/{{ category|category_items_total }}<br />
-                    Next due out: {{ category|category_next_due_out }}<br />
-                    Next due back: {{ category|category_next_due_back }}
+                    <a href='{% url 'elts.views.category_id' category.id %}'
+                        >{{ category.name }}</a><br />
+                    In stock: {{ category|category_items_available }}/{{ category|category_items_total }}<br />
+                    Next out: {{ category|category_next_due_out }}<br />
+                    Next back: {{ category|category_next_due_back }}
                 </p>
             {% endfor %}
             <p>
