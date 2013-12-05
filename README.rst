@@ -24,6 +24,7 @@ Start by installing the following:
 * django-extensions
 * django-tables2
 * django 1.6
+* factory_boy
 * flup
 * lighttpd
 * mysql
