@@ -29,7 +29,9 @@ def category_tags(category):
 
 # FIXME: write doctests
 def _items(category):
-    return models.Item.objects.filter(tags__category__exact = category) # pylint: disable=E1101
+    return models.Item.objects.filter(
+        tags__category__exact = category
+    ).distinct()
 
 # FIXME: write doctests
 def _lends(items):
