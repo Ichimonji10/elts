@@ -6,7 +6,7 @@ https://docs.djangoproject.com/en/1.6/topics/testing/overview/
 
 """
 from doctest import DocTestSuite
-from templatetags import calendar_tools
+from templatetags import calendar_tools, category_tools
 import factories, forms, tables, views
 
 def load_tests(loader, tests, ignore):
@@ -14,6 +14,7 @@ def load_tests(loader, tests, ignore):
     tests.addTests(DocTestSuite(factories))
     tests.addTests(DocTestSuite(forms))
     tests.addTests(DocTestSuite(tables))
+    tests.addTests(DocTestSuite(category_tools))
     tests.addTests(DocTestSuite(calendar_tools))
     tests.addTests(DocTestSuite(views))
     return tests
