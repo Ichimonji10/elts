@@ -28,7 +28,13 @@ def category_tags(category):
     return models.Tag.objects.filter(category__exact = category) # pylint: disable=E1101
 
 # FIXME: write doctests
-def _items(category):
+@register.filter
+def count(queryset):
+    return queryset.count()
+
+# FIXME: write doctests
+@register.filter
+def category_items(category):
     return models.Item.objects.filter(
         tags__category__exact = category
     ).distinct()
@@ -39,14 +45,8 @@ def _lends(items):
 
 # FIXME: write doctests
 @register.filter
-def category_items_total(category):
-    return _items(category).count()
-
-# FIXME: write doctests
-@register.filter
-def category_items_available(category):
+def items_available(items):
     now = datetime.utcnow().replace(tzinfo = utc)
-    items = _items(category)
     conflicting_lends = _lends(items).filter(
         # Find lends where either of the following holds true.
         (
@@ -67,7 +67,7 @@ def category_items_available(category):
 # FIXME: write doctests
 @register.filter
 def category_next_due_out(category):
-    lend = _lends(_items(category)).filter(
+    lend = _lends(category_items(category)).filter(
         due_out__gte = date.today()
     ).order_by('due_out').first()
     if lend is None:
@@ -78,7 +78,7 @@ def category_next_due_out(category):
 # FIXME: write doctests
 @register.filter
 def category_next_due_back(category):
-    lend = _lends(_items(category)).filter(
+    lend = _lends(category_items(category)).filter(
         due_back__gte = date.today()
     ).order_by('due_back').first()
     if lend is None:
