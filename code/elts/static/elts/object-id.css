@@ -31,8 +31,3 @@ h1:first-child + p {margin-top: 0;}
 h3 {margin-bottom: 0;}
 h3 + p {margin-top: 0;}
 h3, h3 + p {font-size: 90%;}
-
-/* For the table of info about this object, if it exists. */
-th:after {content: ':';}
-th {font-weight: normal; text-align: right;}
-td {font-weight: bold;}

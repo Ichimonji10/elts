@@ -45,6 +45,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render
 from django_tables2 import RequestConfig
 from elts import forms, models, tables
+from elts.templatetags import category_tools
 import json
 
 # pylint: disable=E1101
@@ -159,7 +160,17 @@ def category_id(request, category_id_):
 
     def get_handler():
         """Return information about category ``category_id_``."""
-        return render(request, 'elts/category-id.html', {'category': category_})
+        table = tables.ItemTable(category_tools.category_items(category_))
+        RequestConfig(request).configure(table)
+        return render(
+            request,
+            'elts/category-id.html',
+            {
+                'category': category_,
+                'table': table,
+                'request': request,
+            }
+        )
 
     def put_handler():
         """Update category ``category_id_``.

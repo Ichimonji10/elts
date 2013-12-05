@@ -1,0 +1,4 @@
+/* For the table of info about this object. */
+th:after {content: ':';}
+th {font-weight: normal; text-align: right;}
+td {font-weight: bold;}

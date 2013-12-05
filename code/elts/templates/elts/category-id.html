@@ -1,9 +1,11 @@
 {% extends 'elts/base.html' %}
 {% load category_tags from category_tools %}
+{% load render_table from django_tables2 %}
 {% load static from staticfiles %}
 
 {% block title %}Category "{{ category.name }}"{% endblock %}
 {% block head %}
+    <link rel='stylesheet' href='{% static 'elts/object.css' %}' />
     <link rel='stylesheet' href='{% static 'elts/object-id.css' %}' />
 {% endblock %}
 {% block breadcrumb %}
@@ -18,6 +20,7 @@
         <a href='{% url 'elts.views.category_id_update_form' category.id %}'>Edit</a> or
         <a href='{% url 'elts.views.category_id_delete_form' category.id %}'>Delete</a>
     </p>
+    {% render_table table %}
     {% if category|category_tags %}
         <p>This category has the following tags:</p>
         <ul>
