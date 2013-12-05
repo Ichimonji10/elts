@@ -113,6 +113,14 @@ class ItemTable(tables.Table):
         """
         return mark_safe(_restful_links('item', record.id))
 
+    def render_description(self, value):
+        """Define how the ``description`` column should be rendered.
+
+        ``value`` represents a single cell of data from the table.
+
+        """
+        return _truncate_string(value)
+
 class TagTable(tables.Table):
     """An HTML table displaying ``Tag`` objects.
 
@@ -134,3 +142,35 @@ class TagTable(tables.Table):
 
         """
         return mark_safe(_restful_links('tag', record.id))
+
+    def render_description(self, value):
+        """Define how the ``description`` column should be rendered.
+
+        ``value`` represents a single cell of data from the table.
+
+        """
+        return _truncate_string(value)
+
+def _truncate_string(string):
+    """If ``string`` is too long, truncate it and append an ellipsis.
+
+    ``string`` itself is not affected. A new string is returned.
+
+    >>> target_length = 140
+    >>> string = 'x' * target_length
+    >>> _truncate_string(string) == string
+    True
+    >>> truncated_string = _truncate_string(string + 'x')
+    >>> truncated_string != string
+    True
+    >>> truncated_string[-1] == unichr(8230)
+    True
+    >>> len(truncated_string) == target_length
+    True
+
+    """
+    limit = 140
+    if len(string) > limit:
+        return string[:limit - 1] + unichr(8230)
+    else:
+        return string
