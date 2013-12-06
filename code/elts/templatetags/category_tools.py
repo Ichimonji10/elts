@@ -32,9 +32,33 @@ def category_tags(category):
 def count(queryset):
     return queryset.count()
 
-# FIXME: write doctests
 @register.filter
 def category_items(category):
+    """Return all items that belong to Category ``category``.
+
+    Only items that have *all* of the tags in ``category`` are returned.
+
+    >>> from elts import factories
+    >>> item1 = factories.ItemFactory.create()
+    >>> item2 = factories.ItemFactory.create()
+    >>> item3 = factories.ItemFactory.create()
+    >>> tag1 = factories.TagFactory.create()
+    >>> tag2 = factories.TagFactory.create()
+    >>> item1.tags.add(tag1, tag2)
+    >>> item2.tags.add(tag1)
+    >>> category_t1  = factories.CategoryFactory.create(tags = [tag1])
+    >>> category_t2  = factories.CategoryFactory.create(tags = [tag2])
+    >>> category_t12 = factories.CategoryFactory.create(tags = [tag1, tag2])
+    >>> set(category_items(category_t1)) == set(item1, item2)
+    True
+    >>> set(category_items(category_t2)) == set(item1)
+    True
+    >>> set(category_items(category_t12)) == set(item1)
+    True
+
+    """
+    # FIXME: this query returns all items that have ANY category tags, not ALL
+    # category tags
     return models.Item.objects.filter(
         tags__category__exact = category
     ).distinct()
