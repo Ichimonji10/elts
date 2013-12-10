@@ -1,10 +1,17 @@
 {% extends 'elts/base.html' %}
+{% load dajaxice_js_import from dajaxice_templatetags %}
 {% load item_tags related_tags item_notes tag_link from tag_tools %}
 {% load static from staticfiles %}
 
 {% block title %}Item "{{ item.name }}"{% endblock %}
 {% block head %}
     <link rel='stylesheet' href='{% static 'elts/object-id.css' %}' />
+    {% dajaxice_js_import %}
+    <script>
+        function my_js_callback(data) {
+            alert(data.message);
+        }
+    </script>
 {% endblock %}
 {% block breadcrumb %}
     <li><a href='{% url 'elts.views.item' %}'>Item</a></li>
@@ -17,6 +24,8 @@
         <a href='{% url 'elts.views.item_id_update_form' item.id %}'>Edit</a> or
         <a href='{% url 'elts.views.item_id_delete_form' item.id %}'>Delete</a>
     </p>
+    <button type='button' onclick='Dajaxice.elts.sayhello(my_js_callback);'
+    >POST to server</button>
     {% if not item.is_lendable %}
         <p>This item is <strong>not available</strong> for lending.</p>
     {% endif %}

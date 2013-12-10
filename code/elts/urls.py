@@ -50,6 +50,9 @@ hidden form field named "_method" is present in forms. For example:
 Thus, none of the URLs listed above actually supports ``PUT`` or ``DELETE``
 operations. Support is faked with clever ``POST`` operations.
 
+The above list of URLs is not complete. Dajaxice is used to implement AJAX
+support, and Dajaxice adds additional URLs.
+
 Theory
 ======
 
@@ -62,8 +65,10 @@ If ``/tag/15/update-form/`` is available, then ``/tag/15/``, ``/tag/``, and
 beyond these few points, and the curious are encouraged to do some research.
 
 """
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
+from dajaxice.core import dajaxice_autodiscover, dajaxice_config
 
+dajaxice_autodiscover()
 urlpatterns = patterns( # pylint: disable=C0103
     'elts.views',
     url(r'^$',                             'index'),
@@ -97,4 +102,5 @@ urlpatterns = patterns( # pylint: disable=C0103
     url(r'^tag/(\d+)/$',                   'tag_id'),
     url(r'^tag/(\d+)/delete-form/$',       'tag_id_delete_form'),
     url(r'^tag/(\d+)/update-form/$',       'tag_id_update_form'),
+    url(dajaxice_config.dajaxice_url,      include('dajaxice.urls')),
 )
