@@ -13,6 +13,7 @@ belong here.
 
 """
 import os
+from django.conf import global_settings
 
 # NEVER deploy a site into production with DEBUG turned on!
 DEBUG = True
@@ -69,9 +70,24 @@ STATIC_ROOT = os.path.abspath(os.path.join(
     'collectstatic',
 ))
 
+STATICFILES_FINDERS = tuple(
+    frozenset(global_settings.STATICFILES_FINDERS) |
+    frozenset(['dajaxice.finders.DajaxiceFinder'])
+)
+
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
 STATIC_URL = '/static/'
+
+TEMPLATE_LOADERS = tuple(
+    frozenset(global_settings.TEMPLATE_LOADERS) |
+    frozenset(['django.template.loaders.eggs.Loader'])
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = tuple(
+    frozenset(global_settings.TEMPLATE_CONTEXT_PROCESSORS) |
+    frozenset(['django.core.context_processors.request'])
+)
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '!ncc#qokpg%0hw+4+)6ddsraamoflvbl-xqgql158^4e&(4cd0'
@@ -85,6 +101,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'elts',
     'django_tables2',
+    'dajaxice',
 
     'django.contrib.auth',
     'django.contrib.contenttypes',

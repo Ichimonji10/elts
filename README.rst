@@ -25,6 +25,7 @@ Start by installing the following:
 * lighttpd
 * mysql
 * python2-django (v1.6)
+* python2-django-dajaxice
 * python2-django-tables2
 * python2-factory_boy
 * python2-flup
