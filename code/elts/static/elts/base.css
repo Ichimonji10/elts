@@ -63,7 +63,17 @@ nav#sitenav ul {
     list-style-type: none;
     border-bottom-right-radius: 0.5em;
     }
-nav#sitenav img {width: 100%;}
+nav#sitenav > p,
+nav#sitenav ul li a {
+    color: transparent;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    }
+nav#sitenav > p {background-image: url('/static/elts/award.png');}
+nav#sitenav ul li:nth-child(1) a {
+    background-image: url('/static/elts/today.png');
+    }
 
 /* Style the right column.
  *
