@@ -24,8 +24,9 @@
         <a href='{% url 'elts.views.item_id_update_form' item.id %}'>Edit</a> or
         <a href='{% url 'elts.views.item_id_delete_form' item.id %}'>Delete</a>
     </p>
-    <button type='button' onclick='Dajaxice.elts.sayhello(my_js_callback);'
-    >POST to server</button>
+    <button type='button' onclick='
+        Dajaxice.elts.sayhello(my_js_callback, {'arg': 'test'});
+    '>GET message from server</button>
     {% if not item.is_lendable %}
         <p>This item is <strong>not available</strong> for lending.</p>
     {% endif %}
