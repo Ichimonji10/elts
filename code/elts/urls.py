@@ -41,8 +41,17 @@ URL                             POST     GET    PUT      DELETE
 ``tag/<id>/update-form/``                *
 =============================== ======== ====== ======== ========
 
-REST
-====
+Web browsers only support ``POST`` and ``GET`` operations; ``PUT`` and
+``DELETE`` operations cannot be performed. To accomodate this limitation, a
+hidden form field named "_method" is present in forms. For example:
+
+    <input type="hidden" name="_method" value="PUT" />
+
+Thus, none of the URLs listed above actually supports ``PUT`` or ``DELETE``
+operations. Support is faked with clever ``POST`` operations.
+
+Theory
+======
 
 The URLs in this application are organized in a typical RESTful manner. This
 means that a URL consists soley of nouns. For example, ``/item/15/delete/`` is
@@ -51,22 +60,6 @@ message to ``/item/15/``) Being RESTful also means that URLs are decomposable.
 If ``/tag/15/update-form/`` is available, then ``/tag/15/``, ``/tag/``, and
 ``/`` should also be available. There is much to the RESTful design philosophy
 beyond these few points, and the curious are encouraged to do some research.
-
-Client Compatibility
-====================
-
-Currently, web browsers are the *only* type of supported client. It is desirable
-to extend ELTS so that it can support other types of clients, but no concrete
-plans are in place to do so.
-
-Web Browser Hacks
-=================
-
-Web browsers only support ``POST`` and ``GET`` operations; ``PUT`` and
-``DELETE`` operations cannot be performed. To accomodate this limitation, a
-hidden form field named "_method" is present in forms. For example:
-
-    <input type="hidden" name="_method" value="PUT" />
 
 """
 from django.conf.urls import patterns, url
