@@ -1,29 +1,25 @@
 """Global settings for this Django project.
 
+For a gentle introduction to Django's settings, read `Django settings`_. For a
+more thorough reference, read teh `settings reference`_. To see the differences
+between this settings file and the defaults, run ``manage.py diffsettings``.
+
 This module only contains settings that are Django-specific. If a setting is
-listed in the official `Django documentation`_, it belongs here. If a settings
-is not listed there, it does not belong here.
+listed in the `settings reference`_, it belongs here. Otherwise, it does not
+belong here.
 
-Currently, there are no project-wide custom settings. If a need for them arises,
-it may make sense to place them in the module ``main.custom-settings``.
-
-For the curious, the `Django settings`_ page gives a good overview of how
-settings work and which settings are available.
-
-.. _Django documentation: https://docs.djangoproject.com/en/dev/
+.. _settings reference: https://docs.djangoproject.com/en/dev/ref/settings/
 .. _Django settings: https://docs.djangoproject.com/en/dev/topics/settings/
 
 """
 import os
 
+# NEVER deploy a site into production with DEBUG turned on!
 DEBUG = True
+# Display a detailed report for any exception raised during template rendering.
+# Django only displays fancy error pages if DEBUG is True, so you'll want to set
+# that to take advantage of this setting.
 TEMPLATE_DEBUG = DEBUG
-
-ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
-)
-
-MANAGERS = ADMINS
 
 LOGIN_URL = 'elts.views.login'
 
@@ -45,33 +41,11 @@ DATABASES = {
     }
 }
 
-# DATABASES = {
-#     # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'elts',
-#         'USER': 'elts',
-#         'PASSWORD': 'hackme',
-#         'HOST': '127.0.0.1',
-#         'PORT': '',
-#     }
-# }
-
-# Hosts/domain names that are valid for this site; required if DEBUG is False
-# See https://docs.djangoproject.com/en/1.6/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = []
-
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
 TIME_ZONE = 'America/New_York'
-
-# Language code for this installation. All choices can be found here:
-# http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
-
-SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
@@ -83,15 +57,6 @@ USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
-
-# Absolute filesystem path to the directory that will hold user-uploaded files.
-# Example: "/var/www/example.com/media/"
-MEDIA_ROOT = ''
-
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash.
-# Examples: "http://example.com/media/", "http://media.example.com/"
-MEDIA_URL = ''
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -108,51 +73,13 @@ STATIC_ROOT = os.path.abspath(os.path.join(
 # Example: "http://example.com/static/", "http://static.example.com/"
 STATIC_URL = '/static/'
 
-# Additional locations of static files
-STATICFILES_DIRS = (
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-)
-
-# List of finder classes that know how to find static files in
-# various locations.
-STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
-)
-
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '!ncc#qokpg%0hw+4+)6ddsraamoflvbl-xqgql158^4e&(4cd0'
-
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
-)
-
-MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-)
 
 ROOT_URLCONF = 'main.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'main.wsgi.application'
-
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or
-    # "C:/www/django/templates".  Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-)
 
 INSTALLED_APPS = (
     'django_extensions',
@@ -165,18 +92,14 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
 )
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
-# See http://docs.djangoproject.com/en/dev/topics/logging for
-# more details on how to customize your logging configuration.
+#
+# Logging: http://docs.djangoproject.com/en/dev/topics/logging
+# Admins: https://docs.djangoproject.com/en/1.6/ref/settings/#std:setting-ADMINS
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
