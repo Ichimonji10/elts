@@ -74,7 +74,7 @@ STATIC_ROOT = os.path.abspath(os.path.join(
 STATIC_URL = '/static/'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '!ncc#qokpg%0hw+4+)6ddsraamoflvbl-xqgql158^4e&(4cd0'
+SECRET_KEY = ''
 
 ROOT_URLCONF = 'main.urls'
 
