@@ -36,7 +36,7 @@ flup and django must be used.
 
 Generate static files::
 
-    $ code/manage.py collectstatic
+    $ apps/manage.py collectstatic
 
 The lighttpd config file assumes that the project has been cloned to to
 ``/srv/http/``. Tweak the config file if needed, then install it and start
@@ -52,11 +52,11 @@ Ensure ``collectstatic`` collected files and lighttpd is functioning::
 
 Initialize the database backend::
 
-    $ /srv/http/elts/code/manage.py syncdb
+    $ apps/manage.py syncdb
 
 Start the app server (tweak to taste)::
 
-    $ python2 /srv/http/elts/code/manage.py runfcgi \
+    $ python2 apps/manage.py runfcgi \
         host=127.0.0.1 \
         port=4000 \
         protocol=scgi \
@@ -72,7 +72,7 @@ lighttpd + flup + mysql
 
 Follow directions for setting up lighttpd + flup + sqlite, up to the point where
 the database is initialized. Then, edit the ``DATABASES`` section of
-``code/main/settings.py``. When you're done, it will look something like this::
+``apps/main/settings.py``. When you're done, it will look something like this::
 
     DATABASES = {
         # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
@@ -94,7 +94,7 @@ Install `MySQL-Python`_, then configure the MySQL database::
     mysql> GRANT AlL PRIVILEGES ON elts.* TO 'elts'@'localhost';
     mysql> commit;
     mysql> exit
-    $ python2.7 code/manage.py syncdb
+    $ python2 apps/manage.py syncdb
 
 Start the app server as normal.
 
@@ -123,7 +123,7 @@ example::
     $ epydoc \
         --config configs/epydocrc \
         --output <output_dir> \
-        `find code/ -type f -name \*.py`
+        `find apps/ -type f -name \*.py`
 
 graphviz must be installed for epydoc to generate graphs.
 
@@ -140,7 +140,7 @@ Static Analysis
 You can use pylint to perform static analysis of individual python files. For
 example::
 
-    $ pylint --init-hook='import sys; sys.path.append("code/")' code/elts/views.py | less
+    $ pylint --init-hook='import sys; sys.path.append("apps/")' apps/elts/views.py | less
 
 Some warnings are spurious, and you can force pylint to ignore those warnings.
 For example, the following might be placed in a models.py file::
@@ -165,31 +165,33 @@ Repository Layout
 This section isn't requred reading, but if you really want to understand why the
 project is laid out as it is, read on.
 
-code
-----
+apps/
+-----
 
-This directory acts as the root of the django project. Each sub-folder is a
-django app.
+This directory contains django apps. Roughly speaking, a django app is a
+cohesive set of code that allows users to interact with the database.
 
-code/main
----------
+apps/main/
+----------
 
-The ``main`` folder contains project-wide settings and functionas as the "root"
-URL dispatcher.
+The "main" django app contains project-wide settings. It also functions as the
+root URL dispatcher. To see where requests are dispatched to, read module
+``apps.main.urls``.
 
-code/elts
----------
+apps/elts/
+----------
 
-Whereas ``main`` serves as the "root" project application, ``elts`` contains all
-logic for the actual lending system. Thus, database models for items, item
-reservations, tags, and other facts are housed here.
+The "elts" django app contains logic for the ELTS lending system. It contains
+database models for items, item reservations, tags, and other facts; it provides
+rules for manipulating those facts; and it provides a user interface for doing
+so.
 
 There's one layout quirk of special note. The ``templates`` and ``static``
 directories contain yet another directory called ``elts``. It looks something
 like this::
 
-    $ tree code/elts/
-    code/elts/
+    $ tree apps/elts/
+    apps/elts/
     |-- __init__.py
     |-- models.py
     |-- static
@@ -204,8 +206,8 @@ like this::
 
 At first glance, this appears redundant. Why not do the following instead? ::
 
-    $ tree code/elts/
-    code/elts/
+    $ tree apps/elts/
+    apps/elts/
     |-- __init__.py
     |-- models.py
     |-- static
