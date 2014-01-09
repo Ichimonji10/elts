@@ -166,8 +166,8 @@ graphviz must be installed for epydoc to generate graphs.
 
 You can generate a diagram of the database models::
 
-    $ ./manage.py graph_models elts > elts.dot
-    $ dot -Tsvg -o elts.svg elts.dot
+    $ python2 apps/manage.py graph_models elts > elts.dot
+    $ dot -O -Tsvg elts.dot
 
 Again, graphviz must be installed to generate images.
 
