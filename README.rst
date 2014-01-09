@@ -1,78 +1,102 @@
-About
+ELTS
 =====
 
 This repo contains the source code for the Electronic Lending Tracking System
 (ELTS). You can get the full source code for ELTS from
-https://github.com/Ichimonji10/elts.git.
+https://github.com/Ichimonji10/elts.git. ELTS is written using the Django web
+app framework. For more on Django, read the excellent `Django documentation`_.
 
-ELTS is written using the Django web app framework. For more on Django, read the
-excellent `Django documentation`_.
+This document contains commands that should be run from a shell (command line).
+Your shell's current working directory should be the root directory of this
+repository. That is, you should ``cd`` to the directory containing this
+document.
 
-Deployment Guidelines
-=====================
+Deployment Guide
+================
 
 This project is not dependent upon any particular web server, app server,
-communication protocol, or database backend. However, it it is tested only with
-certain configurations. Directions for setting up specific configurations are
-listed below.
+communication protocol, or database backend. However, it is only tested with
+certain configurations. Directions for two simple deployments are listed below.
 
-lighttpd + flup + sqlite
-------------------------
-
-Start by installing the following:
+All of the setups listed below require several common pieces of software.
+Install the following:
 
 * django-extensions
-* lighttpd
-* mysql
-* python2-django (v1.6)
+* django (version 1.6)
+* python2
 * python2-django-tables2
 * python2-factory_boy
-* python2-flup
 * python2-pytz
 
-Unfortunately, flup (and seemingly every other FastCGI and SCGI handler
-available) do not yet support python 3. As a result, the python 2 versions of
-flup and django must be used.
+Development Setup
+-----------------
 
-Generate static files::
+This setup is easy to accomplish. It is suitable for development work, but it
+should __not__ be used in a production environment.
 
-    $ apps/manage.py collectstatic
+You do not need to install any additional software for this setup.
 
-The lighttpd config file assumes that the project has been cloned to to
-``/srv/http/``. Tweak the config file if needed, then install it and start
-lighttpd. ::
-
-    $ vi configs/lighttpd.conf
-    $ cp configs/lighttpd.conf /etc/lighttpd/lighttpd.conf
-    # systemctl start lighttpd
-
-Ensure ``collectstatic`` collected files and lighttpd is functioning::
-
-    $ curl localhost/static/elts/base.css > /dev/null
-
-Initialize the database backend::
+Initialize the SQLite database::
 
     $ apps/manage.py syncdb
 
-Start the app server (tweak to taste)::
+Start the server that ships with Django::
 
-    $ python2 apps/manage.py runfcgi \
-        host=127.0.0.1 \
-        port=4000 \
-        protocol=scgi \
-        daemonize=false \
-        debug=true
+    $ apps/manage.py runserver
 
-Test the setup by heading to ``localhost/elts/item/`` in a web browser.
-Visiting this page triggers several database queries, so visiting this page
-ensures that you've set things up correctly.
+Direct your web browser to http://localhost:8000/. That's it!
 
-lighttpd + flup + mysql
------------------------
+Production Setup
+----------------
 
-Follow directions for setting up lighttpd + flup + sqlite, up to the point where
-the database is initialized. Then, edit the ``DATABASES`` section of
-``apps/main/settings.py``. When you're done, it will look something like this::
+This setup is harder to accomplish. It is suitable for a small production
+environment.
+
+Prerequisites
+~~~~~~~~~~~~~
+
+Install the following additional software:
+
+* lighttpd
+* mysql
+* python2-flup
+* python-flup
+
+Web Server
+~~~~~~~~~~
+
+Customize the lighttpd config files, back up the current configuration files,
+and install the new config files::
+
+    $ vi configs/lighttpd.conf
+    $ vi configs/scgi.conf
+    # cp /etc/lighttpd/ /etc/lighttpd.old/
+    # cp -t /etc/lighttpd/ configs/lighttpd.conf configs/scgi.conf
+    # systemctl start lighttpd
+
+The lighttpd config files make several important assumtions. For example, they
+make assumptions about where the project has been cloned to (``/srv/http/``) and
+which user the web server should run as. Look them over carefully before
+installing them.
+
+At this point, the web server should be capable of serving up static files. This
+is despite the fact that the django application is not yet working. To determine
+whether lighttpd is working, create a file in the ``collectstatic`` directory,
+and attempt to fetch it::
+
+    $ echo foo > collectstatic/testfile
+    $ curl localhost/static/testfile
+    $ rm collectstatic/testfile
+
+This command causes lighttpd to serve a static file directly from the
+``collectstatic/`` folder. If you can fetch this static file, then lighttpd is
+working.
+
+Database
+~~~~~~~~
+
+Edit the ``DATABASES`` section of ``apps/main/settings.py``. When you're done,
+it will look something like this::
 
     DATABASES = {
         # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
@@ -94,26 +118,39 @@ Install `MySQL-Python`_, then configure the MySQL database::
     mysql> GRANT AlL PRIVILEGES ON elts.* TO 'elts'@'localhost';
     mysql> commit;
     mysql> exit
-    $ python2 apps/manage.py syncdb
 
-Start the app server as normal.
+Initialize the database backend::
 
-Development Guidelines
-======================
+    $ apps/manage.py syncdb
 
-It is possible to start ELTS with only two commands::
+This will create all necessary tables in the database.
 
-    $ ./manage.py syncdb
-    $ ./manage.py runserver
+Application
+~~~~~~~~~~~
 
-This starts the built-in django webserver and a SQLite database backend. You can
-use the setup by heading to http://localhost:8000/ in a web browser.
+Generate static files::
+
+    $ apps/manage.py collectstatic
+
+This will search each app in the ``apps`` folder for static resources, such as
+CSS files and images, and place those files in the ``collectstatic/`` folder.
+
+Start the app server (tweak to taste)::
+
+    $ python2 apps/manage.py runfcgi \
+        host=127.0.0.1 \
+        port=4000 \
+        protocol=scgi \
+        daemonize=false \
+        debug=true
+
+Direct your web browser to http://localhost/. That's it!
 
 Documentation
--------------
+=============
 
-``README.rst`` is written in reStructuredText format. It can be compiled to
-HTML::
+This file (``README.rst``) is written in reStructuredText format. It can be
+compiled to several other formats. To compile it to HTML::
 
     $ rst2html README.rst > README.html
 
@@ -123,7 +160,7 @@ example::
     $ epydoc \
         --config configs/epydocrc \
         --output <output_dir> \
-        `find apps/ -type f -name \*.py`
+        $(find apps/ -type f -name '*.py')
 
 graphviz must be installed for epydoc to generate graphs.
 
@@ -135,29 +172,32 @@ You can generate a diagram of the database models::
 Again, graphviz must be installed to generate images.
 
 Static Analysis
----------------
+===============
 
-You can use pylint to perform static analysis of individual python files. For
-example::
+You can perform static analysis of individual python files using pylint. Pylint
+searches through python code, looking for errors and design issues. To perform
+an analysis on the file ``apps/elts/views.py`` with the following command::
 
-    $ pylint --init-hook='import sys; sys.path.append("apps/")' apps/elts/views.py | less
+    $ pylint \
+        --init-hook='import sys; sys.path.append("apps/")' \
+        apps/elts/views.py | less
 
 Some warnings are spurious, and you can force pylint to ignore those warnings.
 For example, the following might be placed in a models.py file::
 
     # pylint: disable=R0903
-    # "Too few public methods (0/2)" 
+    # "Too few public methods (0/2)"
     # It is both common and OK for a model to have no methods.
     #
     # pylint: disable=W0232
-    # "Class has no __init__ method" 
+    # "Class has no __init__ method"
     # It is both common and OK for a model to have no __init__ method.
 
-The location of ``pylint: diable=XXXX`` directives is important! If "disable"
-statements are placed at the top of a file, the named messages are ignored
-throughout that entire file, but if they are placed within a class, the named
-messages are ignored only within that class. Don't apply a "disable" statement
-to an excessively large scope!
+The location of ``pylint: disable=XXXX`` directives is important! For example,
+if a "disable" statement is placed at the end of a line, the specified warning
+is disabled for only that one line, but if the statement is placed at the top of
+a file, the specified warning is ignored throughout that entire file. Don't
+apply a "disable" statement to an excessively large scope!
 
 Repository Layout
 =================
@@ -186,15 +226,15 @@ database models for items, item reservations, tags, and other facts; it provides
 rules for manipulating those facts; and it provides a user interface for doing
 so.
 
-There's one layout quirk of special note. The ``templates`` and ``static``
-directories contain yet another directory called ``elts``. It looks something
-like this::
+There's one layout quirk of special note. The ``templates`` and
+``collectstatic`` directories contain yet another directory called ``elts``. It
+looks something like this::
 
     $ tree apps/elts/
     apps/elts/
     |-- __init__.py
     |-- models.py
-    |-- static
+    |-- collectstatic
     |   `-- elts
     |       `-- base.css
     |-- templates
@@ -210,7 +250,7 @@ At first glance, this appears redundant. Why not do the following instead? ::
     apps/elts/
     |-- __init__.py
     |-- models.py
-    |-- static
+    |-- collectstatic
     |   `-- base.css
     |-- templates
     |   `-- base.html
@@ -257,6 +297,5 @@ if necessary, and it is populated with necessary tables. This is great for
 development and testing, though it should be changed in production. The contents
 of the this folder should *not* be version controlled.
 
-.. _The Django Book: http://www.djangobook.com/en/2.0/index.html
 .. _Django documentation: https://docs.djangoproject.com/en/dev/
 .. _MySQL-Python: http://mysql-python.sourceforge.net/
