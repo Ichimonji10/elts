@@ -80,16 +80,15 @@ installing them.
 
 At this point, the web server should be capable of serving up static files. This
 is despite the fact that the django application is not yet working. To determine
-whether lighttpd is working, create a file in the ``collectstatic`` directory,
-and attempt to fetch it::
+whether lighttpd is working, create a file in the ``static`` directory, and
+attempt to fetch it::
 
-    $ echo foo > collectstatic/testfile
+    $ echo foo > static/testfile
     $ curl localhost/static/testfile
-    $ rm collectstatic/testfile
+    $ rm static/testfile
 
-This command causes lighttpd to serve a static file directly from the
-``collectstatic/`` folder. If you can fetch this static file, then lighttpd is
-working.
+This command causes lighttpd to serve a static file directly from the ``static``
+folder. If you can fetch this static file, then lighttpd is working.
 
 Database
 ~~~~~~~~
@@ -132,7 +131,7 @@ Generate static files::
     $ apps/manage.py collectstatic
 
 This will search each app in the ``apps`` folder for static resources, such as
-CSS files and images, and place those files in the ``collectstatic/`` folder.
+CSS files and images, and place those files in the ``static`` folder.
 
 Start the app server (tweak to taste)::
 
@@ -225,15 +224,15 @@ database models for items, item reservations, tags, and other facts; it provides
 rules for manipulating those facts; and it provides a user interface for doing
 so.
 
-There's one layout quirk of special note. The ``templates`` and
-``collectstatic`` directories contain yet another directory called ``elts``. It
-looks something like this::
+There's one layout quirk of special note. The ``templates`` and ``static``
+directories contain yet another directory called ``elts``. It looks something
+like this::
 
     $ tree apps/elts/
     apps/elts/
     |-- __init__.py
     |-- models.py
-    |-- collectstatic
+    |-- static
     |   `-- elts
     |       `-- base.css
     |-- templates
@@ -249,7 +248,7 @@ At first glance, this appears redundant. Why not do the following instead? ::
     apps/elts/
     |-- __init__.py
     |-- models.py
-    |-- collectstatic
+    |-- static
     |   `-- base.css
     |-- templates
     |   `-- base.html
@@ -271,14 +270,14 @@ The latter is a bad idea.
     -- `Django documentation
     <https://docs.djangoproject.com/en/1.6/intro/tutorial03/#write-views-that-actually-do-something>`__
 
-collectstatic
--------------
+static
+------
 
 Django can collect static files such as CSS files into a single, central
 location for you. A webserver can then do what it's good at (serving static
 files), and django can do what it's good at (generating dynamic content). Run
 the ``django-admin.py collectstatic`` command to collect files into the
-``collectstatic`` folder. The contents of this folder should *not* be version
+``static`` folder. The contents of this folder should *not* be version
 controlled.
 
 configs
