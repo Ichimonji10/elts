@@ -32,7 +32,7 @@ Development Setup
 -----------------
 
 This setup is easy to accomplish. It is suitable for development work, but it
-should __not__ be used in a production environment.
+should *not* be used in a production environment.
 
 You do not need to install any additional software for this setup.
 
@@ -60,23 +60,22 @@ Install the following additional software:
 * lighttpd
 * mysql
 * python2-flup
-* python-flup
 
 Web Server
 ~~~~~~~~~~
 
-Customize the lighttpd config files, back up the current configuration files,
-and install the new config files::
+Back up your current lighttpd config files. Then, customize and install new
+config files::
 
+    # cp /etc/lighttpd/ /etc/lighttpd.old/
     $ vi configs/lighttpd.conf
     $ vi configs/scgi.conf
-    # cp /etc/lighttpd/ /etc/lighttpd.old/
     # cp -t /etc/lighttpd/ configs/lighttpd.conf configs/scgi.conf
     # systemctl start lighttpd
 
 The lighttpd config files make several important assumtions. For example, they
-make assumptions about where the project has been cloned to (``/srv/http/``) and
-which user the web server should run as. Look them over carefully before
+make assumptions about where the repository has been cloned to (``/srv/http/``)
+and which user the web server should run as. Look them over carefully before
 installing them.
 
 At this point, the web server should be capable of serving up static files. This
