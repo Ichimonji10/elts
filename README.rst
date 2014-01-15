@@ -206,23 +206,23 @@ project is laid out as it is, read on.
 apps/
 -----
 
-This directory contains django apps. Roughly speaking, a django app is a
-cohesive set of code that allows users to interact with the database.
+This directory contains django apps. Roughly speaking, a django app is a body of
+code that can be installed or removed independently of other django apps.
 
 apps/main/
 ----------
 
-The "main" django app contains project-wide settings. It also functions as the
-root URL dispatcher. To see where requests are dispatched to, read module
+The "main" app contains project-wide settings. It also contains the root URL
+dispatcher. To see where requests are dispatched to, read module
 ``apps.main.urls``.
 
 apps/elts/
 ----------
 
-The "elts" django app contains logic for the ELTS lending system. It contains
-database models for items, item reservations, tags, and other facts; it provides
-rules for manipulating those facts; and it provides a user interface for doing
-so.
+The "elts" app contains everythin necessary for implementing the ELTS lending
+system. It contains database models for tracking items, item reservations and
+other facts; it provides rules for manipulating those facts; and it provides a
+user interface for doing so.
 
 There's one layout quirk of special note. The ``templates`` and ``static``
 directories contain yet another directory called ``elts``. It looks something
@@ -273,12 +273,16 @@ The latter is a bad idea.
 static
 ------
 
-Django can collect static files such as CSS files into a single, central
-location for you. A webserver can then do what it's good at (serving static
-files), and django can do what it's good at (generating dynamic content). Run
-the ``django-admin.py collectstatic`` command to collect files into the
-``static`` folder. The contents of this folder should *not* be version
-controlled.
+The ``static`` folder contains static resources, such as CSS documents or PNG
+images. Use the ``collectstatic`` command to populate this directory. The
+collectstatic command is described in the `Application`_ section.
+
+Django is good at generating dynamic content, such as HTML documents. However,
+it is not good at serving up static files, such as CSS docments or SVG images.
+That's the job of a web server, and a web server should serve up resources from
+this directory.
+
+The contents of this folder should *not* be version controlled.
 
 configs
 -------
@@ -289,11 +293,10 @@ self-explanatory.
 sqlite
 ------
 
-By default, this project uses sqlite as a database backend. When you issue
-``manage.py syncdb``, a sqlite database file is created in the ``sqlite`` folder
-if necessary, and it is populated with necessary tables. This is great for
-development and testing, though it should be changed in production. The contents
-of the this folder should *not* be version controlled.
+By default, this project uses sqlite as a database backend. This directory
+houses that sqlite database file.
+
+The contents of the this folder should *not* be version controlled.
 
 .. _Django documentation: https://docs.djangoproject.com/en/dev/
 .. _MySQL-Python: http://mysql-python.sourceforge.net/
