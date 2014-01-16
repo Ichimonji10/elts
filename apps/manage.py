@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 """A command-line utility for project-specific administrative tasks.
 
 From the `official docs`_:
