@@ -35,9 +35,20 @@ def count(queryset):
 # FIXME: write doctests
 @register.filter
 def category_items(category):
-    return models.Item.objects.filter(
-        tags__category__exact = category
-    ).distinct()
+    """Given a ``Category`` model object, return a list of all items in that
+    category.
+
+    """
+    # FIXME: should I check for set relationships using IDs instead of whole
+    # objects?
+    # FIXME: other methods, such as items_available, only work well if given a
+    # queryset
+    category_tags = frozenset(category.tags.all())
+    items = []
+    for item in models.Item.objects.all():
+        if category_tags.issubset(frozenset(item.tags.all())):
+            items.append(item)
+    return items
 
 # FIXME: write doctests
 def _lends(items):
