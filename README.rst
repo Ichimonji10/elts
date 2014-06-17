@@ -11,6 +11,8 @@ Your shell's current working directory should be the root directory of this
 repository. That is, you should ``cd`` to the directory containing this
 document.
 
+.. contents::
+
 Deployment Guide
 ================
 
@@ -296,6 +298,24 @@ By default, this project uses sqlite as a database backend. This directory
 houses that sqlite database file.
 
 The contents of the this folder should *not* be version controlled.
+
+Copyright
+=========
+
+ELTS: The Electronic Lending Tracking System
+Copyright (C) 2014  Jeremy Audet, Josh Rollet
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program.  If not, see <http://www.gnu.org/licenses/>.
 
 .. _Django documentation: https://docs.djangoproject.com/en/dev/
 .. _MySQL-Python: http://mysql-python.sourceforge.net/
